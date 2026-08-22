@@ -1,0 +1,32 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'learning_path.freezed.dart';
+part 'learning_path.g.dart';
+
+@freezed
+class PathStep with _$PathStep {
+  const factory PathStep({
+    required String id,
+    required String title,
+    String? description,
+    @Default(false) bool isCompleted,
+    int? order,
+    String? resourceUrl,
+  }) = _PathStep;
+
+  factory PathStep.fromJson(Map<String, dynamic> json) => _$PathStepFromJson(json);
+}
+
+@freezed
+class LearningPath with _$LearningPath {
+  const factory LearningPath({
+    required String id,
+    required String title,
+    String? description,
+    @Default([]) List<PathStep> steps,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+  }) = _LearningPath;
+
+  factory LearningPath.fromJson(Map<String, dynamic> json) => _$LearningPathFromJson(json);
+}

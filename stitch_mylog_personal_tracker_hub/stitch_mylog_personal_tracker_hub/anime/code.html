@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Anime Library</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface": "#191c1e",
+                    "secondary-fixed-dim": "#c0c1ff",
+                    "on-primary-fixed": "#0f0069",
+                    "on-tertiary": "#ffffff",
+                    "inverse-on-surface": "#eff1f3",
+                    "primary": "#3525cd",
+                    "surface-container-low": "#f2f4f6",
+                    "inverse-primary": "#c3c0ff",
+                    "tertiary": "#7e3000",
+                    "on-surface-variant": "#464555",
+                    "surface-tint": "#4d44e3",
+                    "on-tertiary-fixed-variant": "#7b2f00",
+                    "surface-container-highest": "#e0e3e5",
+                    "surface": "#f7f9fb",
+                    "on-error-container": "#93000a",
+                    "surface-container-high": "#e6e8ea",
+                    "outline": "#777587",
+                    "background": "#f7f9fb",
+                    "on-secondary-fixed": "#07006c",
+                    "surface-variant": "#e0e3e5",
+                    "inverse-surface": "#2d3133",
+                    "primary-fixed-dim": "#c3c0ff",
+                    "on-secondary-fixed-variant": "#2f2ebe",
+                    "primary-fixed": "#e2dfff",
+                    "on-secondary": "#ffffff",
+                    "tertiary-container": "#a44100",
+                    "on-background": "#191c1e",
+                    "on-primary": "#ffffff",
+                    "on-secondary-container": "#fffbff",
+                    "tertiary-fixed-dim": "#ffb695",
+                    "error-container": "#ffdad6",
+                    "surface-bright": "#f7f9fb",
+                    "on-primary-container": "#dad7ff",
+                    "on-tertiary-container": "#ffd2be",
+                    "on-primary-fixed-variant": "#3323cc",
+                    "secondary": "#4648d4",
+                    "outline-variant": "#c7c4d8",
+                    "on-tertiary-fixed": "#351000",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-container": "#6063ee",
+                    "secondary-fixed": "#e1e0ff",
+                    "surface-container": "#eceef0",
+                    "on-error": "#ffffff",
+                    "surface-dim": "#d8dadc",
+                    "tertiary-fixed": "#ffdbcc",
+                    "error": "#ba1a1a",
+                    "primary-container": "#4f46e5"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-gap": "16px",
+                    "unit": "4px",
+                    "group-gap": "32px",
+                    "container-padding": "24px",
+                    "gutter": "16px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "display": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["22px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "display": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        /* Custom scrollbar for horizontal lists */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen flex flex-col font-body-md text-body-md">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-surface dark:bg-surface-dim border-none flat no shadows z-40">
+<div class="flex justify-between items-center px-container-padding h-16 max-w-[1024px] mx-auto">
+<button class="text-on-surface-variant dark:text-outline hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors active:scale-95 duration-150 p-2 rounded-full">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-md text-primary dark:text-primary-fixed-dim tracking-tight">MyLog</h1>
+<button class="text-on-surface-variant dark:text-outline hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors active:scale-95 duration-150 p-2 rounded-full">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<main class="flex-grow max-w-[1024px] mx-auto w-full px-container-padding pb-[90px] md:pb-8 pt-4">
+<!-- Search and Filter Header -->
+<section class="mb-group-gap">
+<div class="relative w-full max-w-md mx-auto mb-stack-gap">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline">search</span>
+</div>
+<input class="w-full bg-surface-container-low border-none rounded-xl py-3 pl-10 pr-4 text-on-surface focus:ring-2 focus:ring-primary focus:outline-none placeholder:text-outline-variant transition-shadow" placeholder="Search anime..." type="text"/>
+</div>
+<!-- Pill Tabs -->
+<div class="flex space-x-2 overflow-x-auto hide-scrollbar pb-2 pt-1 px-1">
+<button class="flex-shrink-0 px-4 py-2 bg-primary text-on-primary rounded-full font-label-md text-label-md transition-colors shadow-sm">Watching</button>
+<button class="flex-shrink-0 px-4 py-2 bg-surface-container text-on-surface-variant hover:bg-surface-container-high rounded-full font-label-md text-label-md transition-colors">Completed</button>
+<button class="flex-shrink-0 px-4 py-2 bg-surface-container text-on-surface-variant hover:bg-surface-container-high rounded-full font-label-md text-label-md transition-colors">Plan to Watch</button>
+<button class="flex-shrink-0 px-4 py-2 bg-surface-container text-on-surface-variant hover:bg-surface-container-high rounded-full font-label-md text-label-md transition-colors">Dropped</button>
+</div>
+</section>
+<!-- Bento Grid List -->
+<section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-stack-gap">
+<!-- Card 1 -->
+<article class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 group flex flex-col h-full border border-surface-container-low">
+<div class="relative aspect-[16/9] w-full overflow-hidden bg-surface-variant">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A vivid, high-contrast poster of a futuristic cyberpunk anime city at night. Neon blues and deep purples dominate the scene, with sleek flying vehicles tracing lines across the sky. The lighting is dramatic, casting sharp shadows and glowing highlights in a distinct anime art style. Clean, digital aesthetic, very detailed and dynamic composition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXDQOfSspsdjDII9w3cIzg6oaVUlyNJyYTlhFLEEQJb_MalcUwgeKiaGScThtNf6m3p9yM_W99jTt0AckdMNMBgHJIAQkvn8I4YSXcaULFFAi1iL3lVXqiFjLQemU5ZP4qWtoV4tuHqeJIiacIKh29lBptG7KZGnWKVE9rmEnUo7j6YQxYJk6nMLWBw9-ukTzP4n-PrjBFn6gkn3PI1pJOeKizP1xafvh_rMZabY5piPBNivRc31gT"/>
+<div class="absolute bottom-2 right-2 bg-inverse-surface/80 backdrop-blur-sm text-inverse-on-surface px-2 py-1 rounded font-label-md text-label-md">
+                        Ep 12/24
+                    </div>
+</div>
+<div class="p-4 flex flex-col flex-grow justify-between">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1 line-clamp-1">Neon Genesis Odyssey</h3>
+<div class="flex flex-wrap gap-1 mb-3">
+<span class="px-2 py-0.5 bg-secondary-container/20 text-secondary rounded text-[10px] font-semibold uppercase tracking-wider">Sci-Fi</span>
+<span class="px-2 py-0.5 bg-secondary-container/20 text-secondary rounded text-[10px] font-semibold uppercase tracking-wider">Mecha</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-auto pt-2 border-t border-surface-container-highest">
+<div class="flex items-center text-tertiary">
+<span class="material-symbols-outlined text-[18px] mr-1" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-body-md text-body-md font-semibold">8.7</span>
+</div>
+<button class="text-primary hover:bg-primary/10 rounded-full p-1 transition-colors">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 group flex flex-col h-full border border-surface-container-low">
+<div class="relative aspect-[16/9] w-full overflow-hidden bg-surface-variant">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A serene, beautifully painted anime landscape featuring a lush green hillside dotted with wildflowers under a clear, bright blue sky with fluffy white clouds. The lighting is soft and natural, evoking a peaceful, Studio Ghibli-esque atmosphere. The colors are vibrant yet harmonious, maintaining a clean, light-mode friendly aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAymJaTTCNP1Q5p3nxcDL0vb6rYYpTvZsInno5H8gPAupB_01xsM9j6P4DEYoMfhHevnZuzyfIq5cMJpDLzXUIwwVoOpewX7KJHKM8cXQ97NjguZbz5_SAX53qrcS7eeezLZkTg-gs-9RPHkSK6lkaLlYDuCpFnNH_mK_E6hRDPiwbTiaJWNQp9WqmVM7kkIVw4PpGadDqQu__mpo1klJKBOZkH4y-cSpwj3VkVySHmjD5nysKRmMR4"/>
+<div class="absolute bottom-2 right-2 bg-inverse-surface/80 backdrop-blur-sm text-inverse-on-surface px-2 py-1 rounded font-label-md text-label-md">
+                        Ep 5/12
+                    </div>
+</div>
+<div class="p-4 flex flex-col flex-grow justify-between">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1 line-clamp-1">Whispering Winds</h3>
+<div class="flex flex-wrap gap-1 mb-3">
+<span class="px-2 py-0.5 bg-secondary-container/20 text-secondary rounded text-[10px] font-semibold uppercase tracking-wider">Fantasy</span>
+<span class="px-2 py-0.5 bg-secondary-container/20 text-secondary rounded text-[10px] font-semibold uppercase tracking-wider">Slice of Life</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-auto pt-2 border-t border-surface-container-highest">
+<div class="flex items-center text-tertiary">
+<span class="material-symbols-outlined text-[18px] mr-1" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-body-md text-body-md font-semibold">9.2</span>
+</div>
+<button class="text-primary hover:bg-primary/10 rounded-full p-1 transition-colors">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 3 -->
+<article class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 group flex flex-col h-full border border-surface-container-low">
+<div class="relative aspect-[16/9] w-full overflow-hidden bg-surface-variant">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A dynamic, high-energy anime action scene depicted in a modern digital painting style. Sparks fly as intense magical energy bursts in vivid reds and oranges against a dark, moody background. The composition is fast-paced and aggressive, showcasing sharp lines and dramatic lighting typical of shounen battle anime." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQE1ZXqm2c1vUs654fNfGAkerXHPdncPP2sDmYHaQlGP5YbsXi_MlHkUqkSAGtFu3W0tZvy-nDPWMlcszxI4VZaMdzX5CPS2jn_UvsNu3hNLlgoVjM8cZnHmf3fUrIAYEUKx40GKap0cu3gNyuPMDCtbKEr7GgXj8HmQLXEegSGdgPocyLThJ-mFrIGSjRGwAe08QnAGEIzHpKmyrtXG93jkd5sNv_htvEP9O_Lka8k0S4qxMNKVxp"/>
+<div class="absolute bottom-2 right-2 bg-inverse-surface/80 backdrop-blur-sm text-inverse-on-surface px-2 py-1 rounded font-label-md text-label-md">
+                        Ep 112/?
+                    </div>
+</div>
+<div class="p-4 flex flex-col flex-grow justify-between">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1 line-clamp-1">Crimson Blade: Awakening</h3>
+<div class="flex flex-wrap gap-1 mb-3">
+<span class="px-2 py-0.5 bg-secondary-container/20 text-secondary rounded text-[10px] font-semibold uppercase tracking-wider">Action</span>
+<span class="px-2 py-0.5 bg-secondary-container/20 text-secondary rounded text-[10px] font-semibold uppercase tracking-wider">Shounen</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-auto pt-2 border-t border-surface-container-highest">
+<div class="flex items-center text-tertiary">
+<span class="material-symbols-outlined text-[18px] mr-1" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-body-md text-body-md font-semibold">8.1</span>
+</div>
+<button class="text-primary hover:bg-primary/10 rounded-full p-1 transition-colors">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+</div>
+</div>
+</article>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 rounded-t-xl bg-surface-container-lowest dark:bg-surface-container-low border-t border-outline-variant flat no shadows">
+<div class="flex justify-around items-center py-2 px-4">
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant p-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest tap-highlight-transparent transition-all duration-200">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary-fixed text-on-secondary-container dark:text-on-secondary-fixed rounded-full px-4 py-1 tap-highlight-transparent transition-all duration-200">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">visibility</span>
+<span class="font-label-md text-label-md">Watch</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant p-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest tap-highlight-transparent transition-all duration-200">
+<span class="material-symbols-outlined mb-1">book</span>
+<span class="font-label-md text-label-md">Read</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant p-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest tap-highlight-transparent transition-all duration-200">
+<span class="material-symbols-outlined mb-1">check_circle</span>
+<span class="font-label-md text-label-md">Tasks</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant p-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest tap-highlight-transparent transition-all duration-200">
+<span class="material-symbols-outlined mb-1">more_horiz</span>
+<span class="font-label-md text-label-md">More</span>
+</button>
+</div>
+</nav>
+</body></html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Read - MyLog</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#191c1e",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "on-primary-fixed": "#0f0069",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#eff1f3",
+                        "primary": "#3525cd",
+                        "surface-container-low": "#f2f4f6",
+                        "inverse-primary": "#c3c0ff",
+                        "tertiary": "#7e3000",
+                        "on-surface-variant": "#464555",
+                        "surface-tint": "#4d44e3",
+                        "on-tertiary-fixed-variant": "#7b2f00",
+                        "surface-container-highest": "#e0e3e5",
+                        "surface": "#f7f9fb",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e6e8ea",
+                        "outline": "#777587",
+                        "background": "#f7f9fb",
+                        "on-secondary-fixed": "#07006c",
+                        "surface-variant": "#e0e3e5",
+                        "inverse-surface": "#2d3133",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "on-secondary-fixed-variant": "#2f2ebe",
+                        "primary-fixed": "#e2dfff",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#a44100",
+                        "on-background": "#191c1e",
+                        "on-primary": "#ffffff",
+                        "on-secondary-container": "#fffbff",
+                        "tertiary-fixed-dim": "#ffb695",
+                        "error-container": "#ffdad6",
+                        "surface-bright": "#f7f9fb",
+                        "on-primary-container": "#dad7ff",
+                        "on-tertiary-container": "#ffd2be",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "secondary": "#4648d4",
+                        "outline-variant": "#c7c4d8",
+                        "on-tertiary-fixed": "#351000",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-container": "#6063ee",
+                        "secondary-fixed": "#e1e0ff",
+                        "surface-container": "#eceef0",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-fixed": "#ffdbcc",
+                        "error": "#ba1a1a",
+                        "primary-container": "#4f46e5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-gap": "16px",
+                        "unit": "4px",
+                        "group-gap": "32px",
+                        "container-padding": "24px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "display": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["22px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "display": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-[80px] md:pb-0 font-body-md">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky z-40 bg-surface dark:bg-surface-dim border-none">
+<div class="flex justify-between items-center px-container-padding h-16 max-w-[1024px] mx-auto">
+<button class="text-on-surface-variant dark:text-outline hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors rounded-full p-2 active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary dark:text-primary-fixed-dim tracking-tight">MyLog</h1>
+<button class="text-on-surface-variant dark:text-outline hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors rounded-full p-2 active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="max-w-[1024px] mx-auto px-5 md:px-container-padding pt-stack-gap">
+<!-- Pill-Style Tabs -->
+<div class="flex overflow-x-auto gap-unit pb-unit mb-group-gap hide-scrollbar bg-surface-container-low rounded-full p-1 w-max max-w-full">
+<button class="font-label-md text-label-md bg-white text-primary rounded-full px-4 py-2 shadow-sm shrink-0">To Read</button>
+<button class="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high rounded-full px-4 py-2 transition-colors shrink-0">Reading</button>
+<button class="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high rounded-full px-4 py-2 transition-colors shrink-0">Read</button>
+<button class="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high rounded-full px-4 py-2 transition-colors shrink-0">Collection</button>
+</div>
+<!-- Book List -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Book Card 1 -->
+<div class="flex gap-gutter p-unit bg-surface-container-lowest rounded-xl hover:bg-surface-container-low transition-colors duration-200 cursor-pointer group">
+<div class="w-24 shrink-0 aspect-[2/3] rounded-lg overflow-hidden bg-surface-variant">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A minimalist book cover design featuring soft pastel gradients and a subtle geometric pattern, evoking a sense of calm reflection, flat lighting, crisp clean aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDebE1H9dWKIyUnZgeLwpAf7IMiBhgtTGRPNCftuyeheOAWzqKzR7QYXturF1NIoKrkoYFwfB89-L4wjxJdCwkQpgJzs3LW5couj9YVFBPSf3_YKLSOU_I2s8EhBUDYLqSZ38Ih6ndQ9b1ZsOHIAd-nMwHsUopF2BtW7ldey8Smv7YkifZRahy9CEKsPu3THvJ3MGJXaJoumzkhfoPmO--grBRRLQJAUQncyZ2nCOnhfYTZk3RchfAt"/>
+</div>
+<div class="flex flex-col py-2 pr-2">
+<h3 class="font-headline-md text-headline-md text-on-surface line-clamp-2 mb-1">The Design of Everyday Things</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-2">Don Norman</p>
+<div class="flex flex-wrap gap-2 mt-auto">
+<span class="px-2 py-1 bg-surface-container text-on-surface-variant rounded-full font-label-md text-label-md">Design</span>
+<span class="px-2 py-1 bg-surface-container text-on-surface-variant rounded-full font-label-md text-label-md">UX</span>
+</div>
+</div>
+</div>
+<!-- Book Card 2 -->
+<div class="flex gap-gutter p-unit bg-surface-container-lowest rounded-xl hover:bg-surface-container-low transition-colors duration-200 cursor-pointer group">
+<div class="w-24 shrink-0 aspect-[2/3] rounded-lg overflow-hidden bg-surface-variant">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A clean, modern book cover with a striking indigo architectural silhouette against a pure white background, minimal typography space, high contrast, paper texture feel" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtIlGh6WHHgYx02QuumbY8RYz_zrtMfPiX6LV0nhE3SYp6nsMLByD9JoARI0E2Qq0WW2UYVjQeVTAb2i57XV4G-LnoGurql-9ZRZAI8GSG3g9eA93B8-qfl-mvbTZkIiGn4S6x-BocCZBf2EeOuq0smJ2NJ0fpesF18vyBUZjp7L5xsSKxTLcmV3fxoBufJquNC0SUk3U7gBh1bISkkclORPdyw-YT8lt4P-gPc-G_kDumvXoDjy69"/>
+</div>
+<div class="flex flex-col py-2 pr-2">
+<h3 class="font-headline-md text-headline-md text-on-surface line-clamp-2 mb-1">Thinking, Fast and Slow</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-2">Daniel Kahneman</p>
+<div class="flex flex-wrap gap-2 mt-auto">
+<span class="px-2 py-1 bg-surface-container text-on-surface-variant rounded-full font-label-md text-label-md">Psychology</span>
+</div>
+</div>
+</div>
+<!-- Book Card 3 -->
+<div class="flex gap-gutter p-unit bg-surface-container-lowest rounded-xl hover:bg-surface-container-low transition-colors duration-200 cursor-pointer group">
+<div class="w-24 shrink-0 aspect-[2/3] rounded-lg overflow-hidden bg-surface-variant">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Abstract minimal book cover art showing overlapping translucent shapes in muted slate and pale indigo, conveying depth and systemic thought, smooth digital vector style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2NDUgBuRiK6ed-n3WdSE8HYYQGWd8fn9Pd67Yti7mzP9fOv0pfIKddH1CpSAGBJMkp5GN_7EyxfjX2n3QgMdGXf8bhxWACsigvDK_VjbFclhNjj3LvvBW_x1EU48ytVLbJOpbQK14N-DRQlSOeCHZrt14taEUFP1d8cdsVQ8nOK-nIwWCZwvrldEysjjSSeEjmfumW_40swCkDVqApRtObS5CKM3uPcLBDpFaSUE-UVUvJqO2c2jF"/>
+</div>
+<div class="flex flex-col py-2 pr-2">
+<h3 class="font-headline-md text-headline-md text-on-surface line-clamp-2 mb-1">Atomic Habits</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-2">James Clear</p>
+<div class="flex flex-wrap gap-2 mt-auto">
+<span class="px-2 py-1 bg-surface-container text-on-surface-variant rounded-full font-label-md text-label-md">Self-Help</span>
+<span class="px-2 py-1 bg-surface-container text-on-surface-variant rounded-full font-label-md text-label-md">Productivity</span>
+</div>
+</div>
+</div>
+<!-- Book Card 4 -->
+<div class="flex gap-gutter p-unit bg-surface-container-lowest rounded-xl hover:bg-surface-container-low transition-colors duration-200 cursor-pointer group">
+<div class="w-24 shrink-0 aspect-[2/3] rounded-lg overflow-hidden bg-surface-variant">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A tranquil book cover design featuring a solitary line-drawn tree on an off-white paper-like texture, accented with a single blue leaf, minimalist nature theme" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDa0OB3T0NcuZJJ0ZyXW_wPPXqac6Ia2e0tHMcT5p5I2rM3DUe-u1TFPapJavTDzAal1hk4KLxdihzf41Y7RsvgtWl-IZ0JFNq1aNNSq_NUZdJ2Air4JfxkLhjrsTkHSJZ_1d3YdhCMotMcMgIm3sgegYJbPCTsJA1PXcuqKsCxyzgQXfmRJtfZMwrmNK_ZJ623MeLxd_1YiOu4b1yml2NMzpSRfHlEP1NaPLubXTWUlrhb8JjXJa1d"/>
+</div>
+<div class="flex flex-col py-2 pr-2">
+<h3 class="font-headline-md text-headline-md text-on-surface line-clamp-2 mb-1">Deep Work</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-2">Cal Newport</p>
+<div class="flex flex-wrap gap-2 mt-auto">
+<span class="px-2 py-1 bg-surface-container text-on-surface-variant rounded-full font-label-md text-label-md">Focus</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center py-2 px-4 shadow-none bg-surface-container-lowest dark:bg-surface-container-low border-t border-outline-variant z-50 rounded-t-xl">
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant p-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest tap-highlight-transparent transition-all duration-200 rounded-lg">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-md text-label-md mt-1">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant p-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest tap-highlight-transparent transition-all duration-200 rounded-lg">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+<span class="font-label-md text-label-md mt-1">Watch</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary-fixed text-on-secondary-container dark:text-on-secondary-fixed rounded-full px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-container-highest tap-highlight-transparent transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="book" style="font-variation-settings: 'FILL' 1;">book</span>
+<span class="font-label-md text-label-md mt-1">Read</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant p-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest tap-highlight-transparent transition-all duration-200 rounded-lg">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+<span class="font-label-md text-label-md mt-1">Tasks</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant p-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest tap-highlight-transparent transition-all duration-200 rounded-lg">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+<span class="font-label-md text-label-md mt-1">More</span>
+</button>
+</nav>
+<style>
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .tap-highlight-transparent {
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+</body></html>

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MyLog - Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface": "#191c1e",
+                    "secondary-fixed-dim": "#c0c1ff",
+                    "on-primary-fixed": "#0f0069",
+                    "on-tertiary": "#ffffff",
+                    "inverse-on-surface": "#eff1f3",
+                    "primary": "#3525cd",
+                    "surface-container-low": "#f2f4f6",
+                    "inverse-primary": "#c3c0ff",
+                    "tertiary": "#7e3000",
+                    "on-surface-variant": "#464555",
+                    "surface-tint": "#4d44e3",
+                    "on-tertiary-fixed-variant": "#7b2f00",
+                    "surface-container-highest": "#e0e3e5",
+                    "surface": "#f7f9fb",
+                    "on-error-container": "#93000a",
+                    "surface-container-high": "#e6e8ea",
+                    "outline": "#777587",
+                    "background": "#f7f9fb",
+                    "on-secondary-fixed": "#07006c",
+                    "surface-variant": "#e0e3e5",
+                    "inverse-surface": "#2d3133",
+                    "primary-fixed-dim": "#c3c0ff",
+                    "on-secondary-fixed-variant": "#2f2ebe",
+                    "primary-fixed": "#e2dfff",
+                    "on-secondary": "#ffffff",
+                    "tertiary-container": "#a44100",
+                    "on-background": "#191c1e",
+                    "on-primary": "#ffffff",
+                    "on-secondary-container": "#fffbff",
+                    "tertiary-fixed-dim": "#ffb695",
+                    "error-container": "#ffdad6",
+                    "surface-bright": "#f7f9fb",
+                    "on-primary-container": "#dad7ff",
+                    "on-tertiary-container": "#ffd2be",
+                    "on-primary-fixed-variant": "#3323cc",
+                    "secondary": "#4648d4",
+                    "outline-variant": "#c7c4d8",
+                    "on-tertiary-fixed": "#351000",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-container": "#6063ee",
+                    "secondary-fixed": "#e1e0ff",
+                    "surface-container": "#eceef0",
+                    "on-error": "#ffffff",
+                    "surface-dim": "#d8dadc",
+                    "tertiary-fixed": "#ffdbcc",
+                    "error": "#ba1a1a",
+                    "primary-container": "#4f46e5"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-gap": "16px",
+                    "unit": "4px",
+                    "group-gap": "32px",
+                    "container-padding": "24px",
+                    "gutter": "16px"
+            },
+            "fontFamily": {
+                    "headline-lg": [
+                            "Inter"
+                    ],
+                    "body-lg": [
+                            "Inter"
+                    ],
+                    "label-md": [
+                            "Inter"
+                    ],
+                    "headline-lg-mobile": [
+                            "Inter"
+                    ],
+                    "display": [
+                            "Inter"
+                    ],
+                    "body-md": [
+                            "Inter"
+                    ],
+                    "headline-md": [
+                            "Inter"
+                    ]
+            },
+            "fontSize": {
+                    "headline-lg": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-lg": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "label-md": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "headline-lg-mobile": [
+                            "22px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "display": [
+                            "32px",
+                            {
+                                    "lineHeight": "40px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "body-md": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-md": [
+                            "20px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "600"
+                            }
+                    ]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        /* Hide scrollbar for horizontal scrolling */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24 md:pb-0 font-body-md">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-surface dark:bg-surface-dim border-none z-40 flat no shadows hidden md:block">
+<div class="flex justify-between items-center px-container-padding h-16 max-w-[1024px] mx-auto">
+<button class="text-on-surface-variant dark:text-outline hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors active:scale-95 transition-transform duration-150 p-2 rounded-full">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary dark:text-primary-fixed-dim tracking-tight">MyLog</h1>
+<button class="text-on-surface-variant dark:text-outline hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors active:scale-95 transition-transform duration-150 p-2 rounded-full">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">account_circle</span>
+</button>
+</div>
+</header>
+<main class="max-w-[1024px] mx-auto px-[20px] md:px-container-padding pt-stack-gap">
+<!-- Greeting Section -->
+<section class="mb-group-gap">
+<h2 class="font-display text-display text-on-surface mb-unit">Good morning, User</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Wednesday, October 25th</p>
+</section>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-group-gap">
+<!-- Today's To-dos Card (Bento span 8) -->
+<div class="md:col-span-8 bg-surface-container-low rounded-[1.5rem] p-container-padding">
+<div class="flex items-center justify-between mb-stack-gap">
+<h3 class="font-headline-md text-headline-md text-on-surface">Today's to-dos</h3>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex flex-col gap-unit">
+<!-- Task 1 -->
+<label class="flex items-start p-3 bg-surface rounded-lg hover:bg-surface-container-high transition-colors cursor-pointer group">
+<input checked="" class="mt-1 w-5 h-5 rounded border-outline text-primary focus:ring-primary focus:ring-offset-surface bg-transparent" type="checkbox"/>
+<div class="ml-3 flex-1">
+<span class="block font-body-lg text-body-lg text-on-surface line-through opacity-70">Review Q3 design spec</span>
+</div>
+</label>
+<!-- Task 2 -->
+<label class="flex items-start p-3 bg-surface rounded-lg hover:bg-surface-container-high transition-colors cursor-pointer group">
+<input class="mt-1 w-5 h-5 rounded border-outline text-primary focus:ring-primary focus:ring-offset-surface bg-transparent" type="checkbox"/>
+<div class="ml-3 flex-1">
+<span class="block font-body-lg text-body-lg text-on-surface group-hover:text-primary transition-colors">Prepare presentation deck</span>
+<span class="block font-body-md text-body-md text-on-surface-variant mt-1">Include the new analytics charts</span>
+</div>
+</label>
+<!-- Task 3 -->
+<label class="flex items-start p-3 bg-surface rounded-lg hover:bg-surface-container-high transition-colors cursor-pointer group">
+<input class="mt-1 w-5 h-5 rounded border-outline text-primary focus:ring-primary focus:ring-offset-surface bg-transparent" type="checkbox"/>
+<div class="ml-3 flex-1">
+<span class="block font-body-lg text-body-lg text-on-surface group-hover:text-primary transition-colors">Call dentist for appointment</span>
+</div>
+</label>
+<!-- Task 4 -->
+<label class="flex items-start p-3 bg-surface rounded-lg hover:bg-surface-container-high transition-colors cursor-pointer group">
+<input class="mt-1 w-5 h-5 rounded border-outline text-primary focus:ring-primary focus:ring-offset-surface bg-transparent" type="checkbox"/>
+<div class="ml-3 flex-1">
+<span class="block font-body-lg text-body-lg text-on-surface group-hover:text-primary transition-colors">Grocery shopping</span>
+<span class="block font-body-md text-body-md text-on-surface-variant mt-1">Milk, eggs, bread, coffee</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Reminders Card (Bento span 4) -->
+<div class="md:col-span-4 bg-primary text-on-primary rounded-[1.5rem] p-container-padding flex flex-col justify-between relative overflow-hidden">
+<!-- Decorative background element -->
+<div class="absolute -top-10 -right-10 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
+<div>
+<div class="flex items-center justify-between mb-stack-gap">
+<h3 class="font-headline-md text-headline-md text-on-primary">Reminders today</h3>
+<span class="material-symbols-outlined text-inverse-primary" style="font-variation-settings: 'FILL' 1;">notifications</span>
+</div>
+<ul class="flex flex-col gap-3 relative z-10">
+<li class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-secondary-fixed"></div>
+<span class="font-body-lg text-body-lg">Team Standup @ 10:00 AM</span>
+</li>
+<li class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-tertiary-fixed-dim"></div>
+<span class="font-body-lg text-body-lg">Water the plants</span>
+</li>
+<li class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-inverse-primary"></div>
+<span class="font-body-lg text-body-lg">Package delivery expected</span>
+</li>
+</ul>
+</div>
+<button class="mt-stack-gap w-full py-2 bg-on-primary text-primary font-label-md text-label-md rounded-lg hover:bg-surface-container-low transition-colors text-center">
+                    View All Reminders
+                </button>
+</div>
+</div>
+<!-- Continue Watching -->
+<section class="mb-group-gap">
+<div class="flex items-center justify-between mb-stack-gap">
+<h3 class="font-headline-md text-headline-md text-on-surface">Continue watching</h3>
+<button class="text-primary font-label-md text-label-md hover:underline">See all</button>
+</div>
+<div class="flex overflow-x-auto hide-scrollbar gap-gutter pb-4 snap-x snap-mandatory">
+<!-- Item 1 -->
+<div class="flex-none w-[200px] snap-start group cursor-pointer">
+<div class="w-full aspect-[16/9] rounded-xl mb-2 overflow-hidden bg-surface-container-high relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A cinematic wide shot from a modern sci-fi television show. A sleek spaceship flying past a glowing, ringed gas giant planet. Cool blue and deep space black tones. Clean, crisp, high-end digital streaming quality aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvCbLwxRUiqH8CPxpyfTFlPVpj9dpVcUARTSXJc3EqGCQQ_3hM3Ib6kRnjFqGhShBkFN_uo7_fjkt3ps2vWNjZts4UvNpEoHH4aNsYYSO4Quve_L2kWWGpDJ_J67YkTxD0Cgs8eh5qSR_TPlsPEhS-Zot_X0DiWhuUV6dYm2mjqEbenJEIzwxLCCU7Onyu7UzmWoCN9UFurBT5Ss6svqjF4FOeg0BUWj7DnqLYBFJqnLoz8328HwG9"/>
+<div class="absolute bottom-0 left-0 w-full h-1 bg-surface-variant">
+<div class="h-full bg-primary w-2/3"></div>
+</div>
+</div>
+<h4 class="font-body-lg text-body-lg text-on-surface font-semibold truncate group-hover:text-primary transition-colors">The Expanse</h4>
+<p class="font-body-md text-body-md text-on-surface-variant truncate">S4:E2 - Jetsam</p>
+</div>
+<!-- Item 2 -->
+<div class="flex-none w-[200px] snap-start group cursor-pointer">
+<div class="w-full aspect-[16/9] rounded-xl mb-2 overflow-hidden bg-surface-container-high relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A documentary still shot. A majestic snow leopard resting on a rocky crag in the Himalayas. High definition nature photography. Bright daylight, crisp details, naturalistic muted earthy tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCE4-0GDRI3WFyVJrJvY8qJQH4P8Ay5IYOuJSyr2KfrFpq91EPdo5IPclMjPdiG9rwYHs-W1lyq2kfOIWR1SZZWRwuemAUyScET-zaEqLs_dMS0mn9jiJFz1e_kw9A7uvmyIgcFEMrA5Wq6FWnpLLl3H3o_AwvrHBR9DyDukSz3UH2Tpm1N1DG4f67r7xVY1dxhy3xet0fZroH90e9Eb-20l2zACx7uG7_iIIKY3bQZP804PgPrATbs"/>
+<div class="absolute bottom-0 left-0 w-full h-1 bg-surface-variant">
+<div class="h-full bg-primary w-1/4"></div>
+</div>
+</div>
+<h4 class="font-body-lg text-body-lg text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Planet Earth III</h4>
+<p class="font-body-md text-body-md text-on-surface-variant truncate">Ep 4 - Extremes</p>
+</div>
+<!-- Item 3 -->
+<div class="flex-none w-[200px] snap-start group cursor-pointer">
+<div class="w-full aspect-[16/9] rounded-xl mb-2 overflow-hidden bg-surface-container-high relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A stylized animation frame showing a cozy, lo-fi hip hop study room. Warm amber lighting, books scattered, a cat sleeping on a windowsill. Minimalist illustration style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxaPqmFF_RKEEq1btgwFR0wqSztmnY-FlApFWocnW1AZg4iuvMZBAz65FMYwWy7MUpmgZEZPTxvZDCisd6v1uyIgicSh-wtT6sddc9bXguDwcOY47Lh3mY6zISRpl4T4z1vpgaKKIregfGRqPg_0U5DDD2KhdxBBfajugwSEtdMdhpRpyzkJm4TsvKnNWqfp-9HQgFJELRXL_34roH-4aEWlScExU1JkeBERdHEfswofseNOPDAemz"/>
+<div class="absolute bottom-0 left-0 w-full h-1 bg-surface-variant">
+<div class="h-full bg-primary w-[80%]"></div>
+</div>
+</div>
+<h4 class="font-body-lg text-body-lg text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Design History</h4>
+<p class="font-body-md text-body-md text-on-surface-variant truncate">Part 2: The Bauhaus</p>
+</div>
+<!-- Item 4 (Partial to show scroll) -->
+<div class="flex-none w-[200px] snap-start group cursor-pointer">
+<div class="w-full aspect-[16/9] rounded-xl mb-2 overflow-hidden bg-surface-container-high relative flex items-center justify-center">
+<span class="material-symbols-outlined text-outline text-4xl" style="font-variation-settings: 'FILL' 0;">movie</span>
+</div>
+<div class="w-3/4 h-4 bg-surface-container-high rounded mb-1"></div>
+<div class="w-1/2 h-3 bg-surface-container-high rounded"></div>
+</div>
+</div>
+</section>
+<!-- Currently Reading -->
+<section class="mb-group-gap">
+<div class="flex items-center justify-between mb-stack-gap">
+<h3 class="font-headline-md text-headline-md text-on-surface">Currently reading</h3>
+<button class="text-primary font-label-md text-label-md hover:underline">See all</button>
+</div>
+<div class="flex overflow-x-auto hide-scrollbar gap-gutter pb-4 snap-x snap-mandatory">
+<!-- Book 1 -->
+<div class="flex-none w-[140px] snap-start group cursor-pointer">
+<div class="w-full aspect-[2/3] rounded-lg mb-2 overflow-hidden bg-surface-container-high shadow-sm relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A minimalist book cover design. Solid deep indigo background with stark white sans-serif typography. Abstract geometric shapes forming a subtle brain or labyrinth motif. Clean, intellectual, modern digital aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCa6Jex97UcV_Is2XhB2U56dfWsNKBwY5lm7Q84PilsEVmy8Lf1QZ_fs7zF3yMtkoJtK_bdqZZ4heFgVwq6xUGrMevpAx-f2kecHCwXOl-vt_MYrVqLzGZglkYgJS7TdB7Dqyj1qmWld13XdzTFrog5iEvncw1XdoDUCXyAEk-Xwa3X_rD_c4dO3rj0Lv1AFJbjQcM6st3ZjoK7gNFbJy7-Nbei-sLCxIBSdrYw0_gBENhNlLQ6KyVr"/>
+<div class="absolute bottom-2 right-2 bg-surface text-on-surface font-label-md text-[10px] px-1.5 py-0.5 rounded shadow">
+                            45%
+                        </div>
+</div>
+<h4 class="font-body-md text-body-md text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Thinking, Fast and Slow</h4>
+<p class="font-label-md text-label-md text-on-surface-variant truncate font-normal">Daniel Kahneman</p>
+</div>
+<!-- Book 2 -->
+<div class="flex-none w-[140px] snap-start group cursor-pointer">
+<div class="w-full aspect-[2/3] rounded-lg mb-2 overflow-hidden bg-surface-container-high shadow-sm relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A modern sci-fi book cover. A stark, barren red landscape of Mars underneath a deep black sky peppered with stars. A single tiny silver habitat module in the distance. High contrast, clean minimalist graphic design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuATjj52B_I3n8Q9Lt4rZOLOfVLdi7Y8OpKByXOdhgedtwLOIzwggwx-OC6ofXim2Muaqk6X6vUcQDiVyAa0m-HxpOf6FmHUQDLnGfubTFESP5Pv33U5r2pWobexviEHyZTCAwtWSrLHLfkUdNsF8vnKf1t1hTiAl4v0LWr87lIunB-kfXFygvkDMhEx3qUUXBFdeGtVItAa9WSwuX4kFPOJCTwAA5Vo6x-lvMA4O-3hC2NT7_G003FM"/>
+<div class="absolute bottom-2 right-2 bg-surface text-on-surface font-label-md text-[10px] px-1.5 py-0.5 rounded shadow">
+                            12%
+                        </div>
+</div>
+<h4 class="font-body-md text-body-md text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Red Mars</h4>
+<p class="font-label-md text-label-md text-on-surface-variant truncate font-normal">Kim Stanley Robinson</p>
+</div>
+<!-- Book 3 -->
+<div class="flex-none w-[140px] snap-start group cursor-pointer">
+<div class="w-full aspect-[2/3] rounded-lg mb-2 overflow-hidden bg-surface-container-high shadow-sm relative flex flex-col items-center justify-center p-4 text-center border border-surface-variant">
+<h4 class="font-headline-md text-headline-md text-on-surface font-bold">DUNE</h4>
+<div class="absolute bottom-2 right-2 bg-surface text-on-surface font-label-md text-[10px] px-1.5 py-0.5 rounded shadow">
+                            88%
+                        </div>
+</div>
+<h4 class="font-body-md text-body-md text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Dune</h4>
+<p class="font-label-md text-label-md text-on-surface-variant truncate font-normal">Frank Herbert</p>
+</div>
+<!-- Book 4 (Partial) -->
+<div class="flex-none w-[140px] snap-start group cursor-pointer">
+<div class="w-full aspect-[2/3] rounded-lg mb-2 overflow-hidden bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-outline text-3xl" style="font-variation-settings: 'FILL' 0;">book</span>
+</div>
+<div class="w-3/4 h-3 bg-surface-container-high rounded mb-1"></div>
+<div class="w-1/2 h-2 bg-surface-container-high rounded"></div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-xl bg-surface-container-lowest dark:bg-surface-container-low border-t border-outline-variant flat no shadows md:hidden">
+<div class="fixed bottom-0 left-0 w-full flex justify-around items-center py-2 px-4 shadow-none">
+<!-- Home (Active) -->
+<button class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary-fixed text-on-secondary-container dark:text-on-secondary-fixed rounded-full px-4 py-1 tap-highlight-transparent transition-all duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-md text-label-md mt-1">Home</span>
+</button>
+<!-- Watch -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant p-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest tap-highlight-transparent transition-all duration-200 rounded-lg">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">visibility</span>
+<span class="font-label-md text-label-md mt-1">Watch</span>
+</button>
+<!-- Read -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant p-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest tap-highlight-transparent transition-all duration-200 rounded-lg">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">book</span>
+<span class="font-label-md text-label-md mt-1">Read</span>
+</button>
+<!-- Tasks -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant p-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest tap-highlight-transparent transition-all duration-200 rounded-lg">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">check_circle</span>
+<span class="font-label-md text-label-md mt-1">Tasks</span>
+</button>
+<!-- More -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant p-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest tap-highlight-transparent transition-all duration-200 rounded-lg">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">more_horiz</span>
+<span class="font-label-md text-label-md mt-1">More</span>
+</button>
+</div>
+</nav>
+</body></html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Movies - MyLog</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-surface": "#191c1e",
+                      "secondary-fixed-dim": "#c0c1ff",
+                      "on-primary-fixed": "#0f0069",
+                      "on-tertiary": "#ffffff",
+                      "inverse-on-surface": "#eff1f3",
+                      "primary": "#3525cd",
+                      "surface-container-low": "#f2f4f6",
+                      "inverse-primary": "#c3c0ff",
+                      "tertiary": "#7e3000",
+                      "on-surface-variant": "#464555",
+                      "surface-tint": "#4d44e3",
+                      "on-tertiary-fixed-variant": "#7b2f00",
+                      "surface-container-highest": "#e0e3e5",
+                      "surface": "#f7f9fb",
+                      "on-error-container": "#93000a",
+                      "surface-container-high": "#e6e8ea",
+                      "outline": "#777587",
+                      "background": "#f7f9fb",
+                      "on-secondary-fixed": "#07006c",
+                      "surface-variant": "#e0e3e5",
+                      "inverse-surface": "#2d3133",
+                      "primary-fixed-dim": "#c3c0ff",
+                      "on-secondary-fixed-variant": "#2f2ebe",
+                      "primary-fixed": "#e2dfff",
+                      "on-secondary": "#ffffff",
+                      "tertiary-container": "#a44100",
+                      "on-background": "#191c1e",
+                      "on-primary": "#ffffff",
+                      "on-secondary-container": "#fffbff",
+                      "tertiary-fixed-dim": "#ffb695",
+                      "error-container": "#ffdad6",
+                      "surface-bright": "#f7f9fb",
+                      "on-primary-container": "#dad7ff",
+                      "on-tertiary-container": "#ffd2be",
+                      "on-primary-fixed-variant": "#3323cc",
+                      "secondary": "#4648d4",
+                      "outline-variant": "#c7c4d8",
+                      "on-tertiary-fixed": "#351000",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-container": "#6063ee",
+                      "secondary-fixed": "#e1e0ff",
+                      "surface-container": "#eceef0",
+                      "on-error": "#ffffff",
+                      "surface-dim": "#d8dadc",
+                      "tertiary-fixed": "#ffdbcc",
+                      "error": "#ba1a1a",
+                      "primary-container": "#4f46e5"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-gap": "16px",
+                      "unit": "4px",
+                      "group-gap": "32px",
+                      "container-padding": "24px",
+                      "gutter": "16px"
+              },
+              "fontFamily": {
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "headline-lg-mobile": [
+                              "Inter"
+                      ],
+                      "display": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "headline-lg": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "22px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        /* Hide scrollbar for horizontal scrolling tabs */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-body-md min-h-screen pb-24 md:pb-0">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-surface dark:bg-surface-dim border-none z-40">
+<div class="flex justify-between items-center px-container-padding h-16 max-w-[1024px] mx-auto flat no shadows">
+<button class="text-primary dark:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors p-2 rounded-full active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary dark:text-primary-fixed-dim tracking-tight">MyLog</h1>
+<button class="text-primary dark:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors p-2 rounded-full active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="max-w-[1024px] mx-auto px-5 md:px-container-padding pt-stack-gap flex flex-col gap-group-gap">
+<!-- Search and Filter -->
+<div class="flex gap-gutter items-center">
+<div class="relative flex-grow">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-xl py-3 pl-12 pr-4 font-body-lg text-body-lg text-on-surface focus:ring-2 focus:ring-primary focus:bg-surface transition-all placeholder:text-outline" placeholder="Search movies..." type="text"/>
+</div>
+<button class="bg-surface-container-low p-3 rounded-xl hover:bg-surface-container-high transition-colors text-on-surface flex-shrink-0">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">tune</span>
+</button>
+</div>
+<!-- Pill-style Tabs -->
+<div class="flex overflow-x-auto hide-scrollbar gap-2 py-1 -mx-5 px-5 md:mx-0 md:px-0">
+<div class="bg-surface-container-low rounded-full flex p-1 whitespace-nowrap">
+<button class="px-6 py-2 rounded-full bg-surface-container-lowest shadow-sm text-primary font-label-md text-label-md transition-all">Watchlist</button>
+<button class="px-6 py-2 rounded-full text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all">Watching</button>
+<button class="px-6 py-2 rounded-full text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all">Watched</button>
+<button class="px-6 py-2 rounded-full text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all">Dropped</button>
+</div>
+</div>
+<!-- Movie List -->
+<div class="flex flex-col gap-stack-gap">
+<!-- Movie Card 1 -->
+<div class="flex gap-4 p-4 bg-surface-container-lowest rounded-xl hover:bg-surface-container-low transition-colors cursor-pointer group">
+<img class="w-24 h-36 object-cover rounded-lg flex-shrink-0 bg-surface-container-high shadow-sm group-hover:shadow-md transition-shadow" data-alt="A detailed, dramatic movie poster thumbnail for a sci-fi epic. The composition features a lone astronaut standing on a desolate, rocky exoplanet under a massive, glowing nebula. The lighting is cinematic with high contrast, primarily using deep space blues and intense bright oranges. The style is hyper-realistic and grand in scale, evoking a sense of wonder and isolation typical of modern science fiction cinema. Minimalist, clean UI aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBM2wQW9Nvt5bg0m7BB1Gdf52uTHPtyx9-XUJc53qwn-OXMPuJac3S5FsHaWeWB93XyIhw2HQj6TMpdLewbQFgjg6iWUxCWk77LonElrKACDyEV0IBeKuMMb19g5wSJAJZir_434zuEnT5YaCjn1Z1rJnzKCI5fWImulqQzzK-8d91so0Q0rUmedibARPr7Q4MszrWw1ZILLtNGunXYjx1xM0JIX0ZNEthgBYwyE-ggPXzVG0pQuz_U"/>
+<div class="flex flex-col justify-between py-1 flex-grow">
+<div>
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-headline-md text-headline-md text-on-surface line-clamp-2 leading-tight">Interstellar Journey</h3>
+<div class="flex items-center gap-1 text-on-surface-variant shrink-0 ml-2">
+<span class="material-symbols-outlined text-[16px] text-[#F59E0B]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-label-md">4.8</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-outline mb-3">2024 • 2h 15m</p>
+</div>
+<div class="flex gap-2 flex-wrap">
+<span class="px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant font-label-md text-label-md">Sci-Fi</span>
+<span class="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md">Drama</span>
+</div>
+</div>
+</div>
+<!-- Movie Card 2 -->
+<div class="flex gap-4 p-4 bg-surface-container-lowest rounded-xl hover:bg-surface-container-low transition-colors cursor-pointer group">
+<img class="w-24 h-36 object-cover rounded-lg flex-shrink-0 bg-surface-container-high shadow-sm group-hover:shadow-md transition-shadow" data-alt="A detailed, moody movie poster thumbnail for a neo-noir detective thriller. The scene shows a silhouette of a detective in a trench coat standing in an alleyway illuminated by flickering neon signs in the rain. The color palette is dominated by dark shadows, toxic greens, and vibrant pinks reflecting off wet pavement. The aesthetic is gritty, cinematic, and stylized, matching a sleek, modern UI context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXggYl37Kev8-I2VgliycEM0iP1T9VSCMeQSa2NeKJRwtmO_Xic2aTJ0syqBd305UEEzrwIkaa--t1MNT-uJV6BYRaEcfdJWU-hx8hYHvQxGjdwct1cA66Wq0adVu2D-q5kPRdMLtLCIfSEJicJhpp_Zm4BXJntPjWy6dA-TNJvlEwgY3A27XSe3jYciaDTY1p4JRWjJqzqao8U4mDU4I7mYfy9oLVAr2PB3RuSZlAIHKB0pCFgUQg"/>
+<div class="flex flex-col justify-between py-1 flex-grow">
+<div>
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-headline-md text-headline-md text-on-surface line-clamp-2 leading-tight">Neon Shadows</h3>
+<div class="flex items-center gap-1 text-on-surface-variant shrink-0 ml-2">
+<span class="material-symbols-outlined text-[16px] text-[#F59E0B]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-label-md">4.5</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-outline mb-3">2023 • 1h 58m</p>
+</div>
+<div class="flex gap-2 flex-wrap">
+<span class="px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant font-label-md text-label-md">Thriller</span>
+<span class="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md">Mystery</span>
+</div>
+</div>
+</div>
+<!-- Movie Card 3 -->
+<div class="flex gap-4 p-4 bg-surface-container-lowest rounded-xl hover:bg-surface-container-low transition-colors cursor-pointer group">
+<img class="w-24 h-36 object-cover rounded-lg flex-shrink-0 bg-surface-container-high shadow-sm group-hover:shadow-md transition-shadow" data-alt="A detailed, serene movie poster thumbnail for a slice-of-life indie film. The image depicts a sunlit, slightly messy artist's studio with large windows looking out onto a quiet suburban street. The lighting is soft, warm, and natural, creating a gentle, nostalgic mood. The color palette consists of muted pastels, warm ochres, and soft whites. The style is painterly and realistic, fitting perfectly within a clean, light-mode design system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_5IRsZVKN9mi9EwIwsuw57ybtMF3faSK6i_5hZYHPICGMA2lPMwItRRJPJIWaY4PsRT5i09emN5ki2OQ21YWVsaJFftS9qjkplVto59jv8Z2v1DdLRfqAkCItGoElWliXXl1uhg3Tto_NIuZ_OM1LYYNJbOApv_nxzr_UgnI3vvGw2Fqw1dftwElpQahUGCVfL75--mPwsKDC4_NtM2CWm30alCIqiM7f4JENb0WLzWRVRm18G45J"/>
+<div class="flex flex-col justify-between py-1 flex-grow">
+<div>
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-headline-md text-headline-md text-on-surface line-clamp-2 leading-tight">The Quiet Room</h3>
+<div class="flex items-center gap-1 text-on-surface-variant shrink-0 ml-2">
+<span class="material-symbols-outlined text-[16px] text-outline" style="font-variation-settings: 'FILL' 0;">star</span>
+<span class="font-label-md text-label-md text-outline">Unrated</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-outline mb-3">2024 • 1h 45m</p>
+</div>
+<div class="flex gap-2 flex-wrap">
+<span class="px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant font-label-md text-label-md">Drama</span>
+<span class="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md">Indie</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center py-2 px-4 shadow-none bg-surface-container-lowest dark:bg-surface-container-low border-t border-outline-variant z-50 rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant p-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest tap-highlight-transparent transition-all duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">home</span>
+<span class="font-label-md text-label-md mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary-fixed text-on-secondary-container dark:text-on-secondary-fixed rounded-full px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-container-highest tap-highlight-transparent transition-all duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">visibility</span>
+<span class="font-label-md text-label-md mt-1">Watch</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant p-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest tap-highlight-transparent transition-all duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">book</span>
+<span class="font-label-md text-label-md mt-1">Read</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant p-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest tap-highlight-transparent transition-all duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">check_circle</span>
+<span class="font-label-md text-label-md mt-1">Tasks</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant p-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest tap-highlight-transparent transition-all duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">more_horiz</span>
+<span class="font-label-md text-label-md mt-1">More</span>
+</a>
+</nav>
+</body></html>

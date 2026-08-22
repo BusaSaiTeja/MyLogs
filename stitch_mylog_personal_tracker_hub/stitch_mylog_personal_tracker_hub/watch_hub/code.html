@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Watch Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#191c1e",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "on-primary-fixed": "#0f0069",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#eff1f3",
+                        "primary": "#3525cd",
+                        "surface-container-low": "#f2f4f6",
+                        "inverse-primary": "#c3c0ff",
+                        "tertiary": "#7e3000",
+                        "on-surface-variant": "#464555",
+                        "surface-tint": "#4d44e3",
+                        "on-tertiary-fixed-variant": "#7b2f00",
+                        "surface-container-highest": "#e0e3e5",
+                        "surface": "#f7f9fb",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e6e8ea",
+                        "outline": "#777587",
+                        "background": "#f7f9fb",
+                        "on-secondary-fixed": "#07006c",
+                        "surface-variant": "#e0e3e5",
+                        "inverse-surface": "#2d3133",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "on-secondary-fixed-variant": "#2f2ebe",
+                        "primary-fixed": "#e2dfff",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#a44100",
+                        "on-background": "#191c1e",
+                        "on-primary": "#ffffff",
+                        "on-secondary-container": "#fffbff",
+                        "tertiary-fixed-dim": "#ffb695",
+                        "error-container": "#ffdad6",
+                        "surface-bright": "#f7f9fb",
+                        "on-primary-container": "#dad7ff",
+                        "on-tertiary-container": "#ffd2be",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "secondary": "#4648d4",
+                        "outline-variant": "#c7c4d8",
+                        "on-tertiary-fixed": "#351000",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-container": "#6063ee",
+                        "secondary-fixed": "#e1e0ff",
+                        "surface-container": "#eceef0",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-fixed": "#ffdbcc",
+                        "error": "#ba1a1a",
+                        "primary-container": "#4f46e5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-gap": "16px",
+                        "unit": "4px",
+                        "group-gap": "32px",
+                        "container-padding": "24px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "display": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["22px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "display": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md text-body-md">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-surface border-none flex justify-between items-center px-container-padding h-16 max-w-[1024px] mx-auto z-40 transition-colors">
+<button class="text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-full p-2 active:scale-95 duration-150 flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<div class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">
+            MyLog
+        </div>
+<button class="text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-full p-2 active:scale-95 duration-150 flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-[1024px] mx-auto px-container-padding pb-32 pt-stack-gap">
+<h1 class="font-display text-display mb-group-gap text-on-surface">Watch Hub</h1>
+<div class="flex flex-col gap-stack-gap">
+<!-- Card 1: Movies -->
+<button class="w-full bg-surface-container-lowest hover:bg-surface-container-low transition-colors rounded-xl p-4 flex items-center gap-4 text-left group active:scale-[0.98] duration-200">
+<div class="w-20 h-20 rounded-lg overflow-hidden shrink-0 flex gap-0.5 bg-surface-variant relative shadow-sm">
+<div class="bg-cover bg-center w-1/2 h-full" data-alt="A cinematic still from a dramatic film, moody lighting, intense colors, flat minimalist style." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDCtcyMvr5G6XaFe1_SCryPn1KwtqsjnGt8C0siSm9GA6acZsTk3yOBZVdU6iLfxeFuBIoS2YrhtFYCyDzcg45WAnJAFelnzCbAMD3KKosbLoWDbPvbDGx8oiWm2aMMOkHjxWofk67JhF5k-RNuY9wmT7vSEXdM60kjAiB9TYvFlbs9kOxtDiytIwxFMt_rnQIkivbXGA8MlCehILAwnm3TmDqVfOBDgaTJQldfWQtJMzP3V1j5g4pi')"></div>
+<div class="w-1/2 h-full flex flex-col gap-0.5">
+<div class="bg-cover bg-center w-full h-1/2" data-alt="A vintage movie poster graphic, bold typography snippet, sepia tones, flat minimalist style." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDe6triisnufe6M0hA49X1d6puKX6R0skmwuwH81sQ-xEw5T7XjVbKdimZOMEWQFvAs7_fHV5SZ31gHoxvohriTgN7c99kCrLv7wpsYp7nyJy5QMJdoSvL4QAuwfEHpUgyEnJ_kyoRSnlTd_AKuTkzolXCRtW-bWxVueMn1hab0EUa9CI8a_044loO81P56phAtv22yX5FwHlmFTU1DfHzYTHBnEXf1hLhaRelFOEvPW_D2enSTjnYV')"></div>
+<div class="bg-cover bg-center w-full h-1/2" data-alt="A close up of a film reel, high contrast black and white, sleek design, flat minimalist style." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCxhdg3C9dQGPJ-kpn18aqKi6LRkbxOTyM9-HDNspecg9KVSsH4psXuaU51V9zVfCmxOQSUlC3TcN4pYhIisdmfUq1Vc-SMtKATofNZkbtIDe6VRz9Bn-NazIrEXQ_DEQBWDZ6ATpkV7pi8qKNQwhO-NuOOODT0L4Aazv_2H-1oXN1FvlbtURaeOl69chPxeTTwMuTdjhMnhD2F1V-uiJzjzI_Y2-FRMFzGWR3RVuZ5zH930S2-t3YW')"></div>
+</div>
+</div>
+<div class="flex-grow">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-1">Movies</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">124 items</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors shrink-0" data-icon="chevron_right">chevron_right</span>
+</button>
+<!-- Card 2: Animated Movies -->
+<button class="w-full bg-surface-container-lowest hover:bg-surface-container-low transition-colors rounded-xl p-4 flex items-center gap-4 text-left group active:scale-[0.98] duration-200">
+<div class="w-20 h-20 rounded-lg overflow-hidden shrink-0 flex gap-0.5 bg-surface-variant relative shadow-sm">
+<div class="bg-cover bg-center w-full h-full" data-alt="A vibrant 3D animated character looking adventurous, colorful stylized world, flat minimalist style." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAleVRztIgyLpyDBv-yRyw7k_1qhmtpDe8HuDqowE2LRpyVSfeYCLS0g3am4WXV3hGjlyXKv8SjrK_GzT2RxqHFmU3kGLKgJkcJeSiOSGz2nVHtz8bBPSKKlORhsom5QPZhK76gIJ4XgMcOfpVZpm-3datc7CLskmmE9zT8lxecwPdZcEboa_O1BYFxhxmmQnCa9HlR2gNOZrbpFTEh2nV3K6HlLuXzZF0LAbCNUXu3xASfjz7SZQ7t')"></div>
+</div>
+<div class="flex-grow">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-1">Animated Movies</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">42 items</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors shrink-0" data-icon="chevron_right">chevron_right</span>
+</button>
+<!-- Card 3: Anime -->
+<button class="w-full bg-surface-container-lowest hover:bg-surface-container-low transition-colors rounded-xl p-4 flex items-center gap-4 text-left group active:scale-[0.98] duration-200">
+<div class="w-20 h-20 rounded-lg overflow-hidden shrink-0 flex gap-0.5 bg-surface-variant relative shadow-sm">
+<div class="bg-cover bg-center w-1/2 h-full" data-alt="A hand-drawn anime style landscape, pastel colors, soft glowing light, cherry blossoms, flat minimalist style." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCFgsPDAUKNgUADx2Yd20UqsAr3VLT5Afq81OWtniPO8mjPlxVssqm27Wl170YV3rPxHkvT1k1sTJVRn6QKzlKTCQfKoyiS5xDf_Hx3QSdIuaU8G6JUpKnitSsbs9XTwhfGgCACexMRQlhPmN_13_j7DJXEcwcG86K-uty5rXKK0zXyQTE9z5eoqIT2jtk36RHbHQYrQQsOn4Ijx23fA4mMgDOjloztXIDAz0drvqTkNVXCDGcfpF7v')"></div>
+<div class="w-1/2 h-full flex flex-col gap-0.5">
+<div class="bg-cover bg-center w-full h-1/2" data-alt="An intense anime character eye close up, dynamic lines, stark contrast, flat minimalist style." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB-Z0V1Kkm9tgHgi3kG6zG5Ru1XJolsaikAgbrrWl6ThPhtHwuZmhSYYvfyKe6Lo0xE6PgqQNbagCw0O96vz0CfokxACyAyVaRhH8ms4l4C3FpOmG7fkiRhcCHw5F7mv-8cKnO_vDi8hwz9bNnLUWndyAME0uT7zO6oDC8vsIfIRgYN2TQG-eVNREvwTe1GGbFrVaPG83idRR9CTY_8-Sl2VV6B6EOHoslliYLzoJBxVed7zm9vQ2dZ')"></div>
+<div class="bg-cover bg-center w-full h-1/2" data-alt="A stylized mecha robot silhouette against a sunset sky, sci-fi anime aesthetic, flat minimalist style." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA8ouww6ytfzXC2uHvPNsb0yVUnCQMLaUChUCXCWyQlv_bZJWNgzoTWYmN2-ampYPqbmV7ckSIF4zzPL-VWSUGhxbqDlDoMaBqIYvIDhhWIGFWyBcOo_YcTjB70hqBTlIgMmyPC4HBgY92SAt7eR_qGG6W-Wj0h9adx6g8mKQ8z1q3FiCVXwbjs6DpamDM3MZC54f_KweqFdTTjQpec3RMHD8n5jF_7GvRsVxgw5c-QipzT6I3VGEor')"></div>
+</div>
+</div>
+<div class="flex-grow">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-1">Anime</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">89 items</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors shrink-0" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center py-2 px-4 shadow-none bg-surface-container-lowest border-t border-outline-variant z-50 rounded-t-xl md:hidden">
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-high transition-all duration-200 tap-highlight-transparent rounded-lg">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 hover:bg-surface-container-high transition-all duration-200 tap-highlight-transparent">
+<span class="material-symbols-outlined mb-1" data-icon="visibility" data-weight="fill" style="font-variation-settings: 'FILL' 1;">visibility</span>
+<span class="font-label-md text-label-md">Watch</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-high transition-all duration-200 tap-highlight-transparent rounded-lg">
+<span class="material-symbols-outlined mb-1" data-icon="book">book</span>
+<span class="font-label-md text-label-md">Read</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-high transition-all duration-200 tap-highlight-transparent rounded-lg">
+<span class="material-symbols-outlined mb-1" data-icon="check_circle">check_circle</span>
+<span class="font-label-md text-label-md">Tasks</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-high transition-all duration-200 tap-highlight-transparent rounded-lg">
+<span class="material-symbols-outlined mb-1" data-icon="more_horiz">more_horiz</span>
+<span class="font-label-md text-label-md">More</span>
+</button>
+</nav>
+</body></html>

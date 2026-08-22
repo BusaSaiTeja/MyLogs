@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tasks - MyLog</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#191c1e",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "on-primary-fixed": "#0f0069",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#eff1f3",
+                        "primary": "#3525cd",
+                        "surface-container-low": "#f2f4f6",
+                        "inverse-primary": "#c3c0ff",
+                        "tertiary": "#7e3000",
+                        "on-surface-variant": "#464555",
+                        "surface-tint": "#4d44e3",
+                        "on-tertiary-fixed-variant": "#7b2f00",
+                        "surface-container-highest": "#e0e3e5",
+                        "surface": "#f7f9fb",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e6e8ea",
+                        "outline": "#777587",
+                        "background": "#f7f9fb",
+                        "on-secondary-fixed": "#07006c",
+                        "surface-variant": "#e0e3e5",
+                        "inverse-surface": "#2d3133",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "on-secondary-fixed-variant": "#2f2ebe",
+                        "primary-fixed": "#e2dfff",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#a44100",
+                        "on-background": "#191c1e",
+                        "on-primary": "#ffffff",
+                        "on-secondary-container": "#fffbff",
+                        "tertiary-fixed-dim": "#ffb695",
+                        "error-container": "#ffdad6",
+                        "surface-bright": "#f7f9fb",
+                        "on-primary-container": "#dad7ff",
+                        "on-tertiary-container": "#ffd2be",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "secondary": "#4648d4",
+                        "outline-variant": "#c7c4d8",
+                        "on-tertiary-fixed": "#351000",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-container": "#6063ee",
+                        "secondary-fixed": "#e1e0ff",
+                        "surface-container": "#eceef0",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-fixed": "#ffdbcc",
+                        "error": "#ba1a1a",
+                        "primary-container": "#4f46e5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-gap": "16px",
+                        "unit": "4px",
+                        "group-gap": "32px",
+                        "container-padding": "24px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "display": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["22px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "display": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #f7f9fb; /* bg-background */
+        }
+        /* Custom toggle styles */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #4f46e5; /* primary-container */
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #4f46e5; /* primary-container */
+        }
+        .toggle-checkbox:checked + .toggle-label:after {
+            transform: translateX(100%);
+            border-color: white;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-background min-h-screen flex flex-col pb-24 md:pb-0">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-surface dark:bg-surface-dim border-none z-40 flat no shadows">
+<div class="flex justify-between items-center px-container-padding h-16 max-w-[1024px] mx-auto">
+<button class="text-on-surface-variant dark:text-outline hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors rounded-full p-2 active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-headline-lg text-headline-lg-mobile text-primary dark:text-primary-fixed-dim tracking-tight md:hidden">MyLog</h1>
+<h1 class="font-headline-lg text-headline-lg text-primary dark:text-primary-fixed-dim tracking-tight hidden md:block">MyLog</h1>
+<button class="text-on-surface-variant dark:text-outline hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors rounded-full p-2 active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow px-[20px] md:px-container-padding max-w-[1024px] mx-auto w-full pt-stack-gap space-y-group-gap">
+<!-- Header Section -->
+<section class="flex justify-between items-end pb-stack-gap">
+<div>
+<h2 class="font-display text-display text-on-surface">Tasks</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-unit">Organize your mental clarity.</p>
+</div>
+<button class="bg-primary text-on-primary rounded-lg px-4 py-2 font-label-md text-label-md flex items-center gap-2 hover:bg-primary-container transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                New Task
+            </button>
+</section>
+<!-- Tasks Container - Bento Grid approach for desktop, stack for mobile -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Left Column: Active Tasks (Today & Upcoming) -->
+<div class="md:col-span-8 space-y-stack-gap">
+<!-- Today Section -->
+<section class="bg-surface-container-lowest rounded-xl p-container-padding hover:bg-surface-container-low transition-colors duration-200">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-stack-gap flex items-center gap-2">
+                        Today
+                        <span class="bg-secondary-container text-on-secondary-container font-label-md text-label-md px-2 py-0.5 rounded-full">3</span>
+</h3>
+<div class="space-y-unit">
+<!-- Task Item 1 -->
+<div class="flex items-center gap-3 p-3 rounded-lg hover:bg-surface-container-highest transition-colors group cursor-pointer">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary-container cursor-pointer transition-colors" type="checkbox"/>
+<span aria-label="High Priority" class="w-2 h-2 rounded-full bg-error"></span>
+<span class="font-body-lg text-body-lg text-on-surface flex-grow group-hover:text-primary transition-colors">Morning Meditation &amp; Journaling</span>
+<span class="font-body-md text-body-md text-on-surface-variant hidden md:block">8:00 AM</span>
+</div>
+<!-- Task Item 2 -->
+<div class="flex items-center gap-3 p-3 rounded-lg hover:bg-surface-container-highest transition-colors group cursor-pointer">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary-container cursor-pointer transition-colors" type="checkbox"/>
+<span aria-label="Medium Priority" class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span class="font-body-lg text-body-lg text-on-surface flex-grow group-hover:text-primary transition-colors">Review Weekly Goals</span>
+<span class="font-body-md text-body-md text-on-surface-variant hidden md:block">12:00 PM</span>
+</div>
+<!-- Task Item 3 -->
+<div class="flex items-center gap-3 p-3 rounded-lg hover:bg-surface-container-highest transition-colors group cursor-pointer">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary-container cursor-pointer transition-colors" type="checkbox"/>
+<span aria-label="Low Priority" class="w-2 h-2 rounded-full bg-tertiary-container"></span>
+<span class="font-body-lg text-body-lg text-on-surface flex-grow group-hover:text-primary transition-colors">Read 30 pages of new book</span>
+<span class="font-body-md text-body-md text-on-surface-variant hidden md:block">Evening</span>
+</div>
+</div>
+</section>
+<!-- Upcoming Section -->
+<section class="bg-surface-container-lowest rounded-xl p-container-padding hover:bg-surface-container-low transition-colors duration-200">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-stack-gap flex items-center gap-2">
+                        Upcoming
+                        <span class="bg-surface-variant text-on-surface-variant font-label-md text-label-md px-2 py-0.5 rounded-full">2</span>
+</h3>
+<div class="space-y-unit">
+<!-- Task Item 1 -->
+<div class="flex items-center gap-3 p-3 rounded-lg hover:bg-surface-container-highest transition-colors group cursor-pointer">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary-container cursor-pointer transition-colors" type="checkbox"/>
+<span aria-label="Medium Priority" class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span class="font-body-lg text-body-lg text-on-surface flex-grow group-hover:text-primary transition-colors">Grocery Shopping</span>
+<span class="font-body-md text-body-md text-on-surface-variant hidden md:block">Tomorrow</span>
+</div>
+<!-- Task Item 2 -->
+<div class="flex items-center gap-3 p-3 rounded-lg hover:bg-surface-container-highest transition-colors group cursor-pointer">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary-container cursor-pointer transition-colors" type="checkbox"/>
+<span aria-label="Low Priority" class="w-2 h-2 rounded-full bg-tertiary-container"></span>
+<span class="font-body-lg text-body-lg text-on-surface flex-grow group-hover:text-primary transition-colors">Schedule Dentist Appointment</span>
+<span class="font-body-md text-body-md text-on-surface-variant hidden md:block">Friday</span>
+</div>
+</div>
+</section>
+<!-- Completed Section (Collapsed) -->
+<section class="bg-surface-container-lowest rounded-xl p-container-padding hover:bg-surface-container-low transition-colors duration-200">
+<details class="group">
+<summary class="font-headline-md text-headline-md text-on-surface-variant cursor-pointer list-none flex justify-between items-center">
+<div class="flex items-center gap-2">
+                                Completed
+                                <span class="bg-surface-variant text-on-surface-variant font-label-md text-label-md px-2 py-0.5 rounded-full">5</span>
+</div>
+<span class="material-symbols-outlined transform group-open:rotate-180 transition-transform duration-200 text-outline">expand_more</span>
+</summary>
+<div class="mt-stack-gap space-y-unit opacity-60">
+<!-- Task Item 1 -->
+<div class="flex items-center gap-3 p-3 rounded-lg">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary-container cursor-not-allowed" disabled="" type="checkbox"/>
+<span class="font-body-lg text-body-lg text-on-surface-variant line-through flex-grow">Drink 2L Water</span>
+</div>
+<!-- Task Item 2 -->
+<div class="flex items-center gap-3 p-3 rounded-lg">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary-container cursor-not-allowed" disabled="" type="checkbox"/>
+<span class="font-body-lg text-body-lg text-on-surface-variant line-through flex-grow">Reply to Emails</span>
+</div>
+</div>
+</details>
+</section>
+</div>
+<!-- Right Column: Reminders / Contextual Tools -->
+<div class="md:col-span-4 space-y-stack-gap">
+<section class="bg-primary-fixed rounded-xl p-container-padding border border-outline-variant/20">
+<div class="flex items-center gap-2 mb-stack-gap">
+<span class="material-symbols-outlined text-on-primary-fixed" data-icon="notifications">notifications</span>
+<h3 class="font-headline-md text-headline-md text-on-primary-fixed">Reminders</h3>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-container-padding">Manage your daily nudge preferences to maintain focus.</p>
+<div class="space-y-stack-gap">
+<!-- Toggle 1 -->
+<div class="flex justify-between items-center">
+<div>
+<span class="font-body-lg text-body-lg text-on-primary-fixed block">Morning Briefing</span>
+<span class="font-body-md text-body-md text-on-surface-variant">9:00 AM</span>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-primary-container focus:ring-0 focus:outline-none" id="toggle1" name="toggle1" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-primary-container cursor-pointer" for="toggle1"></label>
+</div>
+</div>
+<div class="h-[1px] bg-outline-variant/30 w-full"></div>
+<!-- Toggle 2 -->
+<div class="flex justify-between items-center">
+<div>
+<span class="font-body-lg text-body-lg text-on-primary-fixed block">Evening Reflection</span>
+<span class="font-body-md text-body-md text-on-surface-variant">8:30 PM</span>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-surface-variant focus:ring-0 focus:outline-none" id="toggle2" name="toggle2" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-variant cursor-pointer" for="toggle2"></label>
+</div>
+</div>
+</div>
+</section>
+<!-- Visual Anchor Image -->
+<div class="rounded-xl overflow-hidden h-48 relative border border-outline-variant/20 hidden md:block">
+<div class="bg-cover bg-center w-full h-full opacity-80 mix-blend-multiply" data-alt="A serene, minimalist home office setup bathed in soft morning light. A sleek digital tablet displays a minimalist checklist on a pristine white desk. A small potted green succulent sits nearby, adding a touch of nature. The color palette is high-key, featuring calm whites, light slates, and subtle indigo accents. The mood is highly organized, calm, and productive." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCVeTgfsR5Q0GLB5Zo03yvySpmtwn-ZlGvhYUVVzDZ6W8_vpIHLUDLo5ekFkUZjmV37gcfbIiUZv1UTDZ6tGc84-N8PZad__Dij6NjcxvTjuDiOze11_DCLsTxQfcOc00KeV7uAAV4Ao3xDgQW-lXUxCxPN_uMJ3U9nXJrMidAu24MoiQG8ACPaOcwjVa18R9qRInbBNvxu43nLWPjIEX5ahlq8FQhT-uRjbRc3uPTr2eoB2ryLnqQF')"></div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center py-2 px-4 shadow-none bg-surface-container-lowest dark:bg-surface-container-low border-t border-outline-variant z-50 rounded-t-xl md:hidden">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant p-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest tap-highlight-transparent transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-md text-label-md mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant p-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest tap-highlight-transparent transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+<span class="font-label-md text-label-md mt-1">Watch</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant p-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest tap-highlight-transparent transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="book">book</span>
+<span class="font-label-md text-label-md mt-1">Read</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary-fixed text-on-secondary-container dark:text-on-secondary-fixed rounded-full px-4 py-1 hover:bg-surface-container-high dark:hover:bg-surface-container-highest tap-highlight-transparent transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+<span class="font-label-md text-label-md mt-1">Tasks</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant p-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest tap-highlight-transparent transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+<span class="font-label-md text-label-md mt-1">More</span>
+</a>
+</nav>
+</body></html>
