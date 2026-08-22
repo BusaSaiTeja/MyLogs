@@ -5,7 +5,7 @@ import 'package:my_logs/core/theme/app_colors.dart';
 import 'package:my_logs/core/theme/app_spacing.dart';
 import 'package:my_logs/core/theme/app_typography.dart';
 import 'package:my_logs/features/watch/application/media_providers.dart';
-import 'package:my_logs/features/watch/domain/models/media_item.dart';
+import 'package:my_logs/features/watch/presentation/widgets/watch_category_card.dart';
 
 class WatchHubScreen extends ConsumerWidget {
   const WatchHubScreen({super.key});
@@ -40,7 +40,7 @@ class WatchHubScreen extends ConsumerWidget {
           children: [
             Text('Watch Hub', style: AppTypography.display),
             const SizedBox(height: AppSpacing.groupGap),
-            _WatchCategoryCard(
+            WatchCategoryCard(
               title: 'Movies',
               itemCount: stats.movieCount,
               posterUrls: const [
@@ -51,7 +51,7 @@ class WatchHubScreen extends ConsumerWidget {
               onTap: () => context.go('/watch/movies'),
             ),
             const SizedBox(height: AppSpacing.stackGap),
-            _WatchCategoryCard(
+            WatchCategoryCard(
               title: 'Animated Movies',
               itemCount: stats.animatedCount,
               posterUrls: const [
@@ -62,7 +62,7 @@ class WatchHubScreen extends ConsumerWidget {
               onTap: () => context.go('/watch/animated'),
             ),
             const SizedBox(height: AppSpacing.stackGap),
-            _WatchCategoryCard(
+            WatchCategoryCard(
               title: 'Anime',
               itemCount: stats.animeCount,
               posterUrls: const [
@@ -75,111 +75,6 @@ class WatchHubScreen extends ConsumerWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _WatchCategoryCard extends StatelessWidget {
-  const _WatchCategoryCard({
-    required this.title,
-    required this.itemCount,
-    required this.posterUrls,
-    required this.onTap,
-    this.singlePoster = false,
-  });
-
-  final String title;
-  final int itemCount;
-  final List<String> posterUrls;
-  final VoidCallback onTap;
-  final bool singlePoster;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.surfaceContainerLowest,
-      borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.stackGap),
-          child: Row(
-            children: [
-              _PosterMosaic(urls: posterUrls, singlePoster: singlePoster),
-              const SizedBox(width: AppSpacing.stackGap),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: AppTypography.headlineMd),
-                    const SizedBox(height: 4),
-                    Text(
-                      '$itemCount items',
-                      style: AppTypography.bodyMdVariant(),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(Icons.chevron_right_rounded,
-                  color: AppColors.outlineVariant, size: 24),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _PosterMosaic extends StatelessWidget {
-  const _PosterMosaic({required this.urls, this.singlePoster = false});
-  final List<String> urls;
-  final bool singlePoster;
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-      child: SizedBox(
-        width: 80,
-        height: 80,
-        child: singlePoster || urls.length < 2
-            ? _PosterImage(url: urls.isNotEmpty ? urls[0] : '')
-            : Row(
-                children: [
-                  Expanded(child: _PosterImage(url: urls[0])),
-                  const SizedBox(width: 2),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Expanded(child: _PosterImage(url: urls.length > 1 ? urls[1] : '')),
-                        const SizedBox(height: 2),
-                        Expanded(child: _PosterImage(url: urls.length > 2 ? urls[2] : '')),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-      ),
-    );
-  }
-}
-
-class _PosterImage extends StatelessWidget {
-  const _PosterImage({required this.url});
-  final String url;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: AppColors.surfaceVariant,
-      child: url.isEmpty
-          ? const Icon(Icons.movie_outlined, color: AppColors.outline, size: 24)
-          : Image.network(
-              url,
-              fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => const ColoredBox(color: AppColors.surfaceVariant),
-            ),
     );
   }
 }

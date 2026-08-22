@@ -4,11 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:my_logs/core/theme/app_colors.dart';
 import 'package:my_logs/core/theme/app_spacing.dart';
 import 'package:my_logs/core/theme/app_typography.dart';
-import 'package:my_logs/core/widgets/progress_bar.dart';
-import 'package:my_logs/core/widgets/rating_stars.dart';
-import 'package:my_logs/core/widgets/status_chip.dart';
 import 'package:my_logs/features/watch/application/media_providers.dart';
 import 'package:my_logs/features/watch/domain/models/media_item.dart';
+import 'package:my_logs/features/watch/presentation/widgets/media_detail_status_card.dart';
 
 class MediaDetailScreen extends ConsumerStatefulWidget {
   const MediaDetailScreen({super.key, required this.id});
@@ -150,102 +148,19 @@ class _MediaDetailScreenState extends ConsumerState<MediaDetailScreen> {
                   const SizedBox(height: AppSpacing.groupGap),
 
                   // ── Status & Rating card ──────────────────────────────
-                  Container(
-                    padding: const EdgeInsets.all(AppSpacing.stackGap),
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceContainerLowest,
-                      borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-                      border: Border.all(color: AppColors.surfaceContainerHighest),
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Status', style: AppTypography.labelMdVariant()),
-                                  const SizedBox(height: 4),
-                                  _StatusDropdown(
-                                    value: item.status,
-                                    onChanged: (s) {
-                                      if (s != null) {
-                                        ref.read(mediaListProvider.notifier).updateStatus(item.id, s);
-                                      }
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: AppSpacing.stackGap),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('Your Rating', style: AppTypography.labelMdVariant()),
-                                const SizedBox(height: 4),
-                                RatingStars(
-                                  rating: item.rating,
-                                  starSize: 28,
-                                  onRatingChanged: (r) => ref
-                                      .read(mediaListProvider.notifier)
-                                      .updateRating(item.id, r),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-
-                        // Episode progress (anime/series)
-                        if (item.totalEpisodes != null) ...[
-                          const SizedBox(height: AppSpacing.stackGap),
-                          const Divider(color: AppColors.surfaceContainerHighest, height: 1),
-                          const SizedBox(height: AppSpacing.stackGap),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Episode Progress', style: AppTypography.labelMdVariant()),
-                                    const SizedBox(height: 4),
-                                    RichText(
-                                      text: TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: '${item.episodesWatched}',
-                                            style: AppTypography.headlineMd,
-                                          ),
-                                          TextSpan(
-                                            text: ' / ${item.totalEpisodes}',
-                                            style: AppTypography.bodyMdVariant(),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              CircleAvatar(
-                                backgroundColor: AppColors.primary,
-                                child: IconButton(
-                                  icon: const Icon(Icons.add_rounded, color: AppColors.onPrimary),
-                                  onPressed: () => ref
-                                      .read(mediaListProvider.notifier)
-                                      .incrementEpisode(item.id),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          AppProgressBar(
-                            progress: item.totalEpisodes! > 0
-                                ? item.episodesWatched / item.totalEpisodes!
-                                : 0,
-                          ),
-                        ],
-                      ],
-                    ),
+                  MediaDetailStatusCard(
+                    item: item,
+                    onStatusChanged: (s) {
+                      if (s != null) {
+                        ref.read(mediaListProvider.notifier).updateStatus(item.id, s);
+                      }
+                    },
+                    onRatingChanged: (r) => ref
+                        .read(mediaListProvider.notifier)
+                        .updateRating(item.id, r),
+                    onIncrementEpisode: () => ref
+                        .read(mediaListProvider.notifier)
+                        .incrementEpisode(item.id),
                   ),
                   const SizedBox(height: AppSpacing.groupGap),
 
@@ -308,34 +223,6 @@ class _MediaDetailScreenState extends ConsumerState<MediaDetailScreen> {
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
         elevation: 0,
-      ),
-    );
-  }
-}
-
-class _StatusDropdown extends StatelessWidget {
-  const _StatusDropdown({required this.value, required this.onChanged});
-  final MediaStatus value;
-  final ValueChanged<MediaStatus?> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<MediaStatus>(
-          value: value,
-          onChanged: onChanged,
-          isDense: true,
-          style: AppTypography.bodyMd,
-          items: MediaStatus.values
-              .map((s) => DropdownMenuItem(value: s, child: Text(s.label)))
-              .toList(),
-        ),
       ),
     );
   }
