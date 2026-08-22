@@ -107,7 +107,7 @@ class _NoteDetailScreenState extends ConsumerState<NoteDetailScreen> {
               );
               if (discard != true) return;
             }
-            if (mounted) context.go('/');
+            if (context.mounted) context.go('/');
           },
         ),
         title: Text(widget.isNew ? 'New Note' : 'Edit Note',

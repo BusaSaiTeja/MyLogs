@@ -6,7 +6,6 @@ abstract final class AppDateUtils {
   static final _shortDateFormatter = DateFormat('MMM d');
   static final _timeFormatter = DateFormat('h:mm a');
   static final _dayFormatter = DateFormat('EEEE, MMMM d');
-  static final _greetingFormatter = DateFormat('EEEE, MMMM do');
 
   static String formatDate(DateTime date) => _dateFormatter.format(date);
   static String formatShortDate(DateTime date) => _shortDateFormatter.format(date);

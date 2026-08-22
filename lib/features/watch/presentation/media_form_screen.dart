@@ -188,7 +188,7 @@ class _MediaFormScreenState extends ConsumerState<MediaFormScreen> {
                 }),
                 if (_rating != null) ...[
                   const SizedBox(width: 8),
-                  Text('${_rating!.toStringAsFixed(1)}', style: AppTypography.bodyLg),
+                  Text(_rating!.toStringAsFixed(1), style: AppTypography.bodyLg),
                 ],
               ],
             ),
