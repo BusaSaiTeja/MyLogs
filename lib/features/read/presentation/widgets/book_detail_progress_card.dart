@@ -71,7 +71,10 @@ class BookDetailProgressCard extends StatelessWidget {
                   child: AppProgressBar(progress: progress),
                 ),
                 const SizedBox(width: 8),
-                Text('${(progress * 100).round()}%', style: AppTypography.labelMdVariant()),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text('${(progress * 100).round()}%', style: AppTypography.labelMdVariant()),
+                ),
               ],
             ),
           ],

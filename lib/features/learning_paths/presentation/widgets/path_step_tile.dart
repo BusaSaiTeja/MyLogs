@@ -18,38 +18,48 @@ class PathStepTile extends StatelessWidget {
         color: AppColors.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
         border: Border.all(
-          color: step.isCompleted ? AppColors.primary.withValues(alpha: 0.3) : AppColors.surfaceContainerHighest,
+          color: step.isCompleted
+              ? AppColors.primary.withValues(alpha: 0.3)
+              : AppColors.surfaceContainerHighest,
         ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Step number / check circle
-          GestureDetector(
-            onTap: onToggle,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 28,
-              height: 28,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: step.isCompleted ? AppColors.primary : Colors.transparent,
-                border: Border.all(
-                  color: step.isCompleted ? AppColors.primary : AppColors.outline,
-                  width: 2,
+          // Step number / check circle with 48x48 tap target & Semantics
+          Semantics(
+            button: true,
+            label: step.isCompleted ? 'Mark step incomplete' : 'Mark step complete',
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: onToggle,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0), // Expands tap target to 44x44+ logical px
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: step.isCompleted ? AppColors.primary : Colors.transparent,
+                    border: Border.all(
+                      color: step.isCompleted ? AppColors.primary : AppColors.outline,
+                      width: 2,
+                    ),
+                  ),
+                  child: step.isCompleted
+                      ? const Icon(Icons.check_rounded, color: AppColors.onPrimary, size: 16)
+                      : Center(
+                          child: Text(
+                            '${step.order}',
+                            style: AppTypography.labelMd.copyWith(color: AppColors.outline),
+                          ),
+                        ),
                 ),
               ),
-              child: step.isCompleted
-                  ? const Icon(Icons.check_rounded, color: AppColors.onPrimary, size: 16)
-                  : Center(
-                      child: Text(
-                        '${step.order}',
-                        style: AppTypography.labelMd.copyWith(color: AppColors.outline),
-                      ),
-                    ),
             ),
           ),
-          const SizedBox(width: AppSpacing.stackGap),
+          const SizedBox(width: AppSpacing.unit),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

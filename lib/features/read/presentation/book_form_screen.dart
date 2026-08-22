@@ -64,32 +64,43 @@ class _BookFormScreenState extends ConsumerState<BookFormScreen> {
     final genres = _genresCtrl.text.split(',').map((g) => g.trim()).where((g) => g.isNotEmpty).toList();
     final now = DateTime.now();
 
-    if (_isEdit) {
-      final existing = ref.read(bookByIdProvider(widget.bookId!));
-      if (existing == null) return;
-      await ref.read(bookListProvider.notifier).updateItem(existing.copyWith(
-            title: _titleCtrl.text.trim(),
-            author: _authorCtrl.text.trim(),
-            coverUrl: _coverCtrl.text.trim().isEmpty ? null : _coverCtrl.text.trim(),
-            totalPages: int.tryParse(_totalPagesCtrl.text),
-            genres: genres,
-            status: _status,
-            updatedAt: now,
-          ));
-    } else {
-      await ref.read(bookListProvider.notifier).add(BookItem(
-            id: '',
-            title: _titleCtrl.text.trim(),
-            author: _authorCtrl.text.trim(),
-            coverUrl: _coverCtrl.text.trim().isEmpty ? null : _coverCtrl.text.trim(),
-            totalPages: int.tryParse(_totalPagesCtrl.text),
-            genres: genres,
-            status: _status,
-            createdAt: now,
-            updatedAt: now,
-          ));
+    final router = GoRouter.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+
+    try {
+      if (_isEdit && widget.bookId != null) {
+        final existing = ref.read(bookByIdProvider(widget.bookId!));
+        if (existing == null) return;
+        await ref.read(bookListProvider.notifier).updateItem(existing.copyWith(
+              title: _titleCtrl.text.trim(),
+              author: _authorCtrl.text.trim(),
+              coverUrl: _coverCtrl.text.trim().isEmpty ? null : _coverCtrl.text.trim(),
+              totalPages: int.tryParse(_totalPagesCtrl.text),
+              genres: genres,
+              status: _status,
+              updatedAt: now,
+            ));
+      } else {
+        await ref.read(bookListProvider.notifier).add(BookItem(
+              id: '',
+              title: _titleCtrl.text.trim(),
+              author: _authorCtrl.text.trim(),
+              coverUrl: _coverCtrl.text.trim().isEmpty ? null : _coverCtrl.text.trim(),
+              totalPages: int.tryParse(_totalPagesCtrl.text),
+              genres: genres,
+              status: _status,
+              createdAt: now,
+              updatedAt: now,
+            ));
+      }
+      if (!mounted) return;
+      router.pop();
+    } catch (e) {
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(content: Text('Failed to save book: $e')),
+      );
     }
-    if (mounted) context.pop();
   }
 
   @override

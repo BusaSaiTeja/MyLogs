@@ -48,17 +48,22 @@ class MediaDetailStatusCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: AppSpacing.stackGap),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Your Rating', style: AppTypography.labelMdVariant()),
-                  const SizedBox(height: 4),
-                  RatingStars(
-                    rating: item.rating,
-                    starSize: 28,
-                    onRatingChanged: onRatingChanged,
-                  ),
-                ],
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Your Rating', style: AppTypography.labelMdVariant()),
+                    const SizedBox(height: 4),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: RatingStars(
+                        rating: item.rating,
+                        starSize: 24,
+                        onRatingChanged: onRatingChanged,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

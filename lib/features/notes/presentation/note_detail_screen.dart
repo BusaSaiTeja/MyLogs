@@ -59,26 +59,37 @@ class _NoteDetailScreenState extends ConsumerState<NoteDetailScreen> {
     final tags = _tagsCtrl.text.split(',').map((t) => t.trim()).where((t) => t.isNotEmpty).toList();
     final now = DateTime.now();
 
-    if (widget.isNew) {
-      await ref.read(noteListProvider.notifier).add(NoteItem(
-            id: '',
-            title: title,
-            content: _contentCtrl.text,
-            tags: tags,
-            createdAt: now,
-            updatedAt: now,
-          ));
-    } else {
-      final existing = ref.read(noteByIdProvider(widget.noteId!));
-      if (existing == null) return;
-      await ref.read(noteListProvider.notifier).updateItem(existing.copyWith(
-            title: title,
-            content: _contentCtrl.text,
-            tags: tags,
-            updatedAt: now,
-          ));
+    final router = GoRouter.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+
+    try {
+      if (widget.isNew) {
+        await ref.read(noteListProvider.notifier).add(NoteItem(
+              id: '',
+              title: title,
+              content: _contentCtrl.text,
+              tags: tags,
+              createdAt: now,
+              updatedAt: now,
+            ));
+      } else if (widget.noteId != null) {
+        final existing = ref.read(noteByIdProvider(widget.noteId!));
+        if (existing == null) return;
+        await ref.read(noteListProvider.notifier).updateItem(existing.copyWith(
+              title: title,
+              content: _contentCtrl.text,
+              tags: tags,
+              updatedAt: now,
+            ));
+      }
+      if (!mounted) return;
+      router.pop();
+    } catch (e) {
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(content: Text('Failed to save note: $e')),
+      );
     }
-    if (mounted) context.pop();
   }
 
   @override

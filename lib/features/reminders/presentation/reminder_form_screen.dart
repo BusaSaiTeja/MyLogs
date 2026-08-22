@@ -6,6 +6,8 @@ import 'package:my_logs/core/theme/app_spacing.dart';
 import 'package:my_logs/core/theme/app_typography.dart';
 import 'package:my_logs/features/reminders/application/reminder_providers.dart';
 import 'package:my_logs/features/reminders/domain/models/reminder_item.dart';
+import 'package:my_logs/features/reminders/presentation/widgets/reminder_recurrence_selector.dart';
+import 'package:my_logs/features/reminders/presentation/widgets/reminder_time_picker_tile.dart';
 
 class ReminderFormScreen extends ConsumerStatefulWidget {
   const ReminderFormScreen({super.key, this.reminderId});
@@ -71,30 +73,41 @@ class _ReminderFormScreenState extends ConsumerState<ReminderFormScreen> {
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     final now = DateTime.now();
-    if (_isEdit) {
-      final existing = (ref.read(reminderListProvider).valueOrNull ?? [])
-          .where((r) => r.id == reminderId)
-          .firstOrNull;
-      if (existing == null) return;
-      await ref.read(reminderListProvider.notifier).updateItem(existing.copyWith(
-            title: _titleCtrl.text.trim(),
-            scheduledTime: _scheduledTime,
-            recurrence: _recurrence,
-            isEnabled: _isEnabled,
-            updatedAt: now,
-          ));
-    } else {
-      await ref.read(reminderListProvider.notifier).add(ReminderItem(
-            id: '',
-            title: _titleCtrl.text.trim(),
-            scheduledTime: _scheduledTime,
-            recurrence: _recurrence,
-            isEnabled: _isEnabled,
-            createdAt: now,
-            updatedAt: now,
-          ));
+    final router = GoRouter.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+
+    try {
+      if (_isEdit) {
+        final existing = (ref.read(reminderListProvider).valueOrNull ?? [])
+            .where((r) => r.id == reminderId)
+            .firstOrNull;
+        if (existing == null) return;
+        await ref.read(reminderListProvider.notifier).updateItem(existing.copyWith(
+              title: _titleCtrl.text.trim(),
+              scheduledTime: _scheduledTime,
+              recurrence: _recurrence,
+              isEnabled: _isEnabled,
+              updatedAt: now,
+            ));
+      } else {
+        await ref.read(reminderListProvider.notifier).add(ReminderItem(
+              id: '',
+              title: _titleCtrl.text.trim(),
+              scheduledTime: _scheduledTime,
+              recurrence: _recurrence,
+              isEnabled: _isEnabled,
+              createdAt: now,
+              updatedAt: now,
+            ));
+      }
+      if (!mounted) return;
+      router.pop();
+    } catch (e) {
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(content: Text('Failed to save reminder: $e')),
+      );
     }
-    if (mounted) context.pop();
   }
 
   @override
@@ -131,58 +144,16 @@ class _ReminderFormScreenState extends ConsumerState<ReminderFormScreen> {
             const SizedBox(height: AppSpacing.stackGap),
             Text('Scheduled Time', style: AppTypography.labelMdVariant()),
             const SizedBox(height: 6),
-            GestureDetector(
+            ReminderTimePickerTile(
+              scheduledTime: _scheduledTime,
               onTap: _pickDateTime,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceContainerLow,
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.alarm_rounded, color: AppColors.primary, size: 20),
-                    const SizedBox(width: 12),
-                    Text(
-                      '${_scheduledTime.day}/${_scheduledTime.month}/${_scheduledTime.year} '
-                      '${_scheduledTime.hour.toString().padLeft(2, '0')}:${_scheduledTime.minute.toString().padLeft(2, '0')}',
-                      style: AppTypography.bodyLg,
-                    ),
-                  ],
-                ),
-              ),
             ),
             const SizedBox(height: AppSpacing.stackGap),
             Text('Recurrence', style: AppTypography.labelMdVariant()),
             const SizedBox(height: 8),
-            Row(
-              children: ReminderRecurrence.values.map((r) {
-                final isSelected = r == _recurrence;
-                return Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: GestureDetector(
-                      onTap: () => setState(() => _recurrence = r),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 180),
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        decoration: BoxDecoration(
-                          color: isSelected ? AppColors.primary : AppColors.surfaceContainerLow,
-                          borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-                        ),
-                        child: Center(
-                          child: Text(
-                            r.label,
-                            style: AppTypography.labelMd.copyWith(
-                              color: isSelected ? AppColors.onPrimary : AppColors.onSurfaceVariant,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
+            ReminderRecurrenceSelector(
+              selectedRecurrence: _recurrence,
+              onRecurrenceSelected: (r) => setState(() => _recurrence = r),
             ),
             const SizedBox(height: AppSpacing.stackGap),
             Row(

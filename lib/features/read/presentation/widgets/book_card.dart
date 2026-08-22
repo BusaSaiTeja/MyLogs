@@ -16,79 +16,90 @@ class BookCard extends StatelessWidget {
         ? book.currentPage / book.totalPages!
         : 0.0;
 
-    return Material(
-      color: AppColors.surfaceContainerLowest,
-      borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.unit),
-          child: Row(
-            children: [
-              // Cover
-              ClipRRect(
-                borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-                child: SizedBox(
-                  width: 72,
-                  height: double.infinity,
-                  child: book.coverUrl != null
-                      ? Image.network(
-                          book.coverUrl!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) => const _BookCoverPlaceholder(),
-                        )
-                      : const _BookCoverPlaceholder(),
-                ),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(AppSpacing.stackGap),
+        decoration: BoxDecoration(
+          color: AppColors.surfaceContainerLowest,
+          borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Cover thumbnail
+            ClipRRect(
+              borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+              child: SizedBox(
+                width: 80,
+                height: 120,
+                child: book.coverUrl != null
+                    ? Image.network(
+                        book.coverUrl!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, _, _) =>
+                            const _BookCoverPlaceholder(),
+                      )
+                    : const _BookCoverPlaceholder(),
               ),
-              const SizedBox(width: AppSpacing.gutter),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        book.title,
-                        style: AppTypography.headlineMd,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 2),
-                      Text(book.author, style: AppTypography.bodyMdVariant(), maxLines: 1),
-                      const Spacer(),
-                      if (book.status == BookStatus.reading && book.totalPages != null)
-                        Row(
-                          children: [
-                            Expanded(
-                              child: LinearProgressIndicator(
-                                value: progress,
-                                backgroundColor: AppColors.surfaceContainerHighest,
-                                color: AppColors.primary,
-                                borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              '${(progress * 100).round()}%',
-                              style: AppTypography.labelMdVariant(),
-                            ),
-                          ],
-                        )
-                      else
-                        Wrap(
-                          spacing: 4,
-                          children: book.genres
-                              .take(2)
-                              .map((g) => TagChip(label: g))
-                              .toList(),
-                        ),
-                    ],
+            ),
+            const SizedBox(width: AppSpacing.gutter),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    book.title,
+                    style: AppTypography.bodyLg.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
+                  const SizedBox(height: 2),
+                  Text(
+                    book.author,
+                    style: AppTypography.bodyMdVariant(),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 10),
+                  if (book.status == BookStatus.reading &&
+                      book.totalPages != null)
+                    Row(
+                      children: [
+                        Expanded(
+                          child: LinearProgressIndicator(
+                            value: progress,
+                            backgroundColor:
+                                AppColors.surfaceContainerHighest,
+                            color: AppColors.primary,
+                            borderRadius: BorderRadius.circular(
+                              AppSpacing.radiusFull,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${(progress * 100).round()}%',
+                          style: AppTypography.labelMdVariant(),
+                        ),
+                      ],
+                    )
+                  else
+                    Wrap(
+                      spacing: 4,
+                      runSpacing: 4,
+                      children: book.genres
+                          .take(2)
+                          .map((g) => TagChip(label: g))
+                          .toList(),
+                    ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -102,7 +113,9 @@ class _BookCoverPlaceholder extends StatelessWidget {
   Widget build(BuildContext context) {
     return const ColoredBox(
       color: AppColors.surfaceContainerHigh,
-      child: Center(child: Icon(Icons.book_outlined, color: AppColors.outline, size: 28)),
+      child: Center(
+        child: Icon(Icons.book_outlined, color: AppColors.outline, size: 28),
+      ),
     );
   }
 }

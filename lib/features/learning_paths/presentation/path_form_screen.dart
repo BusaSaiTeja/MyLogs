@@ -20,7 +20,7 @@ class _PathFormScreenState extends ConsumerState<PathFormScreen> {
   late final TextEditingController _titleCtrl;
   late final TextEditingController _descCtrl;
   final List<_StepInput> _steps = [];
-  
+
   bool _isEdit = false;
 
   @override
@@ -28,16 +28,22 @@ class _PathFormScreenState extends ConsumerState<PathFormScreen> {
     super.initState();
     _titleCtrl = TextEditingController();
     _descCtrl = TextEditingController();
-    if (widget.pathId != null) {
+    final pathId = widget.pathId;
+    if (pathId != null) {
       _isEdit = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        final path = ref.read(learningPathByIdProvider(widget.pathId!));
+        final path = ref.read(learningPathByIdProvider(pathId));
         if (path == null) return;
         _titleCtrl.text = path.title;
         _descCtrl.text = path.description ?? '';
         setState(() {
+          for (final s in _steps) {
+            s.title.dispose();
+            s.resourceUrl.dispose();
+          }
           _steps.clear();
-          final sorted = List<PathStep>.from(path.steps)..sort((a, b) => (a.order ?? 0).compareTo(b.order ?? 0));
+          final sorted = List<PathStep>.from(path.steps)
+            ..sort((a, b) => (a.order ?? 0).compareTo(b.order ?? 0));
           for (final s in sorted) {
             _steps.add(_StepInput(
               title: TextEditingController(text: s.title),
@@ -48,7 +54,8 @@ class _PathFormScreenState extends ConsumerState<PathFormScreen> {
         });
       });
     } else {
-      _steps.add(_StepInput(title: TextEditingController(), resourceUrl: TextEditingController()));
+      _steps.add(_StepInput(
+          title: TextEditingController(), resourceUrl: TextEditingController()));
     }
   }
 
@@ -63,50 +70,72 @@ class _PathFormScreenState extends ConsumerState<PathFormScreen> {
     super.dispose();
   }
 
+  void _removeStep(int i) {
+    if (_steps.length > 1) {
+      setState(() {
+        final removed = _steps.removeAt(i);
+        removed.title.dispose();
+        removed.resourceUrl.dispose();
+      });
+    }
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    final now = DateTime.now();
-    final steps = _steps
-        .asMap()
-        .entries
-        .where((e) => e.value.title.text.trim().isNotEmpty)
-        .map((e) => PathStep(
-              id: e.value.id ?? 'step-new-${e.key}',
-              order: e.key + 1,
-              title: e.value.title.text.trim(),
-              resourceUrl: e.value.resourceUrl.text.trim().isEmpty
-                  ? null
-                  : e.value.resourceUrl.text.trim(),
-              isCompleted: false,
-            ))
-        .toList();
+    final router = GoRouter.of(context);
+    final messenger = ScaffoldMessenger.of(context);
 
-    if (_isEdit) {
-      final existing = ref.read(learningPathByIdProvider(widget.pathId!));
-      if (existing == null) return;
-      // Preserve completion state of existing steps
-      final updatedSteps = steps.map((s) {
-        final orig = existing.steps.where((o) => o.id == s.id).firstOrNull;
-        return s.copyWith(isCompleted: orig?.isCompleted ?? false);
-      }).toList();
-      await ref.read(learningPathListProvider.notifier)
-          .updateItem(existing.copyWith(
-            title: _titleCtrl.text.trim(),
-            description: _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
-            steps: updatedSteps,
-            updatedAt: now,
-          ));
-    } else {
-      await ref.read(learningPathListProvider.notifier).add(LearningPath(
-            id: '',
-            title: _titleCtrl.text.trim(),
-            description: _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
-            steps: steps,
-            createdAt: now,
-            updatedAt: now,
-          ));
+    try {
+      final now = DateTime.now();
+      final steps = _steps
+          .asMap()
+          .entries
+          .where((e) => e.value.title.text.trim().isNotEmpty)
+          .map((e) => PathStep(
+                id: e.value.id ?? 'step-new-${e.key}',
+                order: e.key + 1,
+                title: e.value.title.text.trim(),
+                resourceUrl: e.value.resourceUrl.text.trim().isEmpty
+                    ? null
+                    : e.value.resourceUrl.text.trim(),
+                isCompleted: false,
+              ))
+          .toList();
+
+      final pathId = widget.pathId;
+      if (_isEdit && pathId != null) {
+        final existing = ref.read(learningPathByIdProvider(pathId));
+        if (existing == null) return;
+        final updatedSteps = steps.map((s) {
+          final orig = existing.steps.where((o) => o.id == s.id).firstOrNull;
+          return s.copyWith(isCompleted: orig?.isCompleted ?? false);
+        }).toList();
+        await ref.read(learningPathListProvider.notifier).updateItem(existing.copyWith(
+              title: _titleCtrl.text.trim(),
+              description:
+                  _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
+              steps: updatedSteps,
+              updatedAt: now,
+            ));
+      } else {
+        await ref.read(learningPathListProvider.notifier).add(LearningPath(
+              id: '',
+              title: _titleCtrl.text.trim(),
+              description:
+                  _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
+              steps: steps,
+              createdAt: now,
+              updatedAt: now,
+            ));
+      }
+      if (!mounted) return;
+      router.pop();
+    } catch (e) {
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(content: Text('Failed to save learning path: $e')),
+      );
     }
-    if (mounted) context.pop();
   }
 
   @override
@@ -155,8 +184,8 @@ class _PathFormScreenState extends ConsumerState<PathFormScreen> {
                 Text('Steps', style: AppTypography.headlineMd),
                 const Spacer(),
                 TextButton.icon(
-                  onPressed: () => setState(() =>
-                      _steps.add(_StepInput(title: TextEditingController(), resourceUrl: TextEditingController()))),
+                  onPressed: () => setState(() => _steps.add(_StepInput(
+                      title: TextEditingController(), resourceUrl: TextEditingController()))),
                   icon: const Icon(Icons.add_rounded),
                   label: const Text('Add Step'),
                 ),
@@ -180,7 +209,7 @@ class _PathFormScreenState extends ConsumerState<PathFormScreen> {
                         Container(
                           width: 24,
                           height: 24,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: AppColors.primary,
                             shape: BoxShape.circle,
                           ),
@@ -199,9 +228,7 @@ class _PathFormScreenState extends ConsumerState<PathFormScreen> {
                         ),
                         IconButton(
                           icon: const Icon(Icons.remove_circle_outline_rounded, color: AppColors.error),
-                          onPressed: _steps.length > 1
-                              ? () => setState(() => _steps.removeAt(i))
-                              : null,
+                          onPressed: _steps.length > 1 ? () => _removeStep(i) : null,
                         ),
                       ],
                     ),

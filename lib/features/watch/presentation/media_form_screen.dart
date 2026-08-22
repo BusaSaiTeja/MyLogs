@@ -6,6 +6,7 @@ import 'package:my_logs/core/theme/app_spacing.dart';
 import 'package:my_logs/core/theme/app_typography.dart';
 import 'package:my_logs/features/watch/application/media_providers.dart';
 import 'package:my_logs/features/watch/domain/models/media_item.dart';
+import 'package:my_logs/features/watch/presentation/widgets/media_rating_selector.dart';
 
 class MediaFormScreen extends ConsumerStatefulWidget {
   const MediaFormScreen({super.key, required this.category, this.itemId});
@@ -43,24 +44,22 @@ class _MediaFormScreenState extends ConsumerState<MediaFormScreen> {
 
     if (widget.itemId != null) {
       _isEdit = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) => _loadItem());
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final item = ref.read(mediaByIdProvider(widget.itemId!));
+        if (item == null) return;
+        _titleCtrl.text = item.title;
+        _yearCtrl.text = item.year?.toString() ?? '';
+        _synopsisCtrl.text = item.synopsis ?? '';
+        _genresCtrl.text = item.genres.join(', ');
+        _languageCtrl.text = item.language ?? '';
+        _posterUrlCtrl.text = item.posterUrl ?? '';
+        _totalEpsCtrl.text = item.totalEpisodes?.toString() ?? '';
+        setState(() {
+          _status = item.status;
+          _rating = item.rating;
+        });
+      });
     }
-  }
-
-  void _loadItem() {
-    final item = ref.read(mediaByIdProvider(widget.itemId!));
-    if (item == null) return;
-    _titleCtrl.text = item.title;
-    _yearCtrl.text = item.year?.toString() ?? '';
-    _synopsisCtrl.text = item.synopsis ?? '';
-    _genresCtrl.text = item.genres.join(', ');
-    _languageCtrl.text = item.language ?? '';
-    _posterUrlCtrl.text = item.posterUrl ?? '';
-    _totalEpsCtrl.text = item.totalEpisodes?.toString() ?? '';
-    setState(() {
-      _status = item.status;
-      _rating = item.rating;
-    });
   }
 
   @override
@@ -84,43 +83,54 @@ class _MediaFormScreenState extends ConsumerState<MediaFormScreen> {
         .toList();
     final now = DateTime.now();
 
-    if (_isEdit) {
-      final existing = ref.read(mediaByIdProvider(widget.itemId!));
-      if (existing == null) return;
-      await ref.read(mediaListProvider.notifier).updateItem(
-            existing.copyWith(
-              title: _titleCtrl.text.trim(),
-              status: _status,
-              rating: _rating,
-              posterUrl: _posterUrlCtrl.text.trim().isEmpty ? null : _posterUrlCtrl.text.trim(),
-              year: int.tryParse(_yearCtrl.text),
-              genres: genres,
-              language: _languageCtrl.text.trim().isEmpty ? null : _languageCtrl.text.trim(),
-              synopsis: _synopsisCtrl.text.trim().isEmpty ? null : _synopsisCtrl.text.trim(),
-              totalEpisodes: int.tryParse(_totalEpsCtrl.text),
-              updatedAt: now,
-            ),
-          );
-    } else {
-      await ref.read(mediaListProvider.notifier).add(
-            MediaItem(
-              id: '',
-              title: _titleCtrl.text.trim(),
-              category: widget.category,
-              status: _status,
-              rating: _rating,
-              posterUrl: _posterUrlCtrl.text.trim().isEmpty ? null : _posterUrlCtrl.text.trim(),
-              year: int.tryParse(_yearCtrl.text),
-              genres: genres,
-              language: _languageCtrl.text.trim().isEmpty ? null : _languageCtrl.text.trim(),
-              synopsis: _synopsisCtrl.text.trim().isEmpty ? null : _synopsisCtrl.text.trim(),
-              totalEpisodes: int.tryParse(_totalEpsCtrl.text),
-              createdAt: now,
-              updatedAt: now,
-            ),
-          );
+    final router = GoRouter.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+
+    try {
+      if (_isEdit && widget.itemId != null) {
+        final existing = ref.read(mediaByIdProvider(widget.itemId!));
+        if (existing == null) return;
+        await ref.read(mediaListProvider.notifier).updateItem(
+              existing.copyWith(
+                title: _titleCtrl.text.trim(),
+                status: _status,
+                rating: _rating,
+                posterUrl: _posterUrlCtrl.text.trim().isEmpty ? null : _posterUrlCtrl.text.trim(),
+                year: int.tryParse(_yearCtrl.text),
+                genres: genres,
+                language: _languageCtrl.text.trim().isEmpty ? null : _languageCtrl.text.trim(),
+                synopsis: _synopsisCtrl.text.trim().isEmpty ? null : _synopsisCtrl.text.trim(),
+                totalEpisodes: int.tryParse(_totalEpsCtrl.text),
+                updatedAt: now,
+              ),
+            );
+      } else {
+        await ref.read(mediaListProvider.notifier).add(
+              MediaItem(
+                id: '',
+                title: _titleCtrl.text.trim(),
+                category: widget.category,
+                status: _status,
+                rating: _rating,
+                posterUrl: _posterUrlCtrl.text.trim().isEmpty ? null : _posterUrlCtrl.text.trim(),
+                year: int.tryParse(_yearCtrl.text),
+                genres: genres,
+                language: _languageCtrl.text.trim().isEmpty ? null : _languageCtrl.text.trim(),
+                synopsis: _synopsisCtrl.text.trim().isEmpty ? null : _synopsisCtrl.text.trim(),
+                totalEpisodes: int.tryParse(_totalEpsCtrl.text),
+                createdAt: now,
+                updatedAt: now,
+              ),
+            );
+      }
+      if (!mounted) return;
+      router.pop();
+    } catch (e) {
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(content: Text('Failed to save media log: $e')),
+      );
     }
-    if (mounted) context.pop();
   }
 
   @override
@@ -146,96 +156,71 @@ class _MediaFormScreenState extends ConsumerState<MediaFormScreen> {
         child: ListView(
           padding: const EdgeInsets.all(AppSpacing.containerPadding),
           children: [
-            _FormField(label: 'Title *', controller: _titleCtrl,
-                validator: (v) => v!.isEmpty ? 'Required' : null),
-            _FormField(label: 'Year', controller: _yearCtrl, keyboard: TextInputType.number),
-            _FormField(label: 'Poster URL', controller: _posterUrlCtrl, hint: 'https://...'),
-            _FormField(label: 'Genres', controller: _genresCtrl, hint: 'Sci-Fi, Drama'),
-            _FormField(label: 'Language', controller: _languageCtrl),
-            _FormField(label: 'Synopsis', controller: _synopsisCtrl, maxLines: 4),
-            if (widget.category == MediaCategory.anime)
-              _FormField(label: 'Total Episodes', controller: _totalEpsCtrl,
-                  keyboard: TextInputType.number),
+            _field('Title *', _titleCtrl, required: true, hint: 'e.g. Inception'),
             const SizedBox(height: AppSpacing.stackGap),
-            Text('Status', style: AppTypography.labelMdVariant()),
-            const SizedBox(height: 8),
+            if (widget.category == MediaCategory.anime) ...[
+              _field('Total Episodes', _totalEpsCtrl,
+                  hint: 'e.g. 24', keyboard: TextInputType.number),
+              const SizedBox(height: AppSpacing.stackGap),
+            ],
+            _field('Year', _yearCtrl, hint: 'e.g. 2010', keyboard: TextInputType.number),
+            const SizedBox(height: AppSpacing.stackGap),
+            _field('Language', _languageCtrl, hint: 'e.g. English, Japanese'),
+            const SizedBox(height: AppSpacing.stackGap),
+            _field('Genres (comma-separated)', _genresCtrl, hint: 'Sci-Fi, Action, Thriller'),
+            const SizedBox(height: AppSpacing.stackGap),
+            _field('Poster Image URL', _posterUrlCtrl,
+                hint: 'https://...', keyboard: TextInputType.url),
+            const SizedBox(height: AppSpacing.stackGap),
+            _label('Status'),
+            const SizedBox(height: 6),
             DropdownButtonFormField<MediaStatus>(
               initialValue: _status,
               decoration: const InputDecoration(),
-              onChanged: (s) => setState(() => _status = s!),
+              onChanged: (s) {
+                if (s != null) setState(() => _status = s);
+              },
               items: MediaStatus.values
                   .map((s) => DropdownMenuItem(value: s, child: Text(s.label)))
                   .toList(),
             ),
             const SizedBox(height: AppSpacing.stackGap),
-            Text('Rating', style: AppTypography.labelMdVariant()),
+            _label('Rating (1 - 10)'),
             const SizedBox(height: 8),
-            Row(
-              children: [
-                ...List.generate(5, (i) {
-                  final v = i + 1.0;
-                  return GestureDetector(
-                    onTap: () => setState(() => _rating = _rating == v ? null : v),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2),
-                      child: Icon(
-                        (_rating ?? 0) >= v ? Icons.star_rounded : Icons.star_outline_rounded,
-                        color: (_rating ?? 0) >= v ? AppColors.starAmber : AppColors.outlineVariant,
-                        size: 32,
-                      ),
-                    ),
-                  );
-                }),
-                if (_rating != null) ...[
-                  const SizedBox(width: 8),
-                  Text(_rating!.toStringAsFixed(1), style: AppTypography.bodyLg),
-                ],
-              ],
+            MediaRatingSelector(
+              rating: _rating,
+              onRatingChanged: (r) => setState(() => _rating = r),
             ),
+            const SizedBox(height: AppSpacing.stackGap),
+            _field('Synopsis', _synopsisCtrl, maxLines: 4, hint: 'Short overview...'),
             const SizedBox(height: 32),
           ],
         ),
       ),
     );
   }
-}
 
-class _FormField extends StatelessWidget {
-  const _FormField({
-    required this.label,
-    required this.controller,
-    this.hint,
-    this.maxLines = 1,
-    this.keyboard = TextInputType.text,
-    this.validator,
-  });
+  Widget _label(String text) => Text(text, style: AppTypography.labelMdVariant());
 
-  final String label;
-  final TextEditingController controller;
-  final String? hint;
-  final int maxLines;
-  final TextInputType keyboard;
-  final String? Function(String?)? validator;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.stackGap),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: AppTypography.labelMdVariant()),
-          const SizedBox(height: 6),
-          TextFormField(
-            controller: controller,
-            keyboardType: keyboard,
-            maxLines: maxLines,
-            validator: validator,
-            decoration: InputDecoration(hintText: hint),
-            style: AppTypography.bodyLg,
-          ),
-        ],
-      ),
+  Widget _field(String label, TextEditingController controller,
+      {bool required = false,
+      String? hint,
+      TextInputType? keyboard,
+      int maxLines = 1}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _label(label),
+        const SizedBox(height: 6),
+        TextFormField(
+          controller: controller,
+          maxLines: maxLines,
+          keyboardType: keyboard,
+          validator: required ? (v) => v!.trim().isEmpty ? 'Required' : null : null,
+          decoration: InputDecoration(hintText: hint),
+          style: AppTypography.bodyLg,
+        ),
+      ],
     );
   }
 }

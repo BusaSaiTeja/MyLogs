@@ -41,7 +41,8 @@ class _ReadTrackerScreenState extends ConsumerState<ReadTrackerScreen> {
           color: AppColors.primary,
           onPressed: () => context.go('/'),
         ),
-        title: Text('Read Tracker', style: AppTypography.headlineLgMobile.copyWith(color: AppColors.primary)),
+        title: Text('Read Tracker',
+            style: AppTypography.headlineLgMobile.copyWith(color: AppColors.primary)),
         centerTitle: false,
         actions: [
           IconButton(
@@ -78,20 +79,15 @@ class _ReadTrackerScreenState extends ConsumerState<ReadTrackerScreen> {
                     actionLabel: 'Add Book',
                     onAction: () => context.push('/read/add'),
                   )
-                : GridView.builder(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.containerPadding,
-                        vertical: AppSpacing.unit),
-                    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 400,
-                      childAspectRatio: 3.2,
-                      crossAxisSpacing: AppSpacing.gutter,
-                      mainAxisSpacing: AppSpacing.unit * 2,
-                    ),
+                : ListView.builder(
+                    padding: const EdgeInsets.all(AppSpacing.containerPadding),
                     itemCount: books.length,
-                    itemBuilder: (context, i) => BookCard(
-                      book: books[i],
-                      onTap: () => context.push('/read/${books[i].id}'),
+                    itemBuilder: (context, i) => Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpacing.gutter),
+                      child: BookCard(
+                        book: books[i],
+                        onTap: () => context.push('/read/${books[i].id}'),
+                      ),
                     ),
                   ),
           ),

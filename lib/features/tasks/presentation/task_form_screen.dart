@@ -6,6 +6,8 @@ import 'package:my_logs/core/theme/app_spacing.dart';
 import 'package:my_logs/core/theme/app_typography.dart';
 import 'package:my_logs/features/tasks/application/task_providers.dart';
 import 'package:my_logs/features/tasks/domain/models/task_item.dart';
+import 'package:my_logs/features/tasks/presentation/widgets/task_date_picker_tile.dart';
+import 'package:my_logs/features/tasks/presentation/widgets/task_priority_selector.dart';
 
 class TaskFormScreen extends ConsumerStatefulWidget {
   const TaskFormScreen({super.key, this.taskId});
@@ -66,31 +68,41 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
     if (!_formKey.currentState!.validate()) return;
     final now = DateTime.now();
 
-    if (_isEdit) {
-      final existing = (ref.read(taskListProvider).valueOrNull ?? [])
-          .where((t) => t.id == widget.taskId)
-          .firstOrNull;
-      if (existing == null) return;
-      await ref.read(taskListProvider.notifier).updateItem(existing.copyWith(
-            title: _titleCtrl.text.trim(),
-            description: _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
-            priority: _priority,
-            dueDate: _dueDate,
-            updatedAt: now,
-          ));
-    } else {
-      await ref.read(taskListProvider.notifier).add(TaskItem(
-            id: '',
-            title: _titleCtrl.text.trim(),
-            description: _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
-            priority: _priority,
-            dueDate: _dueDate,
+    final router = GoRouter.of(context);
+    final messenger = ScaffoldMessenger.of(context);
 
-            createdAt: now,
-            updatedAt: now,
-          ));
+    try {
+      if (_isEdit) {
+        final existing = (ref.read(taskListProvider).valueOrNull ?? [])
+            .where((t) => t.id == widget.taskId)
+            .firstOrNull;
+        if (existing == null) return;
+        await ref.read(taskListProvider.notifier).updateItem(existing.copyWith(
+              title: _titleCtrl.text.trim(),
+              description: _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
+              priority: _priority,
+              dueDate: _dueDate,
+              updatedAt: now,
+            ));
+      } else {
+        await ref.read(taskListProvider.notifier).add(TaskItem(
+              id: '',
+              title: _titleCtrl.text.trim(),
+              description: _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
+              priority: _priority,
+              dueDate: _dueDate,
+              createdAt: now,
+              updatedAt: now,
+            ));
+      }
+      if (!mounted) return;
+      router.pop();
+    } catch (e) {
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(content: Text('Failed to save task: $e')),
+      );
     }
-    if (mounted) context.pop();
   }
 
   @override
@@ -136,61 +148,16 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
             const SizedBox(height: AppSpacing.stackGap),
             _label('Priority'),
             const SizedBox(height: 8),
-            Row(
-              children: TaskPriority.values.map((p) {
-                final isSelected = p == _priority;
-                return Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: GestureDetector(
-                      onTap: () => setState(() => _priority = p),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 180),
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        decoration: BoxDecoration(
-                          color: isSelected ? AppColors.primary : AppColors.surfaceContainerLow,
-                          borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-                        ),
-                        child: Center(
-                          child: Text(
-                            p.label,
-                            style: AppTypography.labelMd.copyWith(
-                              color: isSelected ? AppColors.onPrimary : AppColors.onSurfaceVariant,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
+            TaskPrioritySelector(
+              selectedPriority: _priority,
+              onPrioritySelected: (p) => setState(() => _priority = p),
             ),
             const SizedBox(height: AppSpacing.stackGap),
             _label('Due Date'),
             const SizedBox(height: 6),
-            Row(
-              children: [
-                Expanded(
-                  child: GestureDetector(
-                    onTap: _pickDate,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                      decoration: BoxDecoration(
-                        color: AppColors.surfaceContainerLow,
-                        borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-                      ),
-                      child: Text(
-                        _dueDate != null
-                            ? '${_dueDate!.day}/${_dueDate!.month}/${_dueDate!.year}'
-                            : 'Select date',
-                        style: _dueDate != null
-                            ? AppTypography.bodyLg
-                            : AppTypography.bodyLg.copyWith(color: AppColors.outline),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+            TaskDatePickerTile(
+              dueDate: _dueDate,
+              onTap: _pickDate,
             ),
             const SizedBox(height: 32),
           ],
