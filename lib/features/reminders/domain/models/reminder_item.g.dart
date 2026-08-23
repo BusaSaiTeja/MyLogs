@@ -18,6 +18,7 @@ _$ReminderItemImpl _$$ReminderItemImplFromJson(Map<String, dynamic> json) =>
             json['recurrence'],
           ) ??
           ReminderRecurrence.none,
+      customDaysText: json['customDaysText'] as String?,
       isEnabled: json['isEnabled'] as bool? ?? true,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
@@ -30,6 +31,7 @@ Map<String, dynamic> _$$ReminderItemImplToJson(_$ReminderItemImpl instance) =>
       'description': instance.description,
       'scheduledTime': instance.scheduledTime.toIso8601String(),
       'recurrence': _$ReminderRecurrenceEnumMap[instance.recurrence]!,
+      'customDaysText': instance.customDaysText,
       'isEnabled': instance.isEnabled,
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),
@@ -40,4 +42,5 @@ const _$ReminderRecurrenceEnumMap = {
   ReminderRecurrence.daily: 'daily',
   ReminderRecurrence.weekly: 'weekly',
   ReminderRecurrence.monthly: 'monthly',
+  ReminderRecurrence.custom: 'custom',
 };

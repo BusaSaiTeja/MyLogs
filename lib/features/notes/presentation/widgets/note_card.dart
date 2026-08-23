@@ -39,28 +39,49 @@ class NoteCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: _cardColor,
           borderRadius: BorderRadius.circular(AppSpacing.radius2Xl),
+          boxShadow: AppColors.cardShadow,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               note.title,
-              style: AppTypography.headlineMd.copyWith(fontSize: 16, fontWeight: FontWeight.w700),
+              style: AppTypography.headlineMd.copyWith(fontSize: 15, fontWeight: FontWeight.w700),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 4),
             Expanded(
               child: Text(
                 note.content,
-                style: AppTypography.bodyMd.copyWith(fontSize: 13, color: const Color(0xFF555555)),
+                style: AppTypography.bodyMd.copyWith(fontSize: 12, color: const Color(0xFF555555)),
                 overflow: TextOverflow.fade,
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              AppDateUtils.formatShortDate(note.updatedAt),
-              style: AppTypography.labelMd.copyWith(color: const Color(0xFF888888), fontSize: 11),
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                Text(
+                  AppDateUtils.formatShortDate(note.updatedAt),
+                  style: AppTypography.labelMd.copyWith(color: const Color(0xFF777777), fontSize: 11),
+                ),
+                const Spacer(),
+                if (note.tags.isNotEmpty)
+                  Wrap(
+                    spacing: 4,
+                    children: note.tags.take(2).map((t) => Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+                          ),
+                          child: Text(
+                            t,
+                            style: AppTypography.labelMd.copyWith(fontSize: 10, color: const Color(0xFF333333)),
+                          ),
+                        )).toList(),
+                  ),
+              ],
             ),
           ],
         ),
@@ -81,7 +102,7 @@ class NoteCard extends StatelessWidget {
               ctx.pop();
               onDelete();
             },
-            child: Text('Delete', style: TextStyle(color: AppColors.error)),
+            child: const Text('Delete', style: TextStyle(color: AppColors.error)),
           ),
         ],
       ),

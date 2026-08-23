@@ -24,6 +24,8 @@ class WatchCategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: AppColors.surfaceContainerLowest,
+      elevation: 2,
+      shadowColor: const Color(0xFF0F172A).withValues(alpha: 0.15),
       borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
       child: InkWell(
         onTap: onTap,

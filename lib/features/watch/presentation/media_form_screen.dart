@@ -142,12 +142,40 @@ class _MediaFormScreenState extends ConsumerState<MediaFormScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
           color: AppColors.primary,
-          onPressed: () => context.go('/'),
+          onPressed: () => context.canPop() ? context.pop() : context.go('/watch'),
         ),
         title: Text(_isEdit ? 'Edit ${widget.category.label}' : 'Add ${widget.category.label}',
             style: AppTypography.headlineLgMobile.copyWith(color: AppColors.primary)),
-        centerTitle: true,
+        centerTitle: false,
         actions: [
+          if (_isEdit && widget.itemId != null)
+            IconButton(
+              icon: const Icon(Icons.delete_outline_rounded),
+              color: AppColors.error,
+              onPressed: () async {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Delete Log'),
+                    content: const Text('Are you sure you want to delete this log?'),
+                    actions: [
+                      TextButton(onPressed: () => ctx.pop(false), child: const Text('Cancel')),
+                      TextButton(
+                        onPressed: () => ctx.pop(true),
+                        style: TextButton.styleFrom(foregroundColor: AppColors.error),
+                        child: const Text('Delete'),
+                      ),
+                    ],
+                  ),
+                );
+                if (confirm == true && context.mounted) {
+                  await ref.read(mediaListProvider.notifier).delete(widget.itemId!);
+                  if (context.mounted) {
+                    context.canPop() ? context.pop() : context.go('/watch');
+                  }
+                }
+              },
+            ),
           TextButton(onPressed: _save, child: Text('Save', style: AppTypography.labelMdPrimary())),
         ],
       ),

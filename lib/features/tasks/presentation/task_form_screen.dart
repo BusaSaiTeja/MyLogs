@@ -114,12 +114,40 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
           color: AppColors.primary,
-          onPressed: () => context.go('/'),
+          onPressed: () => context.canPop() ? context.pop() : context.go('/tasks'),
         ),
         title: Text(_isEdit ? 'Edit Task' : 'New Task',
             style: AppTypography.headlineLgMobile.copyWith(color: AppColors.primary)),
-        centerTitle: true,
+        centerTitle: false,
         actions: [
+          if (_isEdit && widget.taskId != null)
+            IconButton(
+              icon: const Icon(Icons.delete_outline_rounded),
+              color: AppColors.error,
+              onPressed: () async {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Delete Task'),
+                    content: const Text('Are you sure you want to delete this task?'),
+                    actions: [
+                      TextButton(onPressed: () => ctx.pop(false), child: const Text('Cancel')),
+                      TextButton(
+                        onPressed: () => ctx.pop(true),
+                        style: TextButton.styleFrom(foregroundColor: AppColors.error),
+                        child: const Text('Delete'),
+                      ),
+                    ],
+                  ),
+                );
+                if (confirm == true && context.mounted) {
+                  await ref.read(taskListProvider.notifier).delete(widget.taskId!);
+                  if (context.mounted) {
+                    context.canPop() ? context.pop() : context.go('/tasks');
+                  }
+                }
+              },
+            ),
           TextButton(onPressed: _save, child: Text('Save', style: AppTypography.labelMdPrimary())),
         ],
       ),

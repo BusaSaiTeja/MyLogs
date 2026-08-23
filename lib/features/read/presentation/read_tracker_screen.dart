@@ -39,23 +39,17 @@ class _ReadTrackerScreenState extends ConsumerState<ReadTrackerScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
           color: AppColors.primary,
-          onPressed: () => context.go('/'),
+          onPressed: () => context.canPop() ? context.pop() : context.go('/'),
         ),
         title: Text('Read Tracker',
             style: AppTypography.headlineLgMobile.copyWith(color: AppColors.primary)),
         centerTitle: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add_rounded),
-            color: AppColors.primary,
-            onPressed: () => context.push('/read/add'),
-          ),
-          IconButton(
-            icon: const Icon(Icons.account_circle_outlined),
-            color: AppColors.onSurfaceVariant,
-            onPressed: () => context.push('/profile'),
-          ),
-        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.onPrimary,
+        onPressed: () => context.push('/read/add'),
+        child: const Icon(Icons.add_rounded),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,13 +74,14 @@ class _ReadTrackerScreenState extends ConsumerState<ReadTrackerScreen> {
                     onAction: () => context.push('/read/add'),
                   )
                 : ListView.builder(
-                    padding: const EdgeInsets.all(AppSpacing.containerPadding),
+                    padding: const EdgeInsets.all(16.0),
                     itemCount: books.length,
                     itemBuilder: (context, i) => Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.gutter),
+                      padding: const EdgeInsets.only(bottom: 12.0),
                       child: BookCard(
                         book: books[i],
                         onTap: () => context.push('/read/${books[i].id}'),
+                        onDelete: () => ref.read(bookListProvider.notifier).delete(books[i].id),
                       ),
                     ),
                   ),

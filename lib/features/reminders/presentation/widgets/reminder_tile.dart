@@ -40,6 +40,7 @@ class ReminderTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
+          boxShadow: AppColors.cardShadow,
         ),
         child: Row(
           children: [
@@ -53,7 +54,7 @@ class ReminderTile extends StatelessWidget {
                   children: [
                     Text(reminder.title, style: AppTypography.bodyLg),
                     Text(
-                      '${AppDateUtils.formatTime(reminder.scheduledTime)} • ${reminder.recurrence.label}',
+                      '${AppDateUtils.formatTime(reminder.scheduledTime)} • ${(reminder.recurrence == ReminderRecurrence.custom && reminder.customDaysText != null && reminder.customDaysText!.isNotEmpty) ? reminder.customDaysText! : reminder.recurrence.label}',
                       style: AppTypography.labelMdOutline(),
                     ),
                   ],

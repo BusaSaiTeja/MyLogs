@@ -26,6 +26,7 @@ mixin _$ReminderItem {
   String? get description => throw _privateConstructorUsedError;
   DateTime get scheduledTime => throw _privateConstructorUsedError;
   ReminderRecurrence get recurrence => throw _privateConstructorUsedError;
+  String? get customDaysText => throw _privateConstructorUsedError;
   bool get isEnabled => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
   DateTime get updatedAt => throw _privateConstructorUsedError;
@@ -53,6 +54,7 @@ abstract class $ReminderItemCopyWith<$Res> {
     String? description,
     DateTime scheduledTime,
     ReminderRecurrence recurrence,
+    String? customDaysText,
     bool isEnabled,
     DateTime createdAt,
     DateTime updatedAt,
@@ -79,6 +81,7 @@ class _$ReminderItemCopyWithImpl<$Res, $Val extends ReminderItem>
     Object? description = freezed,
     Object? scheduledTime = null,
     Object? recurrence = null,
+    Object? customDaysText = freezed,
     Object? isEnabled = null,
     Object? createdAt = null,
     Object? updatedAt = null,
@@ -105,6 +108,10 @@ class _$ReminderItemCopyWithImpl<$Res, $Val extends ReminderItem>
                 ? _value.recurrence
                 : recurrence // ignore: cast_nullable_to_non_nullable
                       as ReminderRecurrence,
+            customDaysText: freezed == customDaysText
+                ? _value.customDaysText
+                : customDaysText // ignore: cast_nullable_to_non_nullable
+                      as String?,
             isEnabled: null == isEnabled
                 ? _value.isEnabled
                 : isEnabled // ignore: cast_nullable_to_non_nullable
@@ -138,6 +145,7 @@ abstract class _$$ReminderItemImplCopyWith<$Res>
     String? description,
     DateTime scheduledTime,
     ReminderRecurrence recurrence,
+    String? customDaysText,
     bool isEnabled,
     DateTime createdAt,
     DateTime updatedAt,
@@ -163,6 +171,7 @@ class __$$ReminderItemImplCopyWithImpl<$Res>
     Object? description = freezed,
     Object? scheduledTime = null,
     Object? recurrence = null,
+    Object? customDaysText = freezed,
     Object? isEnabled = null,
     Object? createdAt = null,
     Object? updatedAt = null,
@@ -189,6 +198,10 @@ class __$$ReminderItemImplCopyWithImpl<$Res>
             ? _value.recurrence
             : recurrence // ignore: cast_nullable_to_non_nullable
                   as ReminderRecurrence,
+        customDaysText: freezed == customDaysText
+            ? _value.customDaysText
+            : customDaysText // ignore: cast_nullable_to_non_nullable
+                  as String?,
         isEnabled: null == isEnabled
             ? _value.isEnabled
             : isEnabled // ignore: cast_nullable_to_non_nullable
@@ -215,6 +228,7 @@ class _$ReminderItemImpl implements _ReminderItem {
     this.description,
     required this.scheduledTime,
     this.recurrence = ReminderRecurrence.none,
+    this.customDaysText,
     this.isEnabled = true,
     required this.createdAt,
     required this.updatedAt,
@@ -235,6 +249,8 @@ class _$ReminderItemImpl implements _ReminderItem {
   @JsonKey()
   final ReminderRecurrence recurrence;
   @override
+  final String? customDaysText;
+  @override
   @JsonKey()
   final bool isEnabled;
   @override
@@ -244,7 +260,7 @@ class _$ReminderItemImpl implements _ReminderItem {
 
   @override
   String toString() {
-    return 'ReminderItem(id: $id, title: $title, description: $description, scheduledTime: $scheduledTime, recurrence: $recurrence, isEnabled: $isEnabled, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'ReminderItem(id: $id, title: $title, description: $description, scheduledTime: $scheduledTime, recurrence: $recurrence, customDaysText: $customDaysText, isEnabled: $isEnabled, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -260,6 +276,8 @@ class _$ReminderItemImpl implements _ReminderItem {
                 other.scheduledTime == scheduledTime) &&
             (identical(other.recurrence, recurrence) ||
                 other.recurrence == recurrence) &&
+            (identical(other.customDaysText, customDaysText) ||
+                other.customDaysText == customDaysText) &&
             (identical(other.isEnabled, isEnabled) ||
                 other.isEnabled == isEnabled) &&
             (identical(other.createdAt, createdAt) ||
@@ -277,6 +295,7 @@ class _$ReminderItemImpl implements _ReminderItem {
     description,
     scheduledTime,
     recurrence,
+    customDaysText,
     isEnabled,
     createdAt,
     updatedAt,
@@ -303,6 +322,7 @@ abstract class _ReminderItem implements ReminderItem {
     final String? description,
     required final DateTime scheduledTime,
     final ReminderRecurrence recurrence,
+    final String? customDaysText,
     final bool isEnabled,
     required final DateTime createdAt,
     required final DateTime updatedAt,
@@ -321,6 +341,8 @@ abstract class _ReminderItem implements ReminderItem {
   DateTime get scheduledTime;
   @override
   ReminderRecurrence get recurrence;
+  @override
+  String? get customDaysText;
   @override
   bool get isEnabled;
   @override

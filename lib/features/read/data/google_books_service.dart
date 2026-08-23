@@ -1,0 +1,118 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+
+class GoogleBookSuggestion {
+  final String id;
+  final String title;
+  final String author;
+  final String? coverUrl;
+  final int? pageCount;
+  final List<String> categories;
+  final String? language;
+  final String? description;
+
+  const GoogleBookSuggestion({
+    required this.id,
+    required this.title,
+    required this.author,
+    this.coverUrl,
+    this.pageCount,
+    this.categories = const [],
+    this.language,
+    this.description,
+  });
+}
+
+/// Uses the Open Library Search API — completely free, no API key required.
+/// Docs: https://openlibrary.org/developers/api
+class GoogleBooksService {
+  static const _baseUrl = 'https://openlibrary.org/search.json';
+  static const _coverBase = 'https://covers.openlibrary.org/b/id';
+
+  static const _isoLanguageMap = {
+    'eng': 'English',
+    'spa': 'Spanish',
+    'fre': 'French',
+    'ger': 'German',
+    'ita': 'Italian',
+    'jpn': 'Japanese',
+    'chi': 'Chinese',
+    'rus': 'Russian',
+    'por': 'Portuguese',
+    'hin': 'Hindi',
+    'kor': 'Korean',
+    'ara': 'Arabic',
+    'dut': 'Dutch',
+    'pol': 'Polish',
+    'tur': 'Turkish',
+  };
+
+  Future<List<GoogleBookSuggestion>> searchBooks(String title, {String? author}) async {
+    final queryTitle = title.trim();
+    if (queryTitle.isEmpty) return [];
+
+    final queryParts = [queryTitle];
+    if (author != null && author.trim().isNotEmpty) {
+      queryParts.add(author.trim());
+    }
+
+    final uri = Uri.parse('$_baseUrl?q=${Uri.encodeComponent(queryParts.join(' '))}&limit=10&fields=key,title,author_name,number_of_pages_median,subject,language,cover_i');
+
+    try {
+      final response = await http.get(uri, headers: {'User-Agent': 'MyLogsApp/1.0'})
+          .timeout(const Duration(seconds: 8));
+
+      if (response.statusCode != 200) {
+        if (kDebugMode) print('[OpenLibrary] Status: ${response.statusCode}');
+        return [];
+      }
+
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      final docs = data['docs'] as List<dynamic>?;
+      if (docs == null || docs.isEmpty) return [];
+
+      return docs.map((doc) {
+        final d = doc as Map<String, dynamic>;
+
+        // Title
+        final bookTitle = d['title'] as String? ?? 'Untitled';
+
+        // Author(s)
+        final authors = (d['author_name'] as List?)?.cast<String>() ?? [];
+        final authorStr = authors.isNotEmpty ? authors.take(2).join(', ') : 'Unknown Author';
+
+        // Cover URL from cover ID
+        final coverId = d['cover_i'];
+        final coverUrl = coverId != null ? '$_coverBase/$coverId-M.jpg' : null;
+
+        // Page count
+        final pages = d['number_of_pages_median'] as int?;
+
+        // Categories/subjects — take the first 3 only
+        final subjects = (d['subject'] as List?)?.cast<String>().take(3).toList() ?? [];
+
+        // Language (ISO 639-2)
+        final langs = (d['language'] as List?)?.cast<String>() ?? [];
+        final rawLang = langs.isNotEmpty ? langs.first : null;
+        final langFull = rawLang != null ? (_isoLanguageMap[rawLang.toLowerCase()] ?? rawLang.toUpperCase()) : null;
+
+        // ID
+        final key = d['key'] as String? ?? '';
+
+        return GoogleBookSuggestion(
+          id: key,
+          title: bookTitle,
+          author: authorStr,
+          coverUrl: coverUrl,
+          pageCount: pages,
+          categories: subjects,
+          language: langFull,
+        );
+      }).toList();
+    } catch (e) {
+      if (kDebugMode) print('[OpenLibrary] Error: $e');
+      return [];
+    }
+  }
+}

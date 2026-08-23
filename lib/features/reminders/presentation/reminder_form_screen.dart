@@ -20,6 +20,7 @@ class ReminderFormScreen extends ConsumerStatefulWidget {
 class _ReminderFormScreenState extends ConsumerState<ReminderFormScreen> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _titleCtrl;
+  late final TextEditingController _customDaysCtrl;
   DateTime _scheduledTime = DateTime.now().add(const Duration(hours: 1));
   ReminderRecurrence _recurrence = ReminderRecurrence.daily;
   bool _isEnabled = true;
@@ -29,6 +30,7 @@ class _ReminderFormScreenState extends ConsumerState<ReminderFormScreen> {
   void initState() {
     super.initState();
     _titleCtrl = TextEditingController();
+    _customDaysCtrl = TextEditingController();
     if (reminderId != null) {
       _isEdit = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -36,6 +38,7 @@ class _ReminderFormScreenState extends ConsumerState<ReminderFormScreen> {
         final r = items.where((r) => r.id == reminderId).firstOrNull;
         if (r == null) return;
         _titleCtrl.text = r.title;
+        _customDaysCtrl.text = r.customDaysText ?? '';
         setState(() {
           _scheduledTime = r.scheduledTime;
           _recurrence = r.recurrence;
@@ -50,6 +53,7 @@ class _ReminderFormScreenState extends ConsumerState<ReminderFormScreen> {
   @override
   void dispose() {
     _titleCtrl.dispose();
+    _customDaysCtrl.dispose();
     super.dispose();
   }
 
@@ -75,6 +79,9 @@ class _ReminderFormScreenState extends ConsumerState<ReminderFormScreen> {
     final now = DateTime.now();
     final router = GoRouter.of(context);
     final messenger = ScaffoldMessenger.of(context);
+    final customText = _recurrence == ReminderRecurrence.custom
+        ? _customDaysCtrl.text.trim()
+        : null;
 
     try {
       if (_isEdit) {
@@ -86,6 +93,7 @@ class _ReminderFormScreenState extends ConsumerState<ReminderFormScreen> {
               title: _titleCtrl.text.trim(),
               scheduledTime: _scheduledTime,
               recurrence: _recurrence,
+              customDaysText: customText,
               isEnabled: _isEnabled,
               updatedAt: now,
             ));
@@ -95,6 +103,7 @@ class _ReminderFormScreenState extends ConsumerState<ReminderFormScreen> {
               title: _titleCtrl.text.trim(),
               scheduledTime: _scheduledTime,
               recurrence: _recurrence,
+              customDaysText: customText,
               isEnabled: _isEnabled,
               createdAt: now,
               updatedAt: now,
@@ -119,19 +128,47 @@ class _ReminderFormScreenState extends ConsumerState<ReminderFormScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
           color: AppColors.primary,
-          onPressed: () => context.go('/'),
+          onPressed: () => context.canPop() ? context.pop() : context.go('/reminders'),
         ),
         title: Text(_isEdit ? 'Edit Reminder' : 'New Reminder',
             style: AppTypography.headlineLgMobile.copyWith(color: AppColors.primary)),
-        centerTitle: true,
+        centerTitle: false,
         actions: [
+          if (_isEdit && reminderId != null)
+            IconButton(
+              icon: const Icon(Icons.delete_outline_rounded),
+              color: AppColors.error,
+              onPressed: () async {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Delete Reminder'),
+                    content: const Text('Are you sure you want to delete this reminder?'),
+                    actions: [
+                      TextButton(onPressed: () => ctx.pop(false), child: const Text('Cancel')),
+                      TextButton(
+                        onPressed: () => ctx.pop(true),
+                        style: TextButton.styleFrom(foregroundColor: AppColors.error),
+                        child: const Text('Delete'),
+                      ),
+                    ],
+                  ),
+                );
+                if (confirm == true && context.mounted) {
+                  await ref.read(reminderListProvider.notifier).delete(reminderId!);
+                  if (context.mounted) {
+                    context.canPop() ? context.pop() : context.go('/reminders');
+                  }
+                }
+              },
+            ),
           TextButton(onPressed: _save, child: Text('Save', style: AppTypography.labelMdPrimary())),
         ],
       ),
       body: Form(
         key: _formKey,
         child: ListView(
-          padding: const EdgeInsets.all(AppSpacing.containerPadding),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           children: [
             Text('Reminder Title', style: AppTypography.labelMdVariant()),
             const SizedBox(height: 6),
@@ -154,6 +191,7 @@ class _ReminderFormScreenState extends ConsumerState<ReminderFormScreen> {
             ReminderRecurrenceSelector(
               selectedRecurrence: _recurrence,
               onRecurrenceSelected: (r) => setState(() => _recurrence = r),
+              customTextController: _customDaysCtrl,
             ),
             const SizedBox(height: AppSpacing.stackGap),
             Row(

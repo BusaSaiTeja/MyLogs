@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_logs/core/theme/app_colors.dart';
-import 'package:my_logs/core/theme/app_spacing.dart';
 import 'package:my_logs/core/theme/app_typography.dart';
 import 'package:my_logs/core/utils/date_utils.dart';
 import 'package:my_logs/features/tasks/application/task_providers.dart';
@@ -10,7 +9,6 @@ import 'package:my_logs/features/reminders/application/reminder_providers.dart';
 import 'package:my_logs/features/watch/application/media_providers.dart';
 import 'package:my_logs/features/watch/domain/models/media_item.dart';
 import 'package:my_logs/features/read/application/book_providers.dart';
-import 'package:my_logs/features/home/presentation/widgets/home_greeting_header.dart';
 import 'package:my_logs/features/home/presentation/widgets/home_section_header.dart';
 import 'package:my_logs/features/home/presentation/widgets/home_stat_card.dart';
 import 'package:my_logs/features/home/presentation/widgets/home_tile.dart';
@@ -26,7 +24,9 @@ class HomeScreen extends ConsumerWidget {
     final todayReminders = ref.watch(todayRemindersProvider);
     final continueWatching = ref.watch(continueWatchingProvider);
     final currentlyReading = ref.watch(currentlyReadingProvider);
-    final now = DateTime.now();
+
+    const sectionGap = SizedBox(height: 18.0);
+    const itemGap = SizedBox(height: 8.0);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -53,12 +53,8 @@ class HomeScreen extends ConsumerWidget {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.all(AppSpacing.containerPadding),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         children: [
-          // ── Greeting ────────────────────────────────────────────────────────
-          HomeGreetingHeader(now: now),
-          const SizedBox(height: AppSpacing.groupGap),
-
           // ── Quick Stats Row ──────────────────────────────────────────────────
           Row(
             children: [
@@ -71,7 +67,7 @@ class HomeScreen extends ConsumerWidget {
                   onTap: () => context.go('/tasks'),
                 ),
               ),
-              const SizedBox(width: AppSpacing.gutter),
+              const SizedBox(width: 10),
               Expanded(
                 child: HomeStatCard(
                   value: '${todayReminders.length}',
@@ -81,7 +77,7 @@ class HomeScreen extends ConsumerWidget {
                   onTap: () => context.go('/reminders'),
                 ),
               ),
-              const SizedBox(width: AppSpacing.gutter),
+              const SizedBox(width: 10),
               Expanded(
                 child: HomeStatCard(
                   value: '${continueWatching.length}',
@@ -93,7 +89,7 @@ class HomeScreen extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.groupGap),
+          sectionGap,
 
           // ── Today's Tasks ────────────────────────────────────────────────────
           if (todayTasks.isNotEmpty) ...[
@@ -102,7 +98,7 @@ class HomeScreen extends ConsumerWidget {
               actionLabel: 'See all',
               onAction: () => context.go('/tasks'),
             ),
-            const SizedBox(height: AppSpacing.unit * 2),
+            itemGap,
             ...todayTasks.take(4).map((t) => HomeTile(
                   leading: Icon(
                     t.isCompleted
@@ -115,7 +111,7 @@ class HomeScreen extends ConsumerWidget {
                   subtitle: t.dueDate != null ? AppDateUtils.formatDate(t.dueDate!) : null,
                   onTap: () => context.go('/tasks'),
                 )),
-            const SizedBox(height: AppSpacing.groupGap),
+            sectionGap,
           ],
 
           // ── Today's Reminders ────────────────────────────────────────────────
@@ -125,14 +121,14 @@ class HomeScreen extends ConsumerWidget {
               actionLabel: 'See all',
               onAction: () => context.go('/reminders'),
             ),
-            const SizedBox(height: AppSpacing.unit * 2),
+            itemGap,
             ...todayReminders.take(3).map((r) => HomeTile(
                   leading: const Icon(Icons.alarm_rounded, color: AppColors.primary, size: 20),
                   title: r.title,
                   subtitle: AppDateUtils.formatTime(r.scheduledTime),
                   onTap: () => context.go('/reminders'),
                 )),
-            const SizedBox(height: AppSpacing.groupGap),
+            sectionGap,
           ],
 
           // ── Continue Watching ────────────────────────────────────────────────
@@ -142,13 +138,13 @@ class HomeScreen extends ConsumerWidget {
               actionLabel: 'Watch Hub',
               onAction: () => context.go('/watch'),
             ),
-            const SizedBox(height: AppSpacing.stackGap),
+            itemGap,
             SizedBox(
-              height: 180,
+              height: 175,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: continueWatching.length,
-                separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.gutter),
+                separatorBuilder: (_, _) => const SizedBox(width: 10),
                 itemBuilder: (context, i) {
                   final item = continueWatching[i];
                   return ContinueWatchingCard(
@@ -158,7 +154,7 @@ class HomeScreen extends ConsumerWidget {
                 },
               ),
             ),
-            const SizedBox(height: AppSpacing.groupGap),
+            sectionGap,
           ],
 
           // ── Currently Reading ────────────────────────────────────────────────
@@ -168,15 +164,15 @@ class HomeScreen extends ConsumerWidget {
               actionLabel: 'Read Tracker',
               onAction: () => context.go('/read'),
             ),
-            const SizedBox(height: AppSpacing.unit * 2),
+            itemGap,
             ...currentlyReading.take(3).map((book) => CurrentlyReadingTile(
                   book: book,
                   onTap: () => context.push('/read/${book.id}'),
                 )),
-            const SizedBox(height: AppSpacing.groupGap),
+            sectionGap,
           ],
 
-          const SizedBox(height: 32),
+          const SizedBox(height: 16),
         ],
       ),
     );

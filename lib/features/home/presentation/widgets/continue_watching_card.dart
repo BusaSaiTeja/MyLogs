@@ -19,10 +19,14 @@ class ContinueWatchingCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-                child: Container(
+              child: Container(
+                decoration: BoxDecoration(
                   color: AppColors.surfaceContainerHigh,
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+                  boxShadow: AppColors.cardShadow,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
                   child: item.posterUrl != null
                       ? Image.network(
                           item.posterUrl!,

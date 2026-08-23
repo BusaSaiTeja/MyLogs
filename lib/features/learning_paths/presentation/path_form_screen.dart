@@ -147,19 +147,33 @@ class _PathFormScreenState extends ConsumerState<PathFormScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
           color: AppColors.primary,
-          onPressed: () => context.go('/'),
+          onPressed: () => context.canPop() ? context.pop() : context.go('/learning-paths'),
         ),
         title: Text(_isEdit ? 'Edit Path' : 'New Learning Path',
             style: AppTypography.headlineLgMobile.copyWith(color: AppColors.primary)),
-        centerTitle: true,
+        centerTitle: false,
         actions: [
           TextButton(onPressed: _save, child: Text('Save', style: AppTypography.labelMdPrimary())),
         ],
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.onPrimary,
+        onPressed: () {
+          setState(() {
+            _steps.add(_StepInput(
+              title: TextEditingController(),
+              resourceUrl: TextEditingController(),
+            ));
+          });
+        },
+        icon: const Icon(Icons.add_rounded),
+        label: const Text('Add Step'),
+      ),
       body: Form(
         key: _formKey,
         child: ListView(
-          padding: const EdgeInsets.all(AppSpacing.containerPadding),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           children: [
             Text('Path Title *', style: AppTypography.labelMdVariant()),
             const SizedBox(height: 6),
@@ -179,18 +193,7 @@ class _PathFormScreenState extends ConsumerState<PathFormScreen> {
               style: AppTypography.bodyLg,
             ),
             const SizedBox(height: AppSpacing.groupGap),
-            Row(
-              children: [
-                Text('Steps', style: AppTypography.headlineMd),
-                const Spacer(),
-                TextButton.icon(
-                  onPressed: () => setState(() => _steps.add(_StepInput(
-                      title: TextEditingController(), resourceUrl: TextEditingController()))),
-                  icon: const Icon(Icons.add_rounded),
-                  label: const Text('Add Step'),
-                ),
-              ],
-            ),
+            Text('Steps (${_steps.length})', style: AppTypography.headlineMd),
             const SizedBox(height: AppSpacing.stackGap),
             ...List.generate(_steps.length, (i) {
               return Container(
@@ -200,6 +203,7 @@ class _PathFormScreenState extends ConsumerState<PathFormScreen> {
                   color: AppColors.surfaceContainerLowest,
                   borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
                   border: Border.all(color: AppColors.surfaceContainerHighest),
+                  boxShadow: AppColors.cardShadow,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -243,7 +247,7 @@ class _PathFormScreenState extends ConsumerState<PathFormScreen> {
                 ),
               );
             }),
-            const SizedBox(height: 32),
+            const SizedBox(height: 80),
           ],
         ),
       ),

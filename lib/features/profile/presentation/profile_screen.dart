@@ -9,6 +9,8 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const sectionGap = SizedBox(height: 18.0);
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -16,7 +18,7 @@ class ProfileScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
           color: AppColors.primary,
-          onPressed: () => context.go('/'),
+          onPressed: () => context.canPop() ? context.pop() : context.go('/'),
         ),
         title: Text(
           'Profile',
@@ -32,11 +34,11 @@ class ProfileScreen extends StatelessWidget {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.all(AppSpacing.containerPadding),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         children: [
           // ── User Header Card ──────────────────────────────────────────────
           Container(
-            padding: const EdgeInsets.all(AppSpacing.groupGap),
+            padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: AppColors.surfaceContainerLowest,
               borderRadius: BorderRadius.circular(AppSpacing.radius2Xl),
@@ -44,17 +46,17 @@ class ProfileScreen extends StatelessWidget {
             child: Row(
               children: [
                 CircleAvatar(
-                  radius: 32,
+                  radius: 28,
                   backgroundColor: AppColors.primaryContainer,
-                  child: Icon(Icons.person_rounded, size: 36, color: AppColors.onPrimaryContainer),
+                  child: Icon(Icons.person_rounded, size: 32, color: AppColors.onPrimaryContainer),
                 ),
-                const SizedBox(width: AppSpacing.stackGap),
+                const SizedBox(width: 12.0),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Personal Tracker', style: AppTypography.headlineMd),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       Text('Local Mode — Phase 1', style: AppTypography.bodyMdOutline()),
                     ],
                   ),
@@ -62,11 +64,11 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: AppSpacing.groupGap),
+          sectionGap,
 
           // ── Quick Options / Settings Tile ──────────────────────────────────
           Text('Account & Preferences', style: AppTypography.labelMdVariant()),
-          const SizedBox(height: AppSpacing.unit * 2),
+          const SizedBox(height: 8.0),
           Container(
             decoration: BoxDecoration(
               color: AppColors.surfaceContainerLowest,
@@ -100,7 +102,7 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: AppSpacing.groupGap),
+          sectionGap,
 
           Center(
             child: Text(
@@ -108,6 +110,7 @@ class ProfileScreen extends StatelessWidget {
               style: AppTypography.bodyMdOutline(),
             ),
           ),
+          const SizedBox(height: 16.0),
         ],
       ),
     );

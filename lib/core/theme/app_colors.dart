@@ -91,4 +91,14 @@ abstract final class AppColors {
   static const Color priorityHigh = error;
   static const Color priorityMedium = secondaryContainer;
   static const Color priorityLow = tertiaryContainer;
+
+  // ── Card Elevation / Shadows ──────────────────────────────────────────────
+  static final List<BoxShadow> cardShadow = [
+    BoxShadow(
+      color: const Color(0xFF0F172A).withValues(alpha: 0.06),
+      blurRadius: 12,
+      spreadRadius: 0,
+      offset: const Offset(0, 4),
+    ),
+  ];
 }

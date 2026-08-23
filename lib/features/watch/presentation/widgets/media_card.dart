@@ -6,14 +6,23 @@ import 'package:my_logs/core/widgets/status_chip.dart';
 import 'package:my_logs/features/watch/domain/models/media_item.dart';
 
 class MediaCard extends StatelessWidget {
-  const MediaCard({super.key, required this.item, required this.onTap});
+  const MediaCard({
+    super.key,
+    required this.item,
+    required this.onTap,
+    this.onDelete,
+  });
+
   final MediaItem item;
   final VoidCallback onTap;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
+    final cardChild = Material(
       color: AppColors.surfaceContainerLowest,
+      elevation: 2,
+      shadowColor: const Color(0xFF0F172A).withValues(alpha: 0.15),
       borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
       child: InkWell(
         onTap: onTap,
@@ -105,6 +114,24 @@ class MediaCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+
+    if (onDelete == null) return cardChild;
+
+    return Dismissible(
+      key: Key(item.id),
+      direction: DismissDirection.endToStart,
+      onDismissed: (_) => onDelete!(),
+      background: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 20),
+        decoration: BoxDecoration(
+          color: AppColors.error.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
+        ),
+        child: const Icon(Icons.delete_outline_rounded, color: AppColors.error),
+      ),
+      child: cardChild,
     );
   }
 }

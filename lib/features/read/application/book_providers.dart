@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:my_logs/features/read/data/google_books_service.dart';
 import 'package:my_logs/features/read/data/mock_book_repository.dart';
 import 'package:my_logs/features/read/domain/book_repository.dart';
 import 'package:my_logs/features/read/domain/models/book_item.dart';
@@ -6,6 +7,10 @@ import 'package:my_logs/features/read/domain/models/book_item.dart';
 // ── Repository Provider ───────────────────────────────────────────────────────
 final bookRepositoryProvider = Provider<BookRepository>((ref) {
   return MockBookRepository();
+});
+
+final googleBooksServiceProvider = Provider<GoogleBooksService>((ref) {
+  return GoogleBooksService();
 });
 
 // ── Notifier ──────────────────────────────────────────────────────────────────

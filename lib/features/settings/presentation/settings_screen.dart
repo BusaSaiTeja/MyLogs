@@ -9,6 +9,8 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const sectionGap = SizedBox(height: 18.0);
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -16,30 +18,30 @@ class SettingsScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
           color: AppColors.primary,
-          onPressed: () => context.go('/'),
+          onPressed: () => context.canPop() ? context.pop() : context.go('/'),
         ),
         title: Text('Settings',
             style: AppTypography.headlineLgMobile.copyWith(color: AppColors.primary)),
         centerTitle: false,
       ),
       body: ListView(
-        padding: const EdgeInsets.all(AppSpacing.containerPadding),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         children: [
           _SettingsSection(title: 'Account', tiles: [
             _SettingsTile(icon: Icons.person_outline_rounded, label: 'Profile', subtitle: 'Coming in Phase 2'),
             _SettingsTile(icon: Icons.security_outlined, label: 'Privacy & Security', subtitle: 'Coming in Phase 2'),
           ]),
-          const SizedBox(height: AppSpacing.groupGap),
+          sectionGap,
           _SettingsSection(title: 'Preferences', tiles: [
             _SettingsTile(icon: Icons.dark_mode_outlined, label: 'Theme', subtitle: 'System default'),
             _SettingsTile(icon: Icons.notifications_outlined, label: 'Notifications', subtitle: 'Manage local reminders'),
           ]),
-          const SizedBox(height: AppSpacing.groupGap),
+          sectionGap,
           _SettingsSection(title: 'Data', tiles: [
             _SettingsTile(icon: Icons.cloud_upload_outlined, label: 'Sync & Backup', subtitle: 'Cloud sync in Phase 2'),
             _SettingsTile(icon: Icons.import_export_rounded, label: 'Export Data', subtitle: 'Coming soon'),
           ]),
-          const SizedBox(height: AppSpacing.groupGap),
+          sectionGap,
           Center(
             child: Column(
               children: [
@@ -52,7 +54,7 @@ class SettingsScreen extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: AppSpacing.groupGap),
+          const SizedBox(height: 16.0),
         ],
       ),
     );
@@ -70,7 +72,7 @@ class _SettingsSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          padding: const EdgeInsets.only(left: 4, bottom: 6),
           child: Text(title, style: AppTypography.labelMd.copyWith(color: AppColors.onSurfaceVariant, letterSpacing: 1.2)),
         ),
         Container(
@@ -109,7 +111,7 @@ class _SettingsTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
       leading: Icon(icon, color: AppColors.primary),
       title: Text(label, style: AppTypography.bodyLg),
       subtitle: subtitle != null

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_logs/core/theme/app_colors.dart';
-import 'package:my_logs/core/theme/app_spacing.dart';
 import 'package:my_logs/core/theme/app_typography.dart';
 import 'package:my_logs/core/widgets/empty_state.dart';
 import 'package:my_logs/core/widgets/pill_tab_bar.dart';
@@ -10,8 +9,6 @@ import 'package:my_logs/features/watch/application/media_providers.dart';
 import 'package:my_logs/features/watch/domain/models/media_item.dart';
 import 'package:my_logs/features/watch/presentation/widgets/media_card.dart';
 
-/// Reusable list screen for Movies, Animated Movies, and Anime.
-/// Category is injected via [category]; filtered by [MediaStatus] tabs.
 class MediaListScreen extends ConsumerStatefulWidget {
   const MediaListScreen({super.key, required this.category});
   final MediaCategory category;
@@ -62,25 +59,23 @@ class _MediaListScreenState extends ConsumerState<MediaListScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
           color: AppColors.primary,
-          onPressed: () => context.go('/'),
+          onPressed: () => context.canPop() ? context.pop() : context.go('/watch'),
         ),
         title: Text(widget.category.label,
             style: AppTypography.headlineLgMobile.copyWith(color: AppColors.primary)),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add_rounded),
-            color: AppColors.primary,
-            onPressed: () => context.push(_addRoute),
-          ),
-        ],
+        centerTitle: false,
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.onPrimary,
+        onPressed: () => context.push(_addRoute),
+        child: const Icon(Icons.add_rounded),
       ),
       body: Column(
         children: [
           // ── Search bar ────────────────────────────────────────────────────
           Padding(
-            padding: const EdgeInsets.fromLTRB(
-                AppSpacing.containerPadding, AppSpacing.stackGap, AppSpacing.containerPadding, 0),
+            padding: const EdgeInsets.fromLTRB(16.0, 10.0, 16.0, 0),
             child: Row(
               children: [
                 Expanded(
@@ -98,8 +93,7 @@ class _MediaListScreenState extends ConsumerState<MediaListScreen> {
           ),
           // ── Tab bar ───────────────────────────────────────────────────────
           Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.containerPadding, vertical: AppSpacing.stackGap),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
             child: PillTabBar(
               tabs: _tabs,
               selectedIndex: _selectedTab,
@@ -117,18 +111,15 @@ class _MediaListScreenState extends ConsumerState<MediaListScreen> {
                     onAction: () => context.push(_addRoute),
                   )
                 : ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(
-                        AppSpacing.containerPadding,
-                        0,
-                        AppSpacing.containerPadding,
-                        AppSpacing.groupGap),
+                    padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
                     itemCount: filtered.length,
-                    separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.unit * 2),
+                    separatorBuilder: (_, _) => const SizedBox(height: 10.0),
                     itemBuilder: (context, i) {
                       final item = filtered[i];
                       return MediaCard(
                         item: item,
                         onTap: () => context.push(_detailRoute(item.id)),
+                        onDelete: () => ref.read(mediaListProvider.notifier).delete(item.id),
                       );
                     },
                   ),

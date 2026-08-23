@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_logs/core/theme/app_colors.dart';
-import 'package:my_logs/core/theme/app_spacing.dart';
 import 'package:my_logs/core/theme/app_typography.dart';
 import 'package:my_logs/features/watch/application/media_providers.dart';
 import 'package:my_logs/features/watch/presentation/widgets/watch_category_card.dart';
@@ -21,25 +20,18 @@ class WatchHubScreen extends ConsumerWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
           color: AppColors.primary,
-          onPressed: () => context.go('/'),
+          onPressed: () => context.canPop() ? context.pop() : context.go('/'),
         ),
         title: Text('Watch Hub', style: AppTypography.headlineLgMobile.copyWith(color: AppColors.primary)),
         centerTitle: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.account_circle_outlined),
-            color: AppColors.onSurfaceVariant,
-            onPressed: () => context.push('/profile'),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.containerPadding),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Watch Hub', style: AppTypography.display),
-            const SizedBox(height: AppSpacing.groupGap),
+            Text('Watch Hub', style: AppTypography.headlineLg),
+            const SizedBox(height: 16.0),
             WatchCategoryCard(
               title: 'Movies',
               itemCount: stats.movieCount,
@@ -50,7 +42,7 @@ class WatchHubScreen extends ConsumerWidget {
               ],
               onTap: () => context.go('/watch/movies'),
             ),
-            const SizedBox(height: AppSpacing.stackGap),
+            const SizedBox(height: 12.0),
             WatchCategoryCard(
               title: 'Animated Movies',
               itemCount: stats.animatedCount,
@@ -61,7 +53,7 @@ class WatchHubScreen extends ConsumerWidget {
               singlePoster: true,
               onTap: () => context.go('/watch/animated'),
             ),
-            const SizedBox(height: AppSpacing.stackGap),
+            const SizedBox(height: 12.0),
             WatchCategoryCard(
               title: 'Anime',
               itemCount: stats.animeCount,

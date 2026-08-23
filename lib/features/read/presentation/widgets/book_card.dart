@@ -1,49 +1,56 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:my_logs/core/theme/app_colors.dart';
 import 'package:my_logs/core/theme/app_spacing.dart';
 import 'package:my_logs/core/theme/app_typography.dart';
-import 'package:my_logs/core/widgets/status_chip.dart';
+import 'package:my_logs/core/widgets/rating_stars.dart';
 import 'package:my_logs/features/read/domain/models/book_item.dart';
 
 class BookCard extends StatelessWidget {
-  const BookCard({super.key, required this.book, required this.onTap});
+  const BookCard({
+    super.key,
+    required this.book,
+    required this.onTap,
+    this.onDelete,
+  });
+
   final BookItem book;
   final VoidCallback onTap;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
-    final progress = book.totalPages != null && book.totalPages! > 0
-        ? book.currentPage / book.totalPages!
-        : 0.0;
-
-    return GestureDetector(
+    final cardChild = GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.stackGap),
         decoration: BoxDecoration(
           color: AppColors.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
+          boxShadow: AppColors.cardShadow,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Cover thumbnail
+            // ── Cover thumbnail ────────────────────────────────────────
             ClipRRect(
               borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
               child: SizedBox(
                 width: 80,
                 height: 120,
                 child: book.coverUrl != null
-                    ? Image.network(
-                        book.coverUrl!,
+                    ? CachedNetworkImage(
+                        imageUrl: book.coverUrl!,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, _, _) =>
-                            const _BookCoverPlaceholder(),
+                        placeholder: (_, _) => const _BookCoverPlaceholder(),
+                        errorWidget: (_, _, _) => const _BookCoverPlaceholder(),
                       )
                     : const _BookCoverPlaceholder(),
               ),
             ),
             const SizedBox(width: AppSpacing.gutter),
+
+            // ── Title, author, rating, pages, genres ───────────────────
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,9 +58,7 @@ class BookCard extends StatelessWidget {
                 children: [
                   Text(
                     book.title,
-                    style: AppTypography.bodyLg.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: AppTypography.bodyLg.copyWith(fontWeight: FontWeight.w600),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -64,44 +69,68 @@ class BookCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 10),
-                  if (book.status == BookStatus.reading &&
-                      book.totalPages != null)
-                    Row(
-                      children: [
-                        Expanded(
-                          child: LinearProgressIndicator(
-                            value: progress,
-                            backgroundColor:
-                                AppColors.surfaceContainerHighest,
-                            color: AppColors.primary,
-                            borderRadius: BorderRadius.circular(
-                              AppSpacing.radiusFull,
-                            ),
-                          ),
-                        ),
+                  const SizedBox(height: 8),
+                  // Rating stars + pages on same row
+                  Row(
+                    children: [
+                      RatingStars(
+                        rating: book.rating,
+                        starSize: 16,
+                        onRatingChanged: null,
+                      ),
+                      if (book.totalPages != null) ...[
                         const SizedBox(width: 8),
-                        Text(
-                          '${(progress * 100).round()}%',
-                          style: AppTypography.labelMdVariant(),
-                        ),
+                        const Icon(Icons.menu_book_outlined, size: 12, color: AppColors.outline),
+                        const SizedBox(width: 3),
+                        Text('${book.totalPages} pages', style: AppTypography.labelMdOutline()),
                       ],
-                    )
-                  else
+                    ],
+                  ),
+                  if (book.genres.isNotEmpty) ...[
+                    const SizedBox(height: 6),
                     Wrap(
                       spacing: 4,
                       runSpacing: 4,
-                      children: book.genres
-                          .take(2)
-                          .map((g) => TagChip(label: g))
-                          .toList(),
+                      children: book.genres.take(2).map((g) => Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryFixed.withValues(alpha: 0.5),
+                          borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+                        ),
+                        child: Text(
+                          g,
+                          style: AppTypography.labelMd.copyWith(
+                            color: AppColors.primary,
+                            fontSize: 10,
+                          ),
+                        ),
+                      )).toList(),
                     ),
+                  ],
                 ],
               ),
             ),
           ],
         ),
       ),
+    );
+
+    if (onDelete == null) return cardChild;
+
+    return Dismissible(
+      key: Key(book.id),
+      direction: DismissDirection.endToStart,
+      onDismissed: (_) => onDelete!(),
+      background: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 20),
+        decoration: BoxDecoration(
+          color: AppColors.error.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
+        ),
+        child: const Icon(Icons.delete_outline_rounded, color: AppColors.error),
+      ),
+      child: cardChild,
     );
   }
 }

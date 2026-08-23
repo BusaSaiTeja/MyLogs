@@ -35,14 +35,41 @@ class PathDetailScreen extends ConsumerWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
           color: AppColors.primary,
-          onPressed: () => context.go('/'),
+          onPressed: () => context.canPop() ? context.pop() : context.go('/learning-paths'),
         ),
         title: Text(
           'Learning Path',
           style: AppTypography.headlineLgMobile.copyWith(color: AppColors.primary),
         ),
-        centerTitle: true,
+        centerTitle: false,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.delete_outline_rounded),
+            color: AppColors.error,
+            onPressed: () async {
+              final confirm = await showDialog<bool>(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: const Text('Delete Learning Path'),
+                  content: const Text('Are you sure you want to delete this learning path?'),
+                  actions: [
+                    TextButton(onPressed: () => ctx.pop(false), child: const Text('Cancel')),
+                    TextButton(
+                      onPressed: () => ctx.pop(true),
+                      style: TextButton.styleFrom(foregroundColor: AppColors.error),
+                      child: const Text('Delete'),
+                    ),
+                  ],
+                ),
+              );
+              if (confirm == true && context.mounted) {
+                await ref.read(learningPathListProvider.notifier).delete(pathId);
+                if (context.mounted) {
+                  context.canPop() ? context.pop() : context.go('/learning-paths');
+                }
+              }
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.edit_outlined),
             color: AppColors.primary,
@@ -51,7 +78,7 @@ class PathDetailScreen extends ConsumerWidget {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.all(AppSpacing.containerPadding),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         children: [
           Text(path.title, style: AppTypography.display),
           if (path.description != null) ...[

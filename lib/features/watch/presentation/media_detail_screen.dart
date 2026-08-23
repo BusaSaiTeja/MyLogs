@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -18,7 +19,9 @@ class MediaDetailScreen extends ConsumerStatefulWidget {
 
 class _MediaDetailScreenState extends ConsumerState<MediaDetailScreen> {
   late TextEditingController _notesController;
-  bool _notesChanged = false;
+  bool _notesInitialised = false;
+  Timer? _notesDebounce;
+  bool _savedIndicator = false;
 
   @override
   void initState() {
@@ -28,8 +31,23 @@ class _MediaDetailScreenState extends ConsumerState<MediaDetailScreen> {
 
   @override
   void dispose() {
+    _notesDebounce?.cancel();
     _notesController.dispose();
     super.dispose();
+  }
+
+  void _onNotesChanged(String itemId) {
+    _notesDebounce?.cancel();
+    _notesDebounce = Timer(const Duration(milliseconds: 800), () async {
+      await ref
+          .read(mediaListProvider.notifier)
+          .updateNotes(itemId, _notesController.text);
+      if (!mounted) return;
+      setState(() => _savedIndicator = true);
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted) setState(() => _savedIndicator = false);
+      });
+    });
   }
 
   @override
@@ -43,9 +61,10 @@ class _MediaDetailScreenState extends ConsumerState<MediaDetailScreen> {
       );
     }
 
-    // Sync notes controller with item
-    if (!_notesChanged) {
+    // Initialise notes controller once from item data
+    if (!_notesInitialised) {
       _notesController.text = item.notes ?? '';
+      _notesInitialised = true;
     }
 
     return Scaffold(
@@ -60,22 +79,75 @@ class _MediaDetailScreenState extends ConsumerState<MediaDetailScreen> {
             leading: Padding(
               padding: const EdgeInsets.all(8),
               child: CircleAvatar(
-                backgroundColor: AppColors.surfaceContainerLowest.withValues(alpha: 0.85),
+                backgroundColor: AppColors.surfaceContainerLowest.withValues(
+                  alpha: 0.85,
+                ),
                 child: IconButton(
                   icon: const Icon(Icons.arrow_back_rounded),
                   color: AppColors.onSurface,
-                  onPressed: () => context.go('/'),
+                  onPressed: () =>
+                      context.canPop() ? context.pop() : context.go('/watch'),
                 ),
               ),
             ),
             actions: [
+              if (_savedIndicator)
+                Padding(
+                  padding: const EdgeInsets.only(right: 4, top: 8, bottom: 8),
+                  child: CircleAvatar(
+                    backgroundColor: AppColors.surfaceContainerLowest
+                        .withValues(alpha: 0.85),
+                    child: const Icon(
+                      Icons.check_rounded,
+                      color: AppColors.primary,
+                      size: 18,
+                    ),
+                  ),
+                ),
               Padding(
                 padding: const EdgeInsets.all(8),
                 child: CircleAvatar(
-                  backgroundColor: AppColors.surfaceContainerLowest.withValues(alpha: 0.85),
+                  backgroundColor: AppColors.surfaceContainerLowest.withValues(
+                    alpha: 0.85,
+                  ),
                   child: IconButton(
-                    icon: const Icon(Icons.more_vert_rounded, color: AppColors.onSurface),
-                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.delete_outline_rounded,
+                      color: AppColors.error,
+                    ),
+                    onPressed: () async {
+                      final router = GoRouter.of(context);
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Delete Log'),
+                          content: const Text(
+                            'Are you sure you want to delete this log?',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => ctx.pop(false),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () => ctx.pop(true),
+                              style: TextButton.styleFrom(
+                                foregroundColor: AppColors.error,
+                              ),
+                              child: const Text('Delete'),
+                            ),
+                          ],
+                        ),
+                      );
+                      if (confirm == true && mounted) {
+                        final canPop = router.canPop();
+                        await ref
+                            .read(mediaListProvider.notifier)
+                            .delete(widget.id);
+                        if (mounted)
+                          canPop ? router.pop() : router.go('/watch');
+                      }
+                    },
                   ),
                 ),
               ),
@@ -85,9 +157,13 @@ class _MediaDetailScreenState extends ConsumerState<MediaDetailScreen> {
                 fit: StackFit.expand,
                 children: [
                   if (item.posterUrl != null)
-                    Image.network(item.posterUrl!, fit: BoxFit.cover,
-                        errorBuilder: (_, _, _) =>
-                            const ColoredBox(color: AppColors.surfaceContainerHigh))
+                    Image.network(
+                      item.posterUrl!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, _, _) => const ColoredBox(
+                        color: AppColors.surfaceContainerHigh,
+                      ),
+                    )
                   else
                     const ColoredBox(color: AppColors.surfaceContainerHigh),
                   const DecoratedBox(
@@ -118,12 +194,21 @@ class _MediaDetailScreenState extends ConsumerState<MediaDetailScreen> {
                     spacing: 8,
                     children: [
                       if (item.year != null)
-                        Text('${item.year}', style: AppTypography.bodyMdVariant()),
+                        Text(
+                          '${item.year}',
+                          style: AppTypography.bodyMdVariant(),
+                        ),
                       Text('•', style: AppTypography.bodyMdVariant()),
-                      Text(item.category.label, style: AppTypography.bodyMdVariant()),
+                      Text(
+                        item.category.label,
+                        style: AppTypography.bodyMdVariant(),
+                      ),
                       if (item.language != null) ...[
                         Text('•', style: AppTypography.bodyMdVariant()),
-                        Text(item.language!, style: AppTypography.bodyMdVariant()),
+                        Text(
+                          item.language!,
+                          style: AppTypography.bodyMdVariant(),
+                        ),
                       ],
                     ],
                   ),
@@ -134,14 +219,21 @@ class _MediaDetailScreenState extends ConsumerState<MediaDetailScreen> {
                       spacing: 8,
                       runSpacing: 8,
                       children: item.genres
-                          .map((g) => Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: AppColors.surfaceContainerLow,
-                                  borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+                          .map(
+                            (g) => Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.surfaceContainerLow,
+                                borderRadius: BorderRadius.circular(
+                                  AppSpacing.radiusFull,
                                 ),
-                                child: Text(g, style: AppTypography.labelMd),
-                              ))
+                              ),
+                              child: Text(g, style: AppTypography.labelMd),
+                            ),
+                          )
                           .toList(),
                     ),
                   ],
@@ -152,15 +244,14 @@ class _MediaDetailScreenState extends ConsumerState<MediaDetailScreen> {
                     item: item,
                     onStatusChanged: (s) {
                       if (s != null) {
-                        ref.read(mediaListProvider.notifier).updateStatus(item.id, s);
+                        ref
+                            .read(mediaListProvider.notifier)
+                            .updateStatus(item.id, s);
                       }
                     },
                     onRatingChanged: (r) => ref
                         .read(mediaListProvider.notifier)
                         .updateRating(item.id, r),
-                    onIncrementEpisode: () => ref
-                        .read(mediaListProvider.notifier)
-                        .incrementEpisode(item.id),
                   ),
                   const SizedBox(height: AppSpacing.groupGap),
 
@@ -170,16 +261,23 @@ class _MediaDetailScreenState extends ConsumerState<MediaDetailScreen> {
                       padding: const EdgeInsets.all(AppSpacing.stackGap),
                       decoration: BoxDecoration(
                         color: AppColors.surfaceContainerLowest,
-                        borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-                        border: Border.all(color: AppColors.surfaceContainerHighest),
+                        borderRadius: BorderRadius.circular(
+                          AppSpacing.radiusXl,
+                        ),
+                        border: Border.all(
+                          color: AppColors.surfaceContainerHighest,
+                        ),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('SYNOPSIS',
-                              style: AppTypography.labelMd.copyWith(
-                                  color: AppColors.onSurfaceVariant,
-                                  letterSpacing: 1.2)),
+                          Text(
+                            'SYNOPSIS',
+                            style: AppTypography.labelMd.copyWith(
+                              color: AppColors.onSurfaceVariant,
+                              letterSpacing: 1.2,
+                            ),
+                          ),
                           const SizedBox(height: 8),
                           Text(item.synopsis!, style: AppTypography.bodyMd),
                         ],
@@ -188,41 +286,31 @@ class _MediaDetailScreenState extends ConsumerState<MediaDetailScreen> {
                     const SizedBox(height: AppSpacing.groupGap),
                   ],
 
-                  // ── Notes / Review ────────────────────────────────────
-                  Text('Personal Notes & Review', style: AppTypography.headlineMd),
+                  // ── Notes / Review ─────────────────────────────────────
+                  Row(
+                    children: [
+                      Text('Notes & Review', style: AppTypography.headlineMd),
+                      const Spacer(),
+                      Text('Auto-saved', style: AppTypography.labelMdOutline()),
+                    ],
+                  ),
                   const SizedBox(height: AppSpacing.stackGap),
                   TextField(
                     controller: _notesController,
                     maxLines: 6,
-                    onChanged: (_) => setState(() => _notesChanged = true),
+                    onChanged: (_) => _onNotesChanged(item.id),
                     decoration: const InputDecoration(
                       hintText: 'Write your thoughts here...',
                       alignLabelWithHint: true,
                     ),
                     style: AppTypography.bodyLg,
                   ),
-                  const SizedBox(height: 80),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
           ),
         ],
-      ),
-
-      // ── Save FAB ──────────────────────────────────────────────────────────
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          ref.read(mediaListProvider.notifier).updateNotes(widget.id, _notesController.text);
-          setState(() => _notesChanged = false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Log saved!')),
-          );
-        },
-        icon: const Icon(Icons.save_rounded),
-        label: const Text('Save Log'),
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.onPrimary,
-        elevation: 0,
       ),
     );
   }

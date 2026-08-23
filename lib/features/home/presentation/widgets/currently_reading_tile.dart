@@ -24,6 +24,7 @@ class CurrentlyReadingTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
+          boxShadow: AppColors.cardShadow,
         ),
         child: Row(
           children: [

@@ -29,6 +29,7 @@ class HomeStatCard extends StatelessWidget {
           color: AppColors.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
           border: Border.all(color: AppColors.surfaceContainerHighest),
+          boxShadow: AppColors.cardShadow,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

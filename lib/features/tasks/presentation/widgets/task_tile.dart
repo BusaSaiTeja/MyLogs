@@ -25,6 +25,12 @@ class TaskTile extends StatelessWidget {
         TaskPriority.low => AppColors.outlineVariant,
       };
 
+  String _priorityLabel() => switch (task.priority) {
+        TaskPriority.high => 'High',
+        TaskPriority.medium => 'Med',
+        TaskPriority.low => 'Low',
+      };
+
   @override
   Widget build(BuildContext context) {
     return Dismissible(
@@ -44,75 +50,99 @@ class TaskTile extends StatelessWidget {
         onTap: onTap,
         child: Container(
           margin: const EdgeInsets.only(bottom: AppSpacing.unit * 2),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
             color: AppColors.surfaceContainerLowest,
             borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
+            boxShadow: AppColors.cardShadow,
           ),
-          child: Row(
-            children: [
-              // Priority dot
-              Container(
-                width: 6,
-                height: 6,
-                margin: const EdgeInsets.only(right: 12),
-                decoration: BoxDecoration(
+          clipBehavior: Clip.antiAlias,
+          child: IntrinsicHeight(
+            child: Row(
+              children: [
+                // Consistent left accent bar for all priorities (High, Med, Low)
+                Container(
+                  width: 4,
                   color: _priorityColor(),
-                  shape: BoxShape.circle,
                 ),
-              ),
-              // Checkbox
-              GestureDetector(
-                onTap: onToggle,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  width: 22,
-                  height: 22,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: task.isCompleted ? AppColors.primary : AppColors.outline,
-                      width: 2,
-                    ),
-                    color: task.isCompleted ? AppColors.primary : Colors.transparent,
-                  ),
-                  child: task.isCompleted
-                      ? const Icon(Icons.check_rounded, color: AppColors.onPrimary, size: 14)
-                      : null,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      task.title,
-                      style: task.isCompleted
-                          ? AppTypography.bodyLg.copyWith(
-                              color: AppColors.outline,
-                              decoration: TextDecoration.lineThrough,
-                              decorationColor: AppColors.outline,
-                            )
-                          : AppTypography.bodyLg,
-                    ),
-                    if (task.dueDate != null) ...[
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Icon(Icons.calendar_today, size: 14, color: AppColors.onSurfaceVariant),
-                          const SizedBox(width: 4),
-                          Text(
-                            AppDateUtils.formatDate(task.dueDate!),
-                            style: AppTypography.labelMdOutline(),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Row(
+                      children: [
+                        // Checkbox
+                        GestureDetector(
+                          onTap: onToggle,
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            width: 22,
+                            height: 22,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: task.isCompleted ? AppColors.primary : AppColors.outline,
+                                width: 2,
+                              ),
+                              color: task.isCompleted ? AppColors.primary : Colors.transparent,
+                            ),
+                            child: task.isCompleted
+                                ? const Icon(Icons.check_rounded, color: AppColors.onPrimary, size: 14)
+                                : null,
                           ),
-                        ],
-                      ),
-                    ],
-                  ],
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                task.title,
+                                style: task.isCompleted
+                                    ? AppTypography.bodyLg.copyWith(
+                                        color: AppColors.outline,
+                                        decoration: TextDecoration.lineThrough,
+                                        decorationColor: AppColors.outline,
+                                      )
+                                    : AppTypography.bodyLg,
+                              ),
+                              if (task.dueDate != null) ...[
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    Icon(Icons.calendar_today, size: 14, color: AppColors.onSurfaceVariant),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      AppDateUtils.formatDate(task.dueDate!),
+                                      style: AppTypography.labelMdOutline(),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        // Consistent priority badge for all priorities (High, Med, Low)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: _priorityColor().withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+                          ),
+                          child: Text(
+                            _priorityLabel(),
+                            style: AppTypography.labelMd.copyWith(
+                              color: _priorityColor(),
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

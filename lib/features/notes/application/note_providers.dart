@@ -8,6 +8,23 @@ final noteRepositoryProvider = Provider<NoteRepository>((ref) {
   return MockNoteRepository();
 });
 
+// ── Categories State ──────────────────────────────────────────────────────────
+class NoteCategoriesNotifier extends StateNotifier<List<String>> {
+  NoteCategoriesNotifier()
+      : super(['All', 'Study', 'Shopping', 'Work', 'Personal', 'Ideas']);
+
+  void addCategory(String category) {
+    final trimmed = category.trim();
+    if (trimmed.isNotEmpty && !state.contains(trimmed)) {
+      state = [...state, trimmed];
+    }
+  }
+}
+
+final noteCategoriesProvider =
+    StateNotifierProvider<NoteCategoriesNotifier, List<String>>(
+        (ref) => NoteCategoriesNotifier());
+
 // ── Notifier ──────────────────────────────────────────────────────────────────
 class NoteListNotifier extends AsyncNotifier<List<NoteItem>> {
   NoteRepository get _repo => ref.read(noteRepositoryProvider);
