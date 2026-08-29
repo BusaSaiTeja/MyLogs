@@ -30,38 +30,38 @@ class WatchHubScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Watch Hub', style: AppTypography.headlineLg),
+            Text('Categories', style: AppTypography.headlineLg),
             const SizedBox(height: 16.0),
+
+            // ── Movies Card ──────────────────────────────────────────────────
             WatchCategoryCard(
               title: 'Movies',
+              subtitle: 'Feature films, reviews & ratings',
               itemCount: stats.movieCount,
-              posterUrls: const [
-                'https://images.unsplash.com/photo-1608178398319-48f814d0750c?w=200',
-                'https://images.unsplash.com/photo-1514565131-fce0801e6785?w=200',
-                'https://images.unsplash.com/photo-1434564764349-4803f97b8de3?w=200',
-              ],
+              icon: Icons.movie_filter_rounded,
+              gradientColors: const [Color(0xFF6366F1), Color(0xFF4F46E5)],
               onTap: () => context.go('/watch/movies'),
             ),
             const SizedBox(height: 12.0),
+
+            // ── Animated Movies Card ─────────────────────────────────────────
             WatchCategoryCard(
               title: 'Animated Movies',
+              subtitle: 'Animated features & classics',
               itemCount: stats.animatedCount,
-              posterUrls: const [
-                'https://images.unsplash.com/photo-1595120547202-f51a44451cb7?w=200',
-                'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=200',
-              ],
-              singlePoster: true,
+              icon: Icons.auto_awesome_rounded,
+              gradientColors: const [Color(0xFFF59E0B), Color(0xFFD97706)],
               onTap: () => context.go('/watch/animated'),
             ),
             const SizedBox(height: 12.0),
+
+            // ── Anime Card ───────────────────────────────────────────────────
             WatchCategoryCard(
               title: 'Anime',
+              subtitle: 'Anime series & seasonal releases',
               itemCount: stats.animeCount,
-              posterUrls: const [
-                'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=200',
-                'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=200',
-                'https://images.unsplash.com/photo-1583835746434-cf1534674b41?w=200',
-              ],
+              icon: Icons.tv_rounded,
+              gradientColors: const [Color(0xFFEC4899), Color(0xFF8B5CF6)],
               onTap: () => context.go('/watch/anime'),
             ),
           ],

@@ -25,6 +25,7 @@ class BookItem with _$BookItem {
     required String title,
     required String author,
     @Default(BookStatus.toRead) BookStatus status,
+    @Default(false) bool isCollection,
     String? coverUrl,
     String? synopsis,
     @Default([]) List<String> genres,

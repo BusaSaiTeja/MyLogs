@@ -144,8 +144,9 @@ class _MediaDetailScreenState extends ConsumerState<MediaDetailScreen> {
                         await ref
                             .read(mediaListProvider.notifier)
                             .delete(widget.id);
-                        if (mounted)
+                        if (mounted) {
                           canPop ? router.pop() : router.go('/watch');
+                        }
                       }
                     },
                   ),

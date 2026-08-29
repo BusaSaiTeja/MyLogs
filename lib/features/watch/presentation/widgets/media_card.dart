@@ -116,23 +116,7 @@ class MediaCard extends StatelessWidget {
       ),
     );
 
-    if (onDelete == null) return cardChild;
-
-    return Dismissible(
-      key: Key(item.id),
-      direction: DismissDirection.endToStart,
-      onDismissed: (_) => onDelete!(),
-      background: Container(
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
-        decoration: BoxDecoration(
-          color: AppColors.error.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-        ),
-        child: const Icon(Icons.delete_outline_rounded, color: AppColors.error),
-      ),
-      child: cardChild,
-    );
+    return cardChild;
   }
 }
 

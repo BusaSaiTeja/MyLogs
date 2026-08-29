@@ -19,19 +19,35 @@ class ReadTrackerScreen extends ConsumerStatefulWidget {
 
 class _ReadTrackerScreenState extends ConsumerState<ReadTrackerScreen> {
   int _selectedTab = 0;
-  static const _tabs = ['To Read', 'Reading', 'Read', 'Collection'];
+  final PageController _pageController = PageController();
+
+  static const _tabs = ['Reading', 'Read', 'To Read', 'Collection'];
   static const _statuses = [
-    BookStatus.toRead,
     BookStatus.reading,
     BookStatus.read,
+    BookStatus.toRead,
     BookStatus.collection,
   ];
 
   @override
-  Widget build(BuildContext context) {
-    final currentStatus = _statuses[_selectedTab];
-    final books = ref.watch(booksByStatusProvider(currentStatus));
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
+  void _onTabSelected(int index) {
+    setState(() => _selectedTab = index);
+    if (_pageController.hasClients) {
+      _pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOutCubic,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -60,31 +76,43 @@ class _ReadTrackerScreenState extends ConsumerState<ReadTrackerScreen> {
             child: PillTabBar(
               tabs: _tabs,
               selectedIndex: _selectedTab,
-              onTabSelected: (i) => setState(() => _selectedTab = i),
+              onTabSelected: _onTabSelected,
             ),
           ),
           const SizedBox(height: AppSpacing.stackGap),
           Expanded(
-            child: books.isEmpty
-                ? EmptyState(
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: _statuses.length,
+              onPageChanged: (i) => setState(() => _selectedTab = i),
+              itemBuilder: (context, tabIdx) {
+                final status = _statuses[tabIdx];
+                final books = ref.watch(booksByStatusProvider(status));
+
+                if (books.isEmpty) {
+                  return EmptyState(
                     icon: Icons.book_outlined,
-                    title: 'No books here yet',
+                    title: 'No ${_tabs[tabIdx].toLowerCase()} books',
                     subtitle: 'Add your first book to your library',
                     actionLabel: 'Add Book',
                     onAction: () => context.push('/read/add'),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.all(16.0),
-                    itemCount: books.length,
-                    itemBuilder: (context, i) => Padding(
-                      padding: const EdgeInsets.only(bottom: 12.0),
-                      child: BookCard(
-                        book: books[i],
-                        onTap: () => context.push('/read/${books[i].id}'),
-                        onDelete: () => ref.read(bookListProvider.notifier).delete(books[i].id),
-                      ),
+                  );
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  itemCount: books.length,
+                  itemBuilder: (context, i) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12.0),
+                    child: BookCard(
+                      book: books[i],
+                      onTap: () => context.push('/read/${books[i].id}'),
+                      onDelete: () => ref.read(bookListProvider.notifier).delete(books[i].id),
                     ),
                   ),
+                );
+              },
+            ),
           ),
         ],
       ),

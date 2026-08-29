@@ -66,42 +66,38 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
+    FocusScope.of(context).unfocus();
     final now = DateTime.now();
 
-    final router = GoRouter.of(context);
-    final messenger = ScaffoldMessenger.of(context);
-
-    try {
-      if (_isEdit) {
-        final existing = (ref.read(taskListProvider).valueOrNull ?? [])
-            .where((t) => t.id == widget.taskId)
-            .firstOrNull;
-        if (existing == null) return;
-        await ref.read(taskListProvider.notifier).updateItem(existing.copyWith(
+    if (_isEdit) {
+      final existing = (ref.read(taskListProvider).valueOrNull ?? [])
+          .where((t) => t.id == widget.taskId)
+          .firstOrNull;
+      if (existing != null) {
+        ref.read(taskListProvider.notifier).updateItem(existing.copyWith(
               title: _titleCtrl.text.trim(),
               description: _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
               priority: _priority,
               dueDate: _dueDate,
-              updatedAt: now,
-            ));
-      } else {
-        await ref.read(taskListProvider.notifier).add(TaskItem(
-              id: '',
-              title: _titleCtrl.text.trim(),
-              description: _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
-              priority: _priority,
-              dueDate: _dueDate,
-              createdAt: now,
               updatedAt: now,
             ));
       }
-      if (!mounted) return;
-      router.pop();
-    } catch (e) {
-      if (!mounted) return;
-      messenger.showSnackBar(
-        SnackBar(content: Text('Failed to save task: $e')),
-      );
+    } else {
+      ref.read(taskListProvider.notifier).add(TaskItem(
+            id: '',
+            title: _titleCtrl.text.trim(),
+            description: _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
+            priority: _priority,
+            dueDate: _dueDate,
+            createdAt: now,
+            updatedAt: now,
+          ));
+    }
+
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go('/tasks');
     }
   }
 
@@ -141,9 +137,11 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                   ),
                 );
                 if (confirm == true && context.mounted) {
-                  await ref.read(taskListProvider.notifier).delete(widget.taskId!);
-                  if (context.mounted) {
-                    context.canPop() ? context.pop() : context.go('/tasks');
+                  ref.read(taskListProvider.notifier).delete(widget.taskId!);
+                  if (context.canPop()) {
+                    context.pop();
+                  } else {
+                    context.go('/tasks');
                   }
                 }
               },

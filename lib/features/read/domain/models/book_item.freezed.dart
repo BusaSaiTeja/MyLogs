@@ -25,6 +25,7 @@ mixin _$BookItem {
   String get title => throw _privateConstructorUsedError;
   String get author => throw _privateConstructorUsedError;
   BookStatus get status => throw _privateConstructorUsedError;
+  bool get isCollection => throw _privateConstructorUsedError;
   String? get coverUrl => throw _privateConstructorUsedError;
   String? get synopsis => throw _privateConstructorUsedError;
   List<String> get genres => throw _privateConstructorUsedError;
@@ -55,6 +56,7 @@ abstract class $BookItemCopyWith<$Res> {
     String title,
     String author,
     BookStatus status,
+    bool isCollection,
     String? coverUrl,
     String? synopsis,
     List<String> genres,
@@ -86,6 +88,7 @@ class _$BookItemCopyWithImpl<$Res, $Val extends BookItem>
     Object? title = null,
     Object? author = null,
     Object? status = null,
+    Object? isCollection = null,
     Object? coverUrl = freezed,
     Object? synopsis = freezed,
     Object? genres = null,
@@ -114,6 +117,10 @@ class _$BookItemCopyWithImpl<$Res, $Val extends BookItem>
                 ? _value.status
                 : status // ignore: cast_nullable_to_non_nullable
                       as BookStatus,
+            isCollection: null == isCollection
+                ? _value.isCollection
+                : isCollection // ignore: cast_nullable_to_non_nullable
+                      as bool,
             coverUrl: freezed == coverUrl
                 ? _value.coverUrl
                 : coverUrl // ignore: cast_nullable_to_non_nullable
@@ -170,6 +177,7 @@ abstract class _$$BookItemImplCopyWith<$Res>
     String title,
     String author,
     BookStatus status,
+    bool isCollection,
     String? coverUrl,
     String? synopsis,
     List<String> genres,
@@ -200,6 +208,7 @@ class __$$BookItemImplCopyWithImpl<$Res>
     Object? title = null,
     Object? author = null,
     Object? status = null,
+    Object? isCollection = null,
     Object? coverUrl = freezed,
     Object? synopsis = freezed,
     Object? genres = null,
@@ -228,6 +237,10 @@ class __$$BookItemImplCopyWithImpl<$Res>
             ? _value.status
             : status // ignore: cast_nullable_to_non_nullable
                   as BookStatus,
+        isCollection: null == isCollection
+            ? _value.isCollection
+            : isCollection // ignore: cast_nullable_to_non_nullable
+                  as bool,
         coverUrl: freezed == coverUrl
             ? _value.coverUrl
             : coverUrl // ignore: cast_nullable_to_non_nullable
@@ -277,6 +290,7 @@ class _$BookItemImpl implements _BookItem {
     required this.title,
     required this.author,
     this.status = BookStatus.toRead,
+    this.isCollection = false,
     this.coverUrl,
     this.synopsis,
     final List<String> genres = const [],
@@ -300,6 +314,9 @@ class _$BookItemImpl implements _BookItem {
   @override
   @JsonKey()
   final BookStatus status;
+  @override
+  @JsonKey()
+  final bool isCollection;
   @override
   final String? coverUrl;
   @override
@@ -329,7 +346,7 @@ class _$BookItemImpl implements _BookItem {
 
   @override
   String toString() {
-    return 'BookItem(id: $id, title: $title, author: $author, status: $status, coverUrl: $coverUrl, synopsis: $synopsis, genres: $genres, rating: $rating, currentPage: $currentPage, totalPages: $totalPages, notes: $notes, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'BookItem(id: $id, title: $title, author: $author, status: $status, isCollection: $isCollection, coverUrl: $coverUrl, synopsis: $synopsis, genres: $genres, rating: $rating, currentPage: $currentPage, totalPages: $totalPages, notes: $notes, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -341,6 +358,8 @@ class _$BookItemImpl implements _BookItem {
             (identical(other.title, title) || other.title == title) &&
             (identical(other.author, author) || other.author == author) &&
             (identical(other.status, status) || other.status == status) &&
+            (identical(other.isCollection, isCollection) ||
+                other.isCollection == isCollection) &&
             (identical(other.coverUrl, coverUrl) ||
                 other.coverUrl == coverUrl) &&
             (identical(other.synopsis, synopsis) ||
@@ -366,6 +385,7 @@ class _$BookItemImpl implements _BookItem {
     title,
     author,
     status,
+    isCollection,
     coverUrl,
     synopsis,
     const DeepCollectionEquality().hash(_genres),
@@ -397,6 +417,7 @@ abstract class _BookItem implements BookItem {
     required final String title,
     required final String author,
     final BookStatus status,
+    final bool isCollection,
     final String? coverUrl,
     final String? synopsis,
     final List<String> genres,
@@ -419,6 +440,8 @@ abstract class _BookItem implements BookItem {
   String get author;
   @override
   BookStatus get status;
+  @override
+  bool get isCollection;
   @override
   String? get coverUrl;
   @override

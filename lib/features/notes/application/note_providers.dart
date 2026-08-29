@@ -1,11 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:my_logs/features/notes/data/mock_note_repository.dart';
+import 'package:my_logs/core/services/auth_service.dart';
+import 'package:my_logs/features/notes/data/firestore_note_repository.dart';
 import 'package:my_logs/features/notes/domain/models/note_item.dart';
 import 'package:my_logs/features/notes/domain/note_repository.dart';
 
 // ── Repository Provider ───────────────────────────────────────────────────────
 final noteRepositoryProvider = Provider<NoteRepository>((ref) {
-  return MockNoteRepository();
+  final authService = ref.watch(authServiceProvider);
+  return FirestoreNoteRepository(authService: authService);
 });
 
 // ── Categories State ──────────────────────────────────────────────────────────

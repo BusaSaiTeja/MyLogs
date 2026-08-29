@@ -1,11 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:my_logs/features/learning_paths/data/mock_learning_path_repository.dart';
+import 'package:my_logs/core/services/auth_service.dart';
+import 'package:my_logs/features/learning_paths/data/firestore_learning_path_repository.dart';
 import 'package:my_logs/features/learning_paths/domain/learning_path_repository.dart';
 import 'package:my_logs/features/learning_paths/domain/models/learning_path.dart';
 
 // ── Repository Provider ───────────────────────────────────────────────────────
 final learningPathRepositoryProvider = Provider<LearningPathRepository>((ref) {
-  return MockLearningPathRepository();
+  final authService = ref.watch(authServiceProvider);
+  return FirestoreLearningPathRepository(authService: authService);
 });
 
 // ── Notifier ──────────────────────────────────────────────────────────────────

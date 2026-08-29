@@ -64,7 +64,7 @@ class _BookFormScreenState extends ConsumerState<BookFormScreen> {
           _addToCollection = true;
         } else {
           _status = book.status;
-          _addToCollection = false;
+          _addToCollection = book.isCollection;
         }
         setState(() {});
       });
@@ -84,10 +84,13 @@ class _BookFormScreenState extends ConsumerState<BookFormScreen> {
     super.dispose();
   }
 
+  int _searchSessionId = 0;
+
   void _onTitleChanged(String query) {
-    _suggestionDismissed = false;
-    _debounceTimer?.cancel();
-    if (query.trim().length < 2) {
+    if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+    final clean = query.trim();
+    if (clean.length < 2) {
+      _searchSessionId++;
       setState(() {
         _suggestions = [];
         _isLoadingSuggestions = false;
@@ -95,23 +98,33 @@ class _BookFormScreenState extends ConsumerState<BookFormScreen> {
       });
       return;
     }
+    _suggestionDismissed = false;
+    _debounceTimer = Timer(const Duration(milliseconds: 300), () => _fetchSuggestions(clean));
+  }
 
+  Future<void> _fetchSuggestions(String query) async {
+    final currentSession = ++_searchSessionId;
     setState(() {
       _isLoadingSuggestions = true;
       _showNoResultsMsg = false;
     });
 
-    _debounceTimer = Timer(const Duration(milliseconds: 450), () async {
-      final results = await ref
-          .read(googleBooksServiceProvider)
-          .searchBooks(query, author: _authorCtrl.text.trim().isEmpty ? null : _authorCtrl.text.trim());
-      if (!mounted) return;
+    try {
+      final results = await ref.read(googleBooksServiceProvider).searchBooks(query);
+      if (!mounted || currentSession != _searchSessionId) return;
+
+      setState(() {
+        _suggestions = results;
+        _isLoadingSuggestions = false;
+        _showNoResultsMsg = results.isEmpty && !_suggestionDismissed && _titleCtrl.text.trim().length >= 2;
+      });
+    } catch (_) {
+      if (!mounted || currentSession != _searchSessionId) return;
       setState(() {
         _isLoadingSuggestions = false;
-        _suggestions = results;
-        _showNoResultsMsg = results.isEmpty && !_suggestionDismissed;
+        _showNoResultsMsg = true;
       });
-    });
+    }
   }
 
   void _applySuggestion(GoogleBookSuggestion book) {
@@ -119,12 +132,16 @@ class _BookFormScreenState extends ConsumerState<BookFormScreen> {
     setState(() {
       _titleCtrl.text = book.title;
       _authorCtrl.text = book.author;
-      if (book.coverUrl != null) _coverCtrl.text = book.coverUrl!;
-      if (book.pageCount != null) _totalPagesCtrl.text = book.pageCount.toString();
-      if (book.categories.isNotEmpty) _genresCtrl.text = book.categories.join(', ');
-      if (book.language != null) _languageCtrl.text = book.language!;
+      if (book.coverUrl != null && book.coverUrl!.isNotEmpty) {
+        _coverCtrl.text = book.coverUrl!;
+      }
+      if (book.pageCount != null && book.pageCount! > 0) {
+        _totalPagesCtrl.text = book.pageCount.toString();
+      }
+      if (book.categories.isNotEmpty) {
+        _genresCtrl.text = book.categories.join(', ');
+      }
       _suggestions = [];
-      _isLoadingSuggestions = false;
       _showNoResultsMsg = false;
       _suggestionDismissed = true;
     });
@@ -140,50 +157,47 @@ class _BookFormScreenState extends ConsumerState<BookFormScreen> {
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
+    FocusScope.of(context).unfocus();
     final genres = _genresCtrl.text
         .split(',')
         .map((g) => g.trim())
         .where((g) => g.isNotEmpty)
         .toList();
     final now = DateTime.now();
-    final finalStatus = _addToCollection ? BookStatus.collection : _status;
 
-    final router = GoRouter.of(context);
-    final messenger = ScaffoldMessenger.of(context);
-
-    try {
-      if (_isEdit && widget.bookId != null) {
-        final existing = ref.read(bookByIdProvider(widget.bookId!));
-        if (existing == null) return;
-        await ref.read(bookListProvider.notifier).updateItem(existing.copyWith(
+    if (_isEdit && widget.bookId != null) {
+      final existing = ref.read(bookByIdProvider(widget.bookId!));
+      if (existing != null) {
+        ref.read(bookListProvider.notifier).updateItem(existing.copyWith(
               title: _titleCtrl.text.trim(),
               author: _authorCtrl.text.trim(),
               coverUrl: _coverCtrl.text.trim().isEmpty ? null : _coverCtrl.text.trim(),
               totalPages: int.tryParse(_totalPagesCtrl.text),
               genres: genres,
-              status: finalStatus,
-              updatedAt: now,
-            ));
-      } else {
-        await ref.read(bookListProvider.notifier).add(BookItem(
-              id: '',
-              title: _titleCtrl.text.trim(),
-              author: _authorCtrl.text.trim(),
-              coverUrl: _coverCtrl.text.trim().isEmpty ? null : _coverCtrl.text.trim(),
-              totalPages: int.tryParse(_totalPagesCtrl.text),
-              genres: genres,
-              status: finalStatus,
-              createdAt: now,
+              status: _status,
+              isCollection: _addToCollection,
               updatedAt: now,
             ));
       }
-      if (!mounted) return;
-      router.pop();
-    } catch (e) {
-      if (!mounted) return;
-      messenger.showSnackBar(
-        SnackBar(content: Text('Failed to save book: $e')),
-      );
+    } else {
+      ref.read(bookListProvider.notifier).add(BookItem(
+            id: '',
+            title: _titleCtrl.text.trim(),
+            author: _authorCtrl.text.trim(),
+            coverUrl: _coverCtrl.text.trim().isEmpty ? null : _coverCtrl.text.trim(),
+            totalPages: int.tryParse(_totalPagesCtrl.text),
+            genres: genres,
+            status: _status,
+            isCollection: _addToCollection,
+            createdAt: now,
+            updatedAt: now,
+          ));
+    }
+
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go('/read');
     }
   }
 
@@ -262,58 +276,61 @@ class _BookFormScreenState extends ConsumerState<BookFormScreen> {
                     boxShadow: AppColors.cardShadow,
                     border: Border.all(color: AppColors.outlineVariant),
                   ),
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.symmetric(vertical: 6),
-                    itemCount: _suggestions.length,
-                    separatorBuilder: (_, _) => Divider(
-                      height: 1,
-                      color: AppColors.outline.withValues(alpha: 0.1),
-                    ),
-                    itemBuilder: (_, i) {
-                      final item = _suggestions[i];
-                      return ListTile(
-                        dense: true,
-                        leading: item.coverUrl != null
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(4),
-                                child: CachedNetworkImage(
-                                  imageUrl: item.coverUrl!,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      itemCount: _suggestions.length,
+                      separatorBuilder: (_, _) => Divider(
+                        height: 1,
+                        color: AppColors.outline.withValues(alpha: 0.1),
+                      ),
+                      itemBuilder: (_, i) {
+                        final item = _suggestions[i];
+                        return ListTile(
+                          dense: true,
+                          leading: item.coverUrl != null
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(4),
+                                  child: CachedNetworkImage(
+                                    imageUrl: item.coverUrl!,
+                                    width: 32,
+                                    height: 46,
+                                    fit: BoxFit.cover,
+                                    placeholder: (_, _) => Container(
+                                      width: 32,
+                                      height: 46,
+                                      color: AppColors.surfaceContainerLow,
+                                    ),
+                                    errorWidget: (_, _, _) => Container(
+                                      width: 32,
+                                      height: 46,
+                                      color: AppColors.surfaceContainerLow,
+                                      child: const Icon(Icons.book, size: 16),
+                                    ),
+                                  ),
+                                )
+                              : Container(
                                   width: 32,
                                   height: 46,
-                                  fit: BoxFit.cover,
-                                  placeholder: (_, _) => Container(
-                                    width: 32,
-                                    height: 46,
-                                    color: AppColors.surfaceContainerLow,
-                                  ),
-                                  errorWidget: (_, _, _) => Container(
-                                    width: 32,
-                                    height: 46,
-                                    color: AppColors.surfaceContainerLow,
-                                    child: const Icon(Icons.book, size: 16),
-                                  ),
+                                  color: AppColors.surfaceContainerLow,
+                                  child: const Icon(Icons.book, size: 16),
                                 ),
-                              )
-                            : Container(
-                                width: 32,
-                                height: 46,
-                                color: AppColors.surfaceContainerLow,
-                                child: const Icon(Icons.book, size: 16),
-                              ),
-                        title: Text(
-                          item.title,
-                          style: AppTypography.bodyLg.copyWith(fontSize: 14),
-                        ),
-                        subtitle: Text(
-                          '${item.author}${item.pageCount != null ? " • ${item.pageCount} pgs" : ""}',
-                          style: AppTypography.bodyMdVariant().copyWith(fontSize: 12),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        onTap: () => _applySuggestion(item),
-                      );
-                    },
+                          title: Text(
+                            item.title,
+                            style: AppTypography.bodyLg.copyWith(fontSize: 14),
+                          ),
+                          subtitle: Text(
+                            '${item.author}${item.pageCount != null ? " • ${item.pageCount} pgs" : ""}',
+                            style: AppTypography.bodyMdVariant().copyWith(fontSize: 12),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          onTap: () => _applySuggestion(item),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],

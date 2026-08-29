@@ -1,13 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:my_logs/core/services/auth_service.dart';
 import 'package:my_logs/core/utils/date_utils.dart';
 import 'package:my_logs/core/utils/notification_service.dart';
-import 'package:my_logs/features/reminders/data/mock_reminder_repository.dart';
+import 'package:my_logs/features/reminders/data/firestore_reminder_repository.dart';
 import 'package:my_logs/features/reminders/domain/models/reminder_item.dart';
 import 'package:my_logs/features/reminders/domain/reminder_repository.dart';
 
 // ── Repository Provider ───────────────────────────────────────────────────────
 final reminderRepositoryProvider = Provider<ReminderRepository>((ref) {
-  return MockReminderRepository();
+  final authService = ref.watch(authServiceProvider);
+  return FirestoreReminderRepository(authService: authService);
 });
 
 // ── Notifier ──────────────────────────────────────────────────────────────────

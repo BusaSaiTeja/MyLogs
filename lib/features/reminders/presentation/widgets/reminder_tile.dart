@@ -21,53 +21,39 @@ class ReminderTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Dismissible(
-      key: Key(reminder.id),
-      direction: DismissDirection.endToStart,
-      onDismissed: (_) => onDelete(),
-      background: Container(
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
-        decoration: BoxDecoration(
-          color: AppColors.error.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-        ),
-        child: const Icon(Icons.delete_outline_rounded, color: AppColors.error),
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppSpacing.unit * 2),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
+        boxShadow: AppColors.cardShadow,
       ),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: AppSpacing.unit * 2),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: AppColors.surfaceContainerLowest,
-          borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-          boxShadow: AppColors.cardShadow,
-        ),
-        child: Row(
-          children: [
-            const Icon(Icons.alarm_rounded, color: AppColors.primary, size: 20),
-            const SizedBox(width: 12),
-            Expanded(
-              child: GestureDetector(
-                onTap: onTap,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(reminder.title, style: AppTypography.bodyLg),
-                    Text(
-                      '${AppDateUtils.formatTime(reminder.scheduledTime)} • ${(reminder.recurrence == ReminderRecurrence.custom && reminder.customDaysText != null && reminder.customDaysText!.isNotEmpty) ? reminder.customDaysText! : reminder.recurrence.label}',
-                      style: AppTypography.labelMdOutline(),
-                    ),
-                  ],
-                ),
+      child: Row(
+        children: [
+          const Icon(Icons.alarm_rounded, color: AppColors.primary, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: GestureDetector(
+              onTap: onTap,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(reminder.title, style: AppTypography.bodyLg),
+                  Text(
+                    '${AppDateUtils.formatTime(reminder.scheduledTime)} • ${(reminder.recurrence == ReminderRecurrence.custom && reminder.customDaysText != null && reminder.customDaysText!.isNotEmpty) ? reminder.customDaysText! : reminder.recurrence.label}',
+                    style: AppTypography.labelMdOutline(),
+                  ),
+                ],
               ),
             ),
-            Switch(
-              value: reminder.isEnabled,
-              onChanged: (_) => onToggle(),
-              activeThumbColor: AppColors.primary,
-            ),
-          ],
-        ),
+          ),
+          Switch(
+            value: reminder.isEnabled,
+            onChanged: (_) => onToggle(),
+            activeThumbColor: AppColors.primary,
+          ),
+        ],
       ),
     );
   }

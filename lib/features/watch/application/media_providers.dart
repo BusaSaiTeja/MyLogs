@@ -1,12 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:my_logs/features/watch/data/mock_media_repository.dart';
+import 'package:my_logs/core/services/auth_service.dart';
+import 'package:my_logs/features/watch/data/firestore_media_repository.dart';
 import 'package:my_logs/features/watch/domain/media_repository.dart';
 import 'package:my_logs/features/watch/domain/models/media_item.dart';
 
 // ── Repository Provider ───────────────────────────────────────────────────────
-/// Phase 2: swap MockMediaRepository → FirestoreMediaRepository here only.
 final mediaRepositoryProvider = Provider<MediaRepository>((ref) {
-  return MockMediaRepository();
+  final authService = ref.watch(authServiceProvider);
+  return FirestoreMediaRepository(authService: authService);
 });
 
 // ── Stats for Watch Hub cards ─────────────────────────────────────────────────

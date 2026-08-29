@@ -20,6 +20,7 @@ class MediaListScreen extends ConsumerStatefulWidget {
 class _MediaListScreenState extends ConsumerState<MediaListScreen> {
   int _selectedTab = 0;
   String _searchQuery = '';
+  final PageController _pageController = PageController();
 
   static const _tabs = ['Plan to Watch', 'Watching', 'Completed', 'On Hold', 'Dropped'];
   static const _statuses = [
@@ -29,6 +30,12 @@ class _MediaListScreenState extends ConsumerState<MediaListScreen> {
     MediaStatus.onHold,
     MediaStatus.dropped,
   ];
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   String get _addRoute => switch (widget.category) {
         MediaCategory.movie => '/watch/movies/add',
@@ -42,16 +49,19 @@ class _MediaListScreenState extends ConsumerState<MediaListScreen> {
         MediaCategory.anime => '/watch/anime/$id',
       };
 
+  void _onTabSelected(int index) {
+    setState(() => _selectedTab = index);
+    if (_pageController.hasClients) {
+      _pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOutCubic,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final currentStatus = _statuses[_selectedTab];
-    final items = ref.watch(mediaByCategoryAndStatus((widget.category, currentStatus)));
-    final filtered = _searchQuery.isEmpty
-        ? items
-        : items
-            .where((m) => m.title.toLowerCase().contains(_searchQuery.toLowerCase()))
-            .toList();
-
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -97,32 +107,51 @@ class _MediaListScreenState extends ConsumerState<MediaListScreen> {
             child: PillTabBar(
               tabs: _tabs,
               selectedIndex: _selectedTab,
-              onTabSelected: (i) => setState(() => _selectedTab = i),
+              onTabSelected: _onTabSelected,
             ),
           ),
-          // ── List ──────────────────────────────────────────────────────────
+          // ── Swipeable PageView List ───────────────────────────────────────
           Expanded(
-            child: filtered.isEmpty
-                ? EmptyState(
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: _statuses.length,
+              onPageChanged: (i) => setState(() => _selectedTab = i),
+              itemBuilder: (context, tabIdx) {
+                final status = _statuses[tabIdx];
+                final items = ref.watch(mediaByCategoryAndStatus((widget.category, status)));
+                final filtered = _searchQuery.isEmpty
+                    ? items
+                    : items
+                        .where((m) =>
+                            m.title.toLowerCase().contains(_searchQuery.toLowerCase()))
+                        .toList();
+
+                if (filtered.isEmpty) {
+                  return EmptyState(
                     icon: Icons.movie_outlined,
-                    title: 'Nothing here yet',
+                    title: 'No ${_tabs[tabIdx].toLowerCase()} items',
                     subtitle: 'Add your first ${widget.category.label.toLowerCase()}',
                     actionLabel: 'Add',
                     onAction: () => context.push(_addRoute),
-                  )
-                : ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
-                    itemCount: filtered.length,
-                    separatorBuilder: (_, _) => const SizedBox(height: 10.0),
-                    itemBuilder: (context, i) {
-                      final item = filtered[i];
-                      return MediaCard(
-                        item: item,
-                        onTap: () => context.push(_detailRoute(item.id)),
-                        onDelete: () => ref.read(mediaListProvider.notifier).delete(item.id),
-                      );
-                    },
-                  ),
+                  );
+                }
+
+                return ListView.separated(
+                  padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
+                  itemCount: filtered.length,
+                  separatorBuilder: (_, _) => const SizedBox(height: 10.0),
+                  itemBuilder: (context, i) {
+                    final item = filtered[i];
+                    return MediaCard(
+                      item: item,
+                      onTap: () => context.push(_detailRoute(item.id)),
+                      onDelete: () =>
+                          ref.read(mediaListProvider.notifier).delete(item.id),
+                    );
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),

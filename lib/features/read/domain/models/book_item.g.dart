@@ -14,6 +14,7 @@ _$BookItemImpl _$$BookItemImplFromJson(Map<String, dynamic> json) =>
       status:
           $enumDecodeNullable(_$BookStatusEnumMap, json['status']) ??
           BookStatus.toRead,
+      isCollection: json['isCollection'] as bool? ?? false,
       coverUrl: json['coverUrl'] as String?,
       synopsis: json['synopsis'] as String?,
       genres:
@@ -35,6 +36,7 @@ Map<String, dynamic> _$$BookItemImplToJson(_$BookItemImpl instance) =>
       'title': instance.title,
       'author': instance.author,
       'status': _$BookStatusEnumMap[instance.status]!,
+      'isCollection': instance.isCollection,
       'coverUrl': instance.coverUrl,
       'synopsis': instance.synopsis,
       'genres': instance.genres,

@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_logs/features/home/presentation/home_screen.dart';
@@ -18,13 +20,37 @@ import 'package:my_logs/features/notes/presentation/note_detail_screen.dart';
 import 'package:my_logs/features/learning_paths/presentation/learning_paths_screen.dart';
 import 'package:my_logs/features/learning_paths/presentation/path_detail_screen.dart';
 import 'package:my_logs/features/learning_paths/presentation/path_form_screen.dart';
+import 'package:my_logs/features/auth/presentation/login_screen.dart';
 import 'package:my_logs/features/profile/presentation/profile_screen.dart';
-import 'package:my_logs/features/settings/presentation/settings_screen.dart';
 import 'package:my_logs/core/theme/app_colors.dart';
 import 'package:my_logs/core/theme/app_typography.dart';
 
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Stream<dynamic> stream) {
+    notifyListeners();
+    _subscription = stream.asBroadcastStream().listen((_) => notifyListeners());
+  }
+
+  late final StreamSubscription<dynamic> _subscription;
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
+}
+
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
+  refreshListenable: GoRouterRefreshStream(FirebaseAuth.instance.authStateChanges()),
+  redirect: (BuildContext context, GoRouterState state) {
+    final bool loggedIn = FirebaseAuth.instance.currentUser != null;
+    final bool loggingIn = state.matchedLocation == '/login';
+
+    if (!loggedIn && !loggingIn) return '/login';
+    if (loggedIn && loggingIn) return '/';
+    return null;
+  },
   routes: [
     StatefulShellRoute.indexedStack(
       builder: (context, state, shell) => _MainShell(navigationShell: shell),
@@ -263,8 +289,8 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const ProfileScreen(),
     ),
     GoRoute(
-      path: '/settings',
-      builder: (context, state) => const SettingsScreen(),
+      path: '/login',
+      builder: (context, state) => const LoginScreen(),
     ),
   ],
 );
@@ -276,12 +302,23 @@ class _MainShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: navigationShell,
-      bottomNavigationBar: _MyLogBottomNav(
-        selectedIndex: navigationShell.currentIndex,
-        onDestinationSelected: (index) =>
-            navigationShell.goBranch(index, initialLocation: index == navigationShell.currentIndex),
+    final isHome = navigationShell.currentIndex == 0;
+
+    return PopScope(
+      canPop: isHome,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        if (!isHome) {
+          navigationShell.goBranch(0);
+        }
+      },
+      child: Scaffold(
+        body: navigationShell,
+        bottomNavigationBar: _MyLogBottomNav(
+          selectedIndex: navigationShell.currentIndex,
+          onDestinationSelected: (index) =>
+              navigationShell.goBranch(index, initialLocation: index == navigationShell.currentIndex),
+        ),
       ),
     );
   }

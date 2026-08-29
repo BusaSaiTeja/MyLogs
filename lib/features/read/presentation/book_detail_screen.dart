@@ -66,6 +66,9 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
       _notesInitialised = true;
     }
 
+    final isInCollection = book.isCollection || book.status == BookStatus.collection;
+    final currentReadingStatus = (book.status == BookStatus.collection) ? BookStatus.toRead : book.status;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: CustomScrollView(
@@ -102,7 +105,6 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
                   child: IconButton(
                     icon: const Icon(Icons.delete_outline_rounded, color: AppColors.error),
                     onPressed: () async {
-                      final router = GoRouter.of(context);
                       final confirm = await showDialog<bool>(
                         context: context,
                         builder: (ctx) => AlertDialog(
@@ -118,10 +120,13 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
                           ],
                         ),
                       );
-                      if (confirm == true && mounted) {
-                        final canPop = router.canPop();
-                        await ref.read(bookListProvider.notifier).delete(widget.id);
-                        if (mounted) canPop ? router.pop() : router.go('/read');
+                      if (confirm == true && context.mounted) {
+                        ref.read(bookListProvider.notifier).delete(widget.id);
+                        if (context.canPop()) {
+                          context.pop();
+                        } else {
+                          context.go('/read');
+                        }
                       }
                     },
                   ),
@@ -201,24 +206,25 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
 
                   const SizedBox(height: AppSpacing.groupGap),
 
-                  // ── Status & Rating card ───────────────────────────────
+                  // ── Status, Rating & Collection Card ───────────────────
                   Container(
                     padding: const EdgeInsets.all(AppSpacing.stackGap),
                     decoration: BoxDecoration(
                       color: AppColors.surfaceContainerLowest,
                       borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
                       border: Border.all(color: AppColors.surfaceContainerHighest),
+                      boxShadow: AppColors.cardShadow,
                     ),
                     child: Column(
                       children: [
                         Row(
                           children: [
-                            // Status
+                            // Reading Status Dropdown
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Status', style: AppTypography.labelMdVariant()),
+                                  Text('Reading Status', style: AppTypography.labelMdVariant()),
                                   const SizedBox(height: 4),
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -228,13 +234,21 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
                                     ),
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton<BookStatus>(
-                                        value: book.status,
+                                        value: currentReadingStatus,
                                         onChanged: (s) {
-                                          if (s != null) ref.read(bookListProvider.notifier).updateStatus(book.id, s);
+                                          if (s != null) {
+                                            ref.read(bookListProvider.notifier).updateStatus(book.id, s);
+                                          }
                                         },
                                         isDense: true,
                                         style: AppTypography.bodyMd,
-                                        items: BookStatus.values
+                                        items: [
+                                          BookStatus.reading,
+                                          BookStatus.read,
+                                          BookStatus.toRead,
+                                          BookStatus.onHold,
+                                          BookStatus.dropped,
+                                        ]
                                             .map((s) => DropdownMenuItem(value: s, child: Text(s.label)))
                                             .toList(),
                                       ),
@@ -265,17 +279,89 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
                             ),
                           ],
                         ),
+
+                        const SizedBox(height: 12),
+
+                        // ── Collection Toggle Tile ───────────────────────────
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: isInCollection
+                                ? AppColors.primary.withValues(alpha: 0.08)
+                                : AppColors.surface,
+                            borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+                            border: Border.all(
+                              color: isInCollection
+                                  ? AppColors.primary.withValues(alpha: 0.35)
+                                  : AppColors.surfaceContainerHighest,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                isInCollection
+                                    ? Icons.collections_bookmark_rounded
+                                    : Icons.collections_bookmark_outlined,
+                                size: 20,
+                                color: isInCollection
+                                    ? AppColors.primary
+                                    : AppColors.outline,
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'In My Collection',
+                                      style: AppTypography.bodyMd.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: isInCollection
+                                            ? AppColors.primary
+                                            : AppColors.onSurface,
+                                      ),
+                                    ),
+                                    Text(
+                                      isInCollection
+                                          ? 'Book is part of your permanent library'
+                                          : 'Toggle to save to your collection tab',
+                                      style: AppTypography.labelMdVariant().copyWith(fontSize: 11),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Switch.adaptive(
+                                value: isInCollection,
+                                activeTrackColor: AppColors.primary,
+                                onChanged: (val) {
+                                  ref.read(bookListProvider.notifier).toggleCollection(book.id, val);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
+
                   const SizedBox(height: AppSpacing.groupGap),
 
-                  // ── Notes & Review ────────────────────────────────────
+
+
+                  // ── Synopsis ───────────────────────────────────────────
+                  if (book.synopsis != null && book.synopsis!.isNotEmpty) ...[
+                    Text('Synopsis', style: AppTypography.headlineMd),
+                    const SizedBox(height: AppSpacing.stackGap),
+                    Text(book.synopsis!, style: AppTypography.bodyMd),
+                    const SizedBox(height: AppSpacing.groupGap),
+                  ],
+
+                  // ── Personal notes ─────────────────────────────────────
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Notes & Review', style: AppTypography.headlineMd),
-                      const Spacer(),
-                      Text('Auto-saved', style: AppTypography.labelMdOutline()),
+                      Text('Personal Notes', style: AppTypography.headlineMd),
+                      Text('Auto-saved', style: AppTypography.labelMdVariant()),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.stackGap),
@@ -284,12 +370,11 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
                     maxLines: 6,
                     onChanged: (_) => _onNotesChanged(book.id),
                     decoration: const InputDecoration(
-                      hintText: 'Your thoughts, highlights, or review…',
-                      alignLabelWithHint: true,
+                      hintText: 'Add thoughts, quotes, chapter summaries...',
                     ),
-                    style: AppTypography.bodyLg,
+                    style: AppTypography.bodyMd,
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: AppSpacing.groupGap * 2),
                 ],
               ),
             ),

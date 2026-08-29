@@ -26,74 +26,59 @@ class LearningPathCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final completed = path.steps.where((s) => s.isCompleted).length;
 
-    return Dismissible(
-      key: Key(path.id),
-      direction: DismissDirection.endToStart,
-      onDismissed: (_) => onDelete(),
-      background: Container(
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
-        decoration: BoxDecoration(
-          color: AppColors.error.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(AppSpacing.radius2Xl),
-        ),
-        child: const Icon(Icons.delete_outline_rounded, color: AppColors.error),
-      ),
-      child: Material(
-        color: AppColors.surfaceContainerLowest,
-        elevation: 2,
-        shadowColor: const Color(0xFF0F172A).withValues(alpha: 0.15),
+    return Material(
+      color: AppColors.surfaceContainerLowest,
+      elevation: 2,
+      shadowColor: const Color(0xFF0F172A).withValues(alpha: 0.15),
+      borderRadius: BorderRadius.circular(AppSpacing.radius2Xl),
+      child: InkWell(
+        onTap: onTap,
         borderRadius: BorderRadius.circular(AppSpacing.radius2Xl),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(AppSpacing.radius2Xl),
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.stackGap),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        path.title,
-                        style: AppTypography.headlineMd,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.stackGap),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      path.title,
+                      style: AppTypography.headlineMd,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(width: 8),
-                    StatusChip.learningStatus(status),
-                  ],
-                ),
-                if (path.description != null && path.description!.isNotEmpty) ...[
-                  const SizedBox(height: 6),
-                  Text(
-                    path.description!,
-                    style: AppTypography.bodyMdVariant(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
+                  const SizedBox(width: 8),
+                  StatusChip.learningStatus(status),
                 ],
-                const SizedBox(height: AppSpacing.stackGap),
-                // Progress bar
-                AppProgressBar(progress: progress),
+              ),
+              if (path.description != null && path.description!.isNotEmpty) ...[
                 const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Text(
-                      '$completed / ${path.steps.length} steps',
-                      style: AppTypography.labelMdVariant(),
-                    ),
-                    const Spacer(),
-                    Text(
-                      '${(progress * 100).round()}%',
-                      style: AppTypography.labelMdPrimary(),
-                    ),
-                  ],
+                Text(
+                  path.description!,
+                  style: AppTypography.bodyMdVariant(),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
-            ),
+              const SizedBox(height: AppSpacing.stackGap),
+              AppProgressBar(progress: progress),
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  Text(
+                    '$completed / ${path.steps.length} steps',
+                    style: AppTypography.labelMdVariant(),
+                  ),
+                  const Spacer(),
+                  Text(
+                    '${(progress * 100).round()}%',
+                    style: AppTypography.labelMdPrimary(),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),

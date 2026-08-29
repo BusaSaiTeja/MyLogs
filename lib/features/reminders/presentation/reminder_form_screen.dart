@@ -155,14 +155,21 @@ class _ReminderFormScreenState extends ConsumerState<ReminderFormScreen> {
                   ),
                 );
                 if (confirm == true && context.mounted) {
-                  await ref.read(reminderListProvider.notifier).delete(reminderId!);
-                  if (context.mounted) {
-                    context.canPop() ? context.pop() : context.go('/reminders');
+                  ref.read(reminderListProvider.notifier).delete(reminderId!);
+                  if (context.canPop()) {
+                    context.pop();
+                  } else {
+                    context.go('/reminders');
                   }
                 }
               },
             ),
-          TextButton(onPressed: _save, child: Text('Save', style: AppTypography.labelMdPrimary())),
+          TextButton(
+            onPressed: () {
+              _save();
+            },
+            child: Text('Save', style: AppTypography.labelMdPrimary()),
+          ),
         ],
       ),
       body: Form(

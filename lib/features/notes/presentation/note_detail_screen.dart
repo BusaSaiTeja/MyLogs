@@ -234,9 +234,13 @@ class _NoteDetailScreenState extends ConsumerState<NoteDetailScreen> {
                     ),
                   );
                   if (confirm == true && context.mounted) {
-                    await ref.read(noteListProvider.notifier).delete(_currentNoteId!);
-                    if (context.mounted) {
-                      context.canPop() ? context.pop() : context.go('/notes');
+                    final idToDelete = _currentNoteId!;
+                    _currentNoteId = null;
+                    ref.read(noteListProvider.notifier).delete(idToDelete);
+                    if (context.canPop()) {
+                      context.pop();
+                    } else {
+                      context.go('/notes');
                     }
                   }
                 },
