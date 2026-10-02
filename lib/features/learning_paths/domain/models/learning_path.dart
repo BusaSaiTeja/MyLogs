@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:my_logs/core/domain/workspace_scoped.dart';
 
 part 'learning_path.freezed.dart';
 part 'learning_path.g.dart';
@@ -18,7 +19,7 @@ class PathStep with _$PathStep {
 }
 
 @freezed
-class LearningPath with _$LearningPath {
+class LearningPath with _$LearningPath implements WorkspaceScoped {
   const factory LearningPath({
     required String id,
     required String title,

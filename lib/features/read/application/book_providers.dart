@@ -85,11 +85,11 @@ final workspaceFilteredBooksProvider = Provider<List<BookItem>>((ref) {
   final activeId = ref.watch(activeWorkspaceIdProvider).valueOrNull;
   final workspaces = ref.watch(workspaceListProvider).valueOrNull ?? [];
 
-  return books.where((b) => itemMatchesWorkspace(
-        itemWorkspaceId: b.workspaceId,
-        activeWorkspaceId: activeId,
-        allWorkspaces: workspaces,
-      )).toList();
+  return filterWorkspaceItems(
+    items: books,
+    activeWorkspaceId: activeId,
+    allWorkspaces: workspaces,
+  );
 });
 
 // ── Derived Providers ─────────────────────────────────────────────────────────

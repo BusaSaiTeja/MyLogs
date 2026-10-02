@@ -55,13 +55,11 @@ final workspaceFilteredLearningPathsProvider =
   final activeId = ref.watch(activeWorkspaceIdProvider).valueOrNull;
   final workspaces = ref.watch(workspaceListProvider).valueOrNull ?? [];
 
-  return pathsAsync.whenData((paths) => paths
-      .where((p) => itemMatchesWorkspace(
-            itemWorkspaceId: p.workspaceId,
-            activeWorkspaceId: activeId,
-            allWorkspaces: workspaces,
-          ))
-      .toList());
+  return pathsAsync.whenData((paths) => filterWorkspaceItems(
+        items: paths,
+        activeWorkspaceId: activeId,
+        allWorkspaces: workspaces,
+      ));
 });
 
 final learningPathByIdProvider =

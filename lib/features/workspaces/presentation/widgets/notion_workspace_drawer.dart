@@ -1,9 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_logs/core/services/auth_service.dart';
 import 'package:my_logs/core/theme/app_colors.dart';
 import 'package:my_logs/core/theme/app_typography.dart';
+import 'package:my_logs/core/utils/user_display_utils.dart';
 import 'package:my_logs/features/learning_paths/application/learning_path_providers.dart';
 import 'package:my_logs/features/notes/application/note_providers.dart';
 import 'package:my_logs/features/read/application/book_providers.dart';
@@ -11,6 +12,7 @@ import 'package:my_logs/features/reminders/application/reminder_providers.dart';
 import 'package:my_logs/features/tasks/application/task_providers.dart';
 import 'package:my_logs/features/watch/application/media_providers.dart';
 import 'package:my_logs/features/workspaces/application/workspace_providers.dart';
+import 'package:my_logs/features/workspaces/application/workspace_stats_provider.dart';
 import 'package:my_logs/features/workspaces/domain/models/workspace_item.dart';
 import 'package:my_logs/features/workspaces/presentation/widgets/workspace_switcher_modal.dart';
 
@@ -34,7 +36,6 @@ class _NotionWorkspaceDrawerState extends ConsumerState<NotionWorkspaceDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
     final activeWs = ref.watch(activeWorkspaceProvider);
 
     final notes = ref.watch(workspaceFilteredNotesProvider).valueOrNull ?? [];
@@ -59,7 +60,7 @@ class _NotionWorkspaceDrawerState extends ConsumerState<NotionWorkspaceDrawer> {
         child: Column(
           children: [
             // ── Top Header (Workspace Pill + Quick Nav Pills) ──────────────
-            _buildTopHeader(user, activeWs),
+            _buildTopHeader(activeWs),
 
             // ── Scrollable Workspace Content ───────────────────────────────
             Expanded(
@@ -72,7 +73,6 @@ class _NotionWorkspaceDrawerState extends ConsumerState<NotionWorkspaceDrawer> {
                     title: 'Home',
                     icon: Icons.home_outlined,
                     activeIcon: Icons.home_rounded,
-                    color: AppColors.primary,
                     count: 0,
                     isActive: currentLoc == '/' || currentLoc.isEmpty,
                     onTap: () {
@@ -114,7 +114,6 @@ class _NotionWorkspaceDrawerState extends ConsumerState<NotionWorkspaceDrawer> {
                       title: 'Notes',
                       icon: Icons.description_outlined,
                       activeIcon: Icons.description_rounded,
-                      color: const Color(0xFF3B82F6),
                       count: notes.length,
                       isActive: currentLoc.startsWith('/notes'),
                       onTap: () {
@@ -129,7 +128,6 @@ class _NotionWorkspaceDrawerState extends ConsumerState<NotionWorkspaceDrawer> {
                       title: 'Tasks',
                       icon: Icons.check_box_outlined,
                       activeIcon: Icons.check_box_rounded,
-                      color: const Color(0xFF10B981),
                       count: tasks.length,
                       isActive: currentLoc.startsWith('/tasks'),
                       onTap: () {
@@ -144,7 +142,6 @@ class _NotionWorkspaceDrawerState extends ConsumerState<NotionWorkspaceDrawer> {
                       title: 'Reminders',
                       icon: Icons.alarm_rounded,
                       activeIcon: Icons.alarm_on_rounded,
-                      color: const Color(0xFFF59E0B),
                       count: reminders.length,
                       isActive: currentLoc.startsWith('/reminders'),
                       onTap: () {
@@ -159,7 +156,6 @@ class _NotionWorkspaceDrawerState extends ConsumerState<NotionWorkspaceDrawer> {
                       title: 'Read Tracker',
                       icon: Icons.menu_book_outlined,
                       activeIcon: Icons.menu_book_rounded,
-                      color: const Color(0xFF8B5CF6),
                       count: books.length,
                       isActive: currentLoc.startsWith('/read'),
                       onTap: () {
@@ -174,7 +170,6 @@ class _NotionWorkspaceDrawerState extends ConsumerState<NotionWorkspaceDrawer> {
                       title: 'Watch Hub',
                       icon: Icons.movie_outlined,
                       activeIcon: Icons.movie_rounded,
-                      color: const Color(0xFFEC4899),
                       count: media.length,
                       isActive: currentLoc.startsWith('/watch'),
                       onTap: () {
@@ -189,7 +184,6 @@ class _NotionWorkspaceDrawerState extends ConsumerState<NotionWorkspaceDrawer> {
                       title: 'Learning Paths',
                       icon: Icons.alt_route_rounded,
                       activeIcon: Icons.alt_route_rounded,
-                      color: const Color(0xFF06B6D4),
                       count: paths.length,
                       isActive: currentLoc.startsWith('/learning-paths'),
                       onTap: () {
@@ -220,88 +214,71 @@ class _NotionWorkspaceDrawerState extends ConsumerState<NotionWorkspaceDrawer> {
     );
   }
 
-  // ── Top Header (Notion App Logo + Workspace Pill) ──────────────────────────
-  Widget _buildTopHeader(User? user, WorkspaceItem? activeWs) {
+  // ── Top Header (Minimalist Clean Workspace Selector) ──────────────────────
+  Widget _buildTopHeader(WorkspaceItem? activeWs) {
     final wsName = activeWs?.name ?? 'Personal';
     final wsColor = Color(activeWs?.colorValue ?? 0xFF4F46E5);
     final wsInitial = wsName.isNotEmpty ? wsName[0].toUpperCase() : 'P';
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
+      padding: const EdgeInsets.fromLTRB(14, 8, 14, 10),
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: _border, width: 1)),
       ),
-      child: Row(
-        children: [
-          // Stylized Notion / App Icon
-          Container(
-            width: 28,
-            height: 28,
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: const Center(
-              child: Icon(Icons.sticky_note_2_rounded, size: 16, color: Colors.white),
-            ),
-          ),
-          const SizedBox(width: 8),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _showNotionWorkspaceDropdown(context),
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+            child: Row(
+              children: [
+                // Workspace Accent Avatar
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: wsColor,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Center(
+                    child: Text(
+                      wsInitial,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
 
-          // Workspace Pill Button
-          Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () => _showNotionWorkspaceDropdown(context),
-              borderRadius: BorderRadius.circular(8),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: _surface,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: _border, width: 1),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 20,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        color: wsColor,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Center(
-                        child: Text(
-                          wsInitial,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
+                // Workspace Name
+                Expanded(
+                  child: Text(
+                    wsName,
+                    style: const TextStyle(
+                      color: _textPrimary,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.2,
                     ),
-                    const SizedBox(width: 6),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 160),
-                      child: Text(
-                        wsName,
-                        style: const TextStyle(
-                          color: _textPrimary,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    const Icon(Icons.keyboard_arrow_down_rounded, size: 16, color: _textSecondary),
-                  ],
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
+
+                const SizedBox(width: 6),
+                const Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  size: 20,
+                  color: _textSecondary,
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -311,20 +288,15 @@ class _NotionWorkspaceDrawerState extends ConsumerState<NotionWorkspaceDrawer> {
     final activeWs = ref.read(activeWorkspaceProvider);
     final allWorkspaces = ref.read(workspaceListProvider).valueOrNull ?? [];
     final activeId = ref.read(activeWorkspaceIdProvider).valueOrNull;
-    final user = FirebaseAuth.instance.currentUser;
+    final user = ref.read(authStateProvider).valueOrNull;
 
-    final notes = ref.read(workspaceFilteredNotesProvider).valueOrNull ?? [];
-    final tasks = ref.read(todayTasksProvider);
-    final reminders = ref.read(todayRemindersProvider);
-    final books = ref.read(workspaceFilteredBooksProvider);
-    final media = ref.read(workspaceFilteredMediaProvider);
-    final paths = ref.read(workspaceFilteredLearningPathsProvider).valueOrNull ?? [];
-    final totalCount = notes.length + tasks.length + reminders.length + books.length + media.length + paths.length;
+    final stats = ref.read(workspaceStatsProvider);
+    final totalCount = stats.total;
 
     final wsName = activeWs?.name ?? 'Personal';
     final wsColor = Color(activeWs?.colorValue ?? 0xFF4F46E5);
     final wsInitial = wsName.isNotEmpty ? wsName[0].toUpperCase() : 'P';
-    final email = user?.email ?? 'siddusaiteja13@gmail.com';
+    final email = UserDisplayUtils.getEmail(user);
 
     showDialog(
       context: context,
@@ -406,7 +378,7 @@ class _NotionWorkspaceDrawerState extends ConsumerState<NotionWorkspaceDrawer> {
                     title: 'Upgrade / Workspace Stats',
                     onTap: () {
                       Navigator.of(ctx).pop();
-                      _showStatsDialog(notes.length, tasks.length, reminders.length, books.length, media.length, paths.length);
+                      _showStatsDialog(stats);
                     },
                   ),
                   _buildDropdownAction(
@@ -784,7 +756,7 @@ class _NotionWorkspaceDrawerState extends ConsumerState<NotionWorkspaceDrawer> {
             onPressed: () async {
               Navigator.of(dialogCtx).pop(); // close dialog
               Navigator.of(context).pop(); // close drawer
-              await FirebaseAuth.instance.signOut();
+              await ref.read(authServiceProvider).signOut();
             },
             child: const Text(
               'Log Out',
@@ -802,11 +774,12 @@ class _NotionWorkspaceDrawerState extends ConsumerState<NotionWorkspaceDrawer> {
     required String title,
     required IconData icon,
     required IconData activeIcon,
-    required Color color,
     required int count,
     required bool isActive,
     required VoidCallback onTap,
   }) {
+    const activeColor = AppColors.primary;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 4),
       child: Material(
@@ -818,18 +791,18 @@ class _NotionWorkspaceDrawerState extends ConsumerState<NotionWorkspaceDrawer> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
             decoration: BoxDecoration(
               color: isActive
-                  ? color.withValues(alpha: 0.10)
+                  ? activeColor.withValues(alpha: 0.10)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(24),
               border: isActive
-                  ? Border.all(color: color.withValues(alpha: 0.35), width: 1)
+                  ? Border.all(color: activeColor.withValues(alpha: 0.35), width: 1)
                   : null,
             ),
             child: Row(
               children: [
                 Icon(
                   isActive ? activeIcon : icon,
-                  color: isActive ? color : _textSecondary,
+                  color: isActive ? activeColor : _textSecondary,
                   size: 20,
                 ),
                 const SizedBox(width: 14),
@@ -837,7 +810,7 @@ class _NotionWorkspaceDrawerState extends ConsumerState<NotionWorkspaceDrawer> {
                   child: Text(
                     title,
                     style: TextStyle(
-                      color: isActive ? color : _textPrimary,
+                      color: isActive ? activeColor : _textPrimary,
                       fontSize: 14,
                       fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
                     ),
@@ -847,7 +820,7 @@ class _NotionWorkspaceDrawerState extends ConsumerState<NotionWorkspaceDrawer> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
-                      color: isActive ? color : _surface,
+                      color: isActive ? activeColor : _surface,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -1001,7 +974,7 @@ class _NotionWorkspaceDrawerState extends ConsumerState<NotionWorkspaceDrawer> {
     );
   }
 
-  void _showStatsDialog(int notes, int tasks, int reminders, int books, int media, int paths) {
+  void _showStatsDialog(WorkspaceStats stats) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -1011,12 +984,12 @@ class _NotionWorkspaceDrawerState extends ConsumerState<NotionWorkspaceDrawer> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _statItem('Notes', notes),
-            _statItem('Tasks', tasks),
-            _statItem('Reminders', reminders),
-            _statItem('Books', books),
-            _statItem('Movies & Anime', media),
-            _statItem('Learning Paths', paths),
+            _statItem('Notes', stats.notes),
+            _statItem('Tasks', stats.tasks),
+            _statItem('Reminders', stats.reminders),
+            _statItem('Books', stats.books),
+            _statItem('Movies & Anime', stats.media),
+            _statItem('Learning Paths', stats.paths),
           ],
         ),
         actions: [

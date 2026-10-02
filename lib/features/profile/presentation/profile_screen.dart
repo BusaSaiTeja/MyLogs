@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,42 +6,17 @@ import 'package:my_logs/core/services/auth_service.dart';
 import 'package:my_logs/core/theme/app_colors.dart';
 import 'package:my_logs/core/theme/app_spacing.dart';
 import 'package:my_logs/core/theme/app_typography.dart';
+import 'package:my_logs/core/utils/user_display_utils.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
-  String _getUserDisplayName(User? user) {
-    if (user == null) return 'Member';
-    if (user.displayName != null && user.displayName!.trim().isNotEmpty) {
-      return user.displayName!.trim();
-    }
-    if (user.email != null && user.email!.contains('@')) {
-      final name = user.email!.split('@').first;
-      if (name.isNotEmpty) {
-        return name[0].toUpperCase() + name.substring(1);
-      }
-    }
-    return 'Member';
-  }
-
-  String _getInitials(String name) {
-    final clean = name.trim();
-    if (clean.isEmpty) return 'M';
-    final parts = clean.split(' ');
-    if (parts.length >= 2 && parts[0].isNotEmpty && parts[1].isNotEmpty) {
-      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
-    }
-    return clean[0].toUpperCase();
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
-    final user = authState.valueOrNull ?? FirebaseAuth.instance.currentUser;
-    final displayName = _getUserDisplayName(user);
-    final userEmail = (user?.email != null && user!.email!.isNotEmpty)
-        ? user.email!
-        : 'Authenticated Member';
+    final user = authState.valueOrNull;
+    final displayName = UserDisplayUtils.getDisplayName(user);
+    final userEmail = UserDisplayUtils.getEmail(user);
     final creationTime = user?.metadata.creationTime != null
         ? DateFormat('MMMM d, y').format(user!.metadata.creationTime!)
         : 'Active Member';
@@ -101,7 +75,7 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                       child: Center(
                         child: Text(
-                          _getInitials(displayName),
+                          UserDisplayUtils.getInitials(displayName),
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w800,

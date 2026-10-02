@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:my_logs/core/domain/workspace_scoped.dart';
 
 part 'book_item.freezed.dart';
 part 'book_item.g.dart';
@@ -19,7 +20,7 @@ extension BookStatusExt on BookStatus {
 }
 
 @freezed
-class BookItem with _$BookItem {
+class BookItem with _$BookItem implements WorkspaceScoped {
   const factory BookItem({
     required String id,
     required String title,

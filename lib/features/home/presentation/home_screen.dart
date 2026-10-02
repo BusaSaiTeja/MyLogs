@@ -15,8 +15,9 @@ import 'package:my_logs/features/home/presentation/widgets/home_tile.dart';
 import 'package:my_logs/features/home/presentation/widgets/continue_watching_card.dart';
 import 'package:my_logs/features/home/presentation/widgets/currently_reading_tile.dart';
 
-import 'package:my_logs/features/workspaces/presentation/widgets/notion_workspace_drawer.dart';
+import 'package:my_logs/core/widgets/drawer_menu_button.dart';
 
+/// Dashboard with Bento hero overview and grouped surfaces.
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
@@ -34,18 +35,7 @@ class HomeScreen extends ConsumerWidget {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.surface,
-        leading: IconButton(
-          icon: const Icon(Icons.menu_rounded),
-          color: AppColors.obsidian,
-          tooltip: 'Workspace Menu',
-          onPressed: () {
-            if (rootScaffoldKey.currentState?.isDrawerOpen == true) {
-              rootScaffoldKey.currentState?.closeDrawer();
-            } else {
-              rootScaffoldKey.currentState?.openDrawer();
-            }
-          },
-        ),
+        leading: const DrawerMenuButton(tooltip: 'Workspace Menu'),
         title: Text(
           'Home',
           style: AppTypography.headlineLgMobile.copyWith(color: AppColors.obsidian),
@@ -75,7 +65,7 @@ class HomeScreen extends ConsumerWidget {
               Expanded(
                 flex: 11,
                 child: SizedBox(
-                  height: 146,
+                  height: 150,
                   child: HomeStatCard(
                     value: '${todayTasks.length}',
                     label: todayTasks.isEmpty
@@ -95,7 +85,7 @@ class HomeScreen extends ConsumerWidget {
               Expanded(
                 flex: 9,
                 child: SizedBox(
-                  height: 146,
+                  height: 150,
                   child: Column(
                     children: [
                       Expanded(
@@ -148,23 +138,24 @@ class HomeScreen extends ConsumerWidget {
               ),
               clipBehavior: Clip.antiAlias,
               child: Column(
-                children: todayTasks.take(4).toList().asMap().entries.map((entry) {
-                  final i = entry.key;
-                  final t = entry.value;
-                  return HomeTile(
-                    leading: Icon(
-                      t.isCompleted
-                          ? Icons.check_circle_rounded
-                          : Icons.radio_button_unchecked_rounded,
-                      color: t.isCompleted ? AppColors.primary : AppColors.outline,
-                      size: 20,
+                children: [
+                  for (var i = 0; i < todayTasks.take(4).length; i++)
+                    HomeTile(
+                      leading: Icon(
+                        todayTasks[i].isCompleted
+                            ? Icons.check_circle_rounded
+                            : Icons.radio_button_unchecked_rounded,
+                        color: todayTasks[i].isCompleted ? AppColors.primary : AppColors.outline,
+                        size: 20,
+                      ),
+                      title: todayTasks[i].title,
+                      subtitle: todayTasks[i].dueDate != null
+                          ? AppDateUtils.formatDate(todayTasks[i].dueDate!)
+                          : null,
+                      showDivider: i < todayTasks.take(4).length - 1,
+                      onTap: () => context.go('/tasks'),
                     ),
-                    title: t.title,
-                    subtitle: t.dueDate != null ? AppDateUtils.formatDate(t.dueDate!) : null,
-                    showDivider: i < (todayTasks.length.clamp(0, 4) - 1),
-                    onTap: () => context.go('/tasks'),
-                  );
-                }).toList(),
+                ],
               ),
             ),
             sectionGap,
@@ -193,17 +184,16 @@ class HomeScreen extends ConsumerWidget {
               ),
               clipBehavior: Clip.antiAlias,
               child: Column(
-                children: todayReminders.take(3).toList().asMap().entries.map((entry) {
-                  final i = entry.key;
-                  final r = entry.value;
-                  return HomeTile(
-                    leading: const Icon(Icons.alarm_rounded, color: AppColors.primary, size: 20),
-                    title: r.title,
-                    subtitle: AppDateUtils.formatTime(r.scheduledTime),
-                    showDivider: i < (todayReminders.length.clamp(0, 3) - 1),
-                    onTap: () => context.go('/reminders'),
-                  );
-                }).toList(),
+                children: [
+                  for (var i = 0; i < todayReminders.take(3).length; i++)
+                    HomeTile(
+                      leading: const Icon(Icons.alarm_rounded, color: AppColors.primary, size: 20),
+                      title: todayReminders[i].title,
+                      subtitle: AppDateUtils.formatTime(todayReminders[i].scheduledTime),
+                      showDivider: i < todayReminders.take(3).length - 1,
+                      onTap: () => context.go('/reminders'),
+                    ),
+                ],
               ),
             ),
             sectionGap,

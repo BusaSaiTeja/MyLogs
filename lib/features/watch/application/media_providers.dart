@@ -87,11 +87,11 @@ final workspaceFilteredMediaProvider = Provider<List<MediaItem>>((ref) {
   final activeId = ref.watch(activeWorkspaceIdProvider).valueOrNull;
   final workspaces = ref.watch(workspaceListProvider).valueOrNull ?? [];
 
-  return items.where((m) => itemMatchesWorkspace(
-        itemWorkspaceId: m.workspaceId,
-        activeWorkspaceId: activeId,
-        allWorkspaces: workspaces,
-      )).toList();
+  return filterWorkspaceItems(
+    items: items,
+    activeWorkspaceId: activeId,
+    allWorkspaces: workspaces,
+  );
 });
 
 // ── Derived / Filtered Providers ──────────────────────────────────────────────

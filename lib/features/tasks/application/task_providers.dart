@@ -103,11 +103,11 @@ final workspaceFilteredTasksProvider = Provider<List<TaskItem>>((ref) {
   final activeId = ref.watch(activeWorkspaceIdProvider).valueOrNull;
   final workspaces = ref.watch(workspaceListProvider).valueOrNull ?? [];
 
-  return tasks.where((t) => itemMatchesWorkspace(
-        itemWorkspaceId: t.workspaceId,
-        activeWorkspaceId: activeId,
-        allWorkspaces: workspaces,
-      )).toList();
+  return filterWorkspaceItems(
+    items: tasks,
+    activeWorkspaceId: activeId,
+    allWorkspaces: workspaces,
+  );
 });
 
 // ── Derived Providers ────────────────────────────────────────────────────────

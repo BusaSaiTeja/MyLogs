@@ -7,6 +7,7 @@ import 'package:my_logs/core/theme/app_spacing.dart';
 import 'package:my_logs/core/theme/app_typography.dart';
 import 'package:my_logs/features/workspaces/application/workspace_providers.dart';
 import 'package:my_logs/features/workspaces/domain/models/workspace_item.dart';
+import 'package:my_logs/features/workspaces/presentation/widgets/workspace_editor_dialog.dart';
 import 'package:my_logs/features/workspaces/presentation/widgets/workspace_icons.dart';
 
 class WorkspaceSwitcherModal extends ConsumerWidget {
@@ -77,7 +78,7 @@ class WorkspaceSwitcherModal extends ConsumerWidget {
                   TextButton.icon(
                     onPressed: () {
                       context.pop();
-                      _showCreateWorkspaceDialog(context, ref);
+                      WorkspaceEditorDialog.show(context);
                     },
                     icon: const Icon(Icons.add_rounded, size: 18),
                     label: const Text('New'),
@@ -168,7 +169,7 @@ class WorkspaceSwitcherModal extends ConsumerWidget {
                                 icon: const Icon(Icons.edit_outlined, size: 18),
                                 color: AppColors.outline,
                                 visualDensity: VisualDensity.compact,
-                                onPressed: () => _showEditWorkspaceDialog(context, ref, ws),
+                                onPressed: () => WorkspaceEditorDialog.show(context, workspace: ws),
                               ),
                               if (!ws.isDefault && workspaces.length > 1)
                                 IconButton(
@@ -220,236 +221,5 @@ class WorkspaceSwitcherModal extends ConsumerWidget {
     );
   }
 
-  static void _showCreateWorkspaceDialog(BuildContext context, WidgetRef ref) {
-    final nameCtrl = TextEditingController();
-    String selectedIcon = 'folder_outlined';
-    int selectedColor = WorkspaceThemeData.availableColors.first;
-
-    showDialog(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (context, setModalState) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSpacing.radius2Xl)),
-            title: Text('New Workspace', style: AppTypography.headlineMd),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextField(
-                    controller: nameCtrl,
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Workspace Name',
-                      hintText: 'e.g. Work, College, Side Project',
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-                  Text('Choose Icon', style: AppTypography.labelMdVariant()),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: WorkspaceThemeData.availableIcons.entries.map((entry) {
-                      final isSel = selectedIcon == entry.key;
-                      return GestureDetector(
-                        onTap: () => setModalState(() => selectedIcon = entry.key),
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: isSel ? Color(selectedColor).withValues(alpha: 0.15) : AppColors.surfaceContainerLow,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: isSel ? Color(selectedColor) : Colors.transparent,
-                              width: 1.5,
-                            ),
-                          ),
-                          child: Icon(
-                            entry.value,
-                            color: isSel ? Color(selectedColor) : AppColors.onSurfaceVariant,
-                            size: 20,
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 18),
-                  Text('Color Theme', style: AppTypography.labelMdVariant()),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: WorkspaceThemeData.availableColors.map((colorVal) {
-                      final isSel = selectedColor == colorVal;
-                      return GestureDetector(
-                        onTap: () => setModalState(() => selectedColor = colorVal),
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: Color(colorVal),
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: isSel ? Colors.white : Colors.transparent,
-                              width: 2.5,
-                            ),
-                            boxShadow: isSel
-                                ? [BoxShadow(color: Color(colorVal).withValues(alpha: 0.5), blurRadius: 8)]
-                                : null,
-                          ),
-                          child: isSel
-                              ? const Icon(Icons.check, size: 16, color: Colors.white)
-                              : null,
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(onPressed: () => ctx.pop(), child: const Text('Cancel')),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(selectedColor),
-                  foregroundColor: Colors.white,
-                ),
-                onPressed: () async {
-                  final name = nameCtrl.text.trim();
-                  if (name.isEmpty) return;
-                  await ref.read(workspaceListProvider.notifier).addWorkspace(
-                        name: name,
-                        iconName: selectedIcon,
-                        colorValue: selectedColor,
-                      );
-                  if (ctx.mounted) ctx.pop();
-                },
-                child: const Text('Create Workspace'),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  static void _showEditWorkspaceDialog(BuildContext context, WidgetRef ref, WorkspaceItem ws) {
-    final nameCtrl = TextEditingController(text: ws.name);
-    String selectedIcon = ws.iconName;
-    int selectedColor = ws.colorValue;
-
-    showDialog(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (context, setModalState) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSpacing.radius2Xl)),
-            title: Text('Edit Workspace', style: AppTypography.headlineMd),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextField(
-                    controller: nameCtrl,
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Workspace Name',
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-                  Text('Choose Icon', style: AppTypography.labelMdVariant()),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: WorkspaceThemeData.availableIcons.entries.map((entry) {
-                      final isSel = selectedIcon == entry.key;
-                      return GestureDetector(
-                        onTap: () => setModalState(() => selectedIcon = entry.key),
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: isSel ? Color(selectedColor).withValues(alpha: 0.15) : AppColors.surfaceContainerLow,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: isSel ? Color(selectedColor) : Colors.transparent,
-                              width: 1.5,
-                            ),
-                          ),
-                          child: Icon(
-                            entry.value,
-                            color: isSel ? Color(selectedColor) : AppColors.onSurfaceVariant,
-                            size: 20,
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 18),
-                  Text('Color Theme', style: AppTypography.labelMdVariant()),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: WorkspaceThemeData.availableColors.map((colorVal) {
-                      final isSel = selectedColor == colorVal;
-                      return GestureDetector(
-                        onTap: () => setModalState(() => selectedColor = colorVal),
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: Color(colorVal),
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: isSel ? Colors.white : Colors.transparent,
-                              width: 2.5,
-                            ),
-                            boxShadow: isSel
-                                ? [BoxShadow(color: Color(colorVal).withValues(alpha: 0.5), blurRadius: 8)]
-                                : null,
-                          ),
-                          child: isSel
-                              ? const Icon(Icons.check, size: 16, color: Colors.white)
-                              : null,
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(onPressed: () => ctx.pop(), child: const Text('Cancel')),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(selectedColor),
-                  foregroundColor: Colors.white,
-                ),
-                onPressed: () async {
-                  final name = nameCtrl.text.trim();
-                  if (name.isEmpty) return;
-                  await ref.read(workspaceListProvider.notifier).updateWorkspace(
-                        ws.copyWith(
-                          name: name,
-                          iconName: selectedIcon,
-                          colorValue: selectedColor,
-                          updatedAt: DateTime.now(),
-                        ),
-                      );
-                  if (ctx.mounted) ctx.pop();
-                },
-                child: const Text('Save Changes'),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
 }
 

@@ -61,13 +61,11 @@ final workspaceFilteredNotesProvider = Provider<AsyncValue<List<NoteItem>>>((ref
   final activeId = ref.watch(activeWorkspaceIdProvider).valueOrNull;
   final workspaces = ref.watch(workspaceListProvider).valueOrNull ?? [];
 
-  return notesAsync.whenData((notes) => notes
-      .where((n) => itemMatchesWorkspace(
-            itemWorkspaceId: n.workspaceId,
-            activeWorkspaceId: activeId,
-            allWorkspaces: workspaces,
-          ))
-      .toList());
+  return notesAsync.whenData((notes) => filterWorkspaceItems(
+        items: notes,
+        activeWorkspaceId: activeId,
+        allWorkspaces: workspaces,
+      ));
 });
 
 final noteByIdProvider = Provider.family<NoteItem?, String>((ref, id) {

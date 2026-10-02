@@ -9,7 +9,8 @@ import 'package:my_logs/core/widgets/pill_tab_bar.dart';
 import 'package:my_logs/features/notes/application/note_providers.dart';
 import 'package:my_logs/features/notes/presentation/widgets/note_card.dart';
 
-import 'package:my_logs/features/workspaces/presentation/widgets/notion_workspace_drawer.dart';
+import 'package:my_logs/core/widgets/drawer_menu_button.dart';
+import 'package:my_logs/core/widgets/feature_more_options_button.dart';
 
 class NotesScreen extends ConsumerStatefulWidget {
   const NotesScreen({super.key});
@@ -83,65 +84,12 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.surface,
-        leading: IconButton(
-          icon: const Icon(Icons.menu_rounded),
-          color: AppColors.obsidian,
-          tooltip: 'Open menu',
-          onPressed: () {
-            if (rootScaffoldKey.currentState?.isDrawerOpen == true) {
-              rootScaffoldKey.currentState?.closeDrawer();
-            } else {
-              rootScaffoldKey.currentState?.openDrawer();
-            }
-          },
-        ),
+        leading: const DrawerMenuButton(tooltip: 'Open menu'),
         title: Text('Notes',
             style: AppTypography.headlineLgMobile.copyWith(color: AppColors.obsidian)),
         centerTitle: false,
-        actions: [
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert_rounded, color: AppColors.onSurfaceVariant),
-            tooltip: 'More options',
-            onSelected: (value) {
-              if (value == 'disable') {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Disable feature (Coming in Phase 3)'),
-                    duration: Duration(seconds: 2),
-                  ),
-                );
-              } else if (value == 'hide') {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Hide feature (Coming in Phase 3)'),
-                    duration: Duration(seconds: 2),
-                  ),
-                );
-              }
-            },
-            itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: 'disable',
-                child: Row(
-                  children: [
-                    Icon(Icons.block_rounded, size: 20, color: AppColors.onSurfaceVariant),
-                    SizedBox(width: 12),
-                    Text('Disable Feature'),
-                  ],
-                ),
-              ),
-              const PopupMenuItem(
-                value: 'hide',
-                child: Row(
-                  children: [
-                    Icon(Icons.visibility_off_outlined, size: 20, color: AppColors.onSurfaceVariant),
-                    SizedBox(width: 12),
-                    Text('Hide Feature'),
-                  ],
-                ),
-              ),
-            ],
-          ),
+        actions: const [
+          FeatureMoreOptionsButton(featureName: 'Notes'),
         ],
       ),
       floatingActionButton: FloatingActionButton(

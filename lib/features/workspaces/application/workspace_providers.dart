@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:my_logs/core/domain/workspace_scoped.dart';
 import 'package:my_logs/core/services/auth_service.dart';
 import 'package:my_logs/features/workspaces/data/firestore_workspace_repository.dart';
 import 'package:my_logs/features/workspaces/domain/models/workspace_item.dart';
@@ -159,5 +160,20 @@ bool itemMatchesWorkspace({
     return activeWorkspaceId == defaultWs.id;
   }
   return false;
+}
+
+/// Filters any list of WorkspaceScoped entities according to the currently active workspace.
+List<T> filterWorkspaceItems<T extends WorkspaceScoped>({
+  required List<T> items,
+  required String? activeWorkspaceId,
+  required List<WorkspaceItem> allWorkspaces,
+}) {
+  return items
+      .where((item) => itemMatchesWorkspace(
+            itemWorkspaceId: item.workspaceId,
+            activeWorkspaceId: activeWorkspaceId,
+            allWorkspaces: allWorkspaces,
+          ))
+      .toList();
 }
 

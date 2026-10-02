@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:my_logs/core/domain/workspace_scoped.dart';
 
 part 'media_item.freezed.dart';
 part 'media_item.g.dart';
@@ -30,7 +31,7 @@ extension MediaStatusExt on MediaStatus {
 }
 
 @freezed
-class MediaItem with _$MediaItem {
+class MediaItem with _$MediaItem implements WorkspaceScoped {
   const factory MediaItem({
     required String id,
     required String title,

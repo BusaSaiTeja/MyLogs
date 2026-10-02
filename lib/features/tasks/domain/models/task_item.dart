@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:my_logs/core/domain/workspace_scoped.dart';
 
 part 'task_item.freezed.dart';
 part 'task_item.g.dart';
@@ -16,7 +17,7 @@ extension TaskPriorityExt on TaskPriority {
 }
 
 @freezed
-class TaskItem with _$TaskItem {
+class TaskItem with _$TaskItem implements WorkspaceScoped {
   const factory TaskItem({
     required String id,
     required String title,
