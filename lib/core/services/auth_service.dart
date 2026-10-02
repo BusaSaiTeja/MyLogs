@@ -83,7 +83,33 @@ class AuthService {
       await credential.user?.updateDisplayName(displayName.trim());
     }
 
+    // Automatically send verification email upon successful sign-up
+    try {
+      await credential.user?.sendEmailVerification();
+    } catch (_) {
+      // Non-blocking in case of rate-limit/network glitch; user can resend from verification screen
+    }
+
     return credential;
+  }
+
+  /// Whether the currently signed-in user's email is verified.
+  bool get isEmailVerified => _auth.currentUser?.emailVerified ?? false;
+
+  /// Sends or resends email verification link to the current user.
+  Future<void> sendEmailVerification() async {
+    final user = _auth.currentUser;
+    if (user != null && !user.emailVerified) {
+      await user.sendEmailVerification();
+    }
+  }
+
+  /// Reloads the current user session from Firebase and returns whether email is verified.
+  Future<bool> checkEmailVerified() async {
+    final user = _auth.currentUser;
+    if (user == null) return false;
+    await user.reload();
+    return _auth.currentUser?.emailVerified ?? false;
   }
 
   /// Signs in with Google, linking guest data if active.

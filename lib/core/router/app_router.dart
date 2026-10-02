@@ -21,6 +21,8 @@ import 'package:my_logs/features/learning_paths/presentation/learning_paths_scre
 import 'package:my_logs/features/learning_paths/presentation/path_detail_screen.dart';
 import 'package:my_logs/features/learning_paths/presentation/path_form_screen.dart';
 import 'package:my_logs/features/auth/presentation/login_screen.dart';
+import 'package:my_logs/features/auth/presentation/register_screen.dart';
+import 'package:my_logs/features/auth/presentation/verify_email_screen.dart';
 import 'package:my_logs/features/profile/presentation/profile_screen.dart';
 import 'package:my_logs/features/workspaces/presentation/feature_marketplace_screen.dart';
 import 'package:my_logs/features/workspaces/presentation/widgets/notion_workspace_drawer.dart';
@@ -44,11 +46,23 @@ final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   refreshListenable: GoRouterRefreshStream(FirebaseAuth.instance.authStateChanges()),
   redirect: (BuildContext context, GoRouterState state) {
-    final bool loggedIn = FirebaseAuth.instance.currentUser != null;
-    final bool loggingIn = state.matchedLocation == '/login';
+    final user = FirebaseAuth.instance.currentUser;
+    final bool loggedIn = user != null;
+    final bool isGoogleOrOAuth =
+        user?.providerData.any((p) => p.providerId == 'google.com') ?? false;
+    final bool isAnonymous = user?.isAnonymous ?? false;
+    final bool isEmailVerified = user?.emailVerified ?? false;
 
-    if (!loggedIn && !loggingIn) return '/login';
-    if (loggedIn && loggingIn) return '/';
+    // Google, anonymous, and verified email users bypass the verification screen
+    final bool isVerified = !loggedIn || isAnonymous || isGoogleOrOAuth || isEmailVerified;
+
+    final String loc = state.matchedLocation;
+    final bool isAuthRoute = loc == '/login' || loc == '/register';
+    final bool isVerifyRoute = loc == '/verify-email';
+
+    if (!loggedIn && !isAuthRoute) return '/login';
+    if (loggedIn && !isVerified && !isVerifyRoute) return '/verify-email';
+    if (loggedIn && isVerified && (isAuthRoute || isVerifyRoute)) return '/';
     return null;
   },
   routes: [
@@ -295,6 +309,14 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/login',
       builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: '/register',
+      builder: (context, state) => const RegisterScreen(),
+    ),
+    GoRoute(
+      path: '/verify-email',
+      builder: (context, state) => const VerifyEmailScreen(),
     ),
   ],
 );

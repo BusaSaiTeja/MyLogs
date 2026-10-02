@@ -6,18 +6,18 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_logs/core/services/auth_service.dart';
 import 'package:my_logs/core/theme/app_colors.dart';
-import 'package:my_logs/core/theme/app_spacing.dart';
 import 'package:my_logs/core/theme/app_typography.dart';
 
-class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends ConsumerStatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
+class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _nameCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
 
@@ -27,12 +27,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   void dispose() {
+    _nameCtrl.dispose();
     _emailCtrl.dispose();
     _passwordCtrl.dispose();
     super.dispose();
   }
 
-  Future<void> _signIn() async {
+  Future<void> _signUp() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() {
@@ -43,23 +44,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final auth = ref.read(authServiceProvider);
 
     try {
-      await auth.signInWithEmail(
+      await auth.signUpWithEmail(
         email: _emailCtrl.text,
         password: _passwordCtrl.text,
+        displayName: _nameCtrl.text,
       );
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Signed in successfully! 👋'),
+          content: Text('Account created! Please verify your email ✉️'),
           backgroundColor: AppColors.primary,
         ),
       );
-      if (context.canPop()) {
-        context.pop();
-      } else {
-        context.go('/');
-      }
+      // GoRouter redirect automatically routes unverified user to /verify-email
     } on FirebaseAuthException catch (e) {
       setState(() {
         _errorMessage = _parseAuthError(e);
@@ -110,7 +108,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       });
     } on PlatformException catch (e) {
       debugPrint(
-        '[Auth] Google Sign-In PlatformException: code=${e.code}, message=${e.message}, details=${e.details}',
+        '[Auth] Google Sign-In PlatformException: code=${e.code}, message=${e.message}',
       );
       setState(() {
         if (e.message != null && e.message!.contains('10')) {
@@ -135,146 +133,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
-  void _showForgotPasswordDialog() {
-    final resetEmailCtrl = TextEditingController(text: _emailCtrl.text.trim());
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surfaceContainerLowest,
-        surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.lock_reset_rounded,
-                color: AppColors.primary,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 10),
-            const Text(
-              'Reset Password',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: AppColors.obsidian,
-              ),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Enter your email address and we will send you a password reset link.',
-              style: AppTypography.bodyMdVariant(),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: resetEmailCtrl,
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                labelText: 'Email Address',
-                hintText: 'you@example.com',
-                prefixIcon: const Icon(Icons.email_outlined, size: 20),
-                filled: true,
-                fillColor: AppColors.surfaceContainerLow,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                  borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                  borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-                  borderSide: const BorderSide(
-                    color: AppColors.primary,
-                    width: 1.5,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        actionsPadding: const EdgeInsets.fromLTRB(16, 4, 16, 14),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(color: AppColors.onSurfaceVariant),
-            ),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              elevation: 0,
-            ),
-            onPressed: () async {
-              final email = resetEmailCtrl.text.trim();
-              if (email.isEmpty) return;
-              Navigator.of(ctx).pop();
-              try {
-                await ref
-                    .read(authServiceProvider)
-                    .sendPasswordResetEmail(email);
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                      'Password reset email sent! Check your inbox.',
-                    ),
-                    backgroundColor: AppColors.primary,
-                  ),
-                );
-              } catch (e) {
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Error: $e'),
-                    backgroundColor: const Color(0xFFDC2626),
-                  ),
-                );
-              }
-            },
-            child: const Text(
-              'Send Link',
-              style: TextStyle(fontWeight: FontWeight.w700),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   String _parseAuthError(FirebaseAuthException e) {
     switch (e.code) {
-      case 'user-not-found':
-        return 'No account found with this email.';
-      case 'wrong-password':
-      case 'invalid-credential':
-        return 'Incorrect email or password. Please verify and try again.';
-      case 'user-disabled':
-        return 'This account has been disabled.';
-      case 'too-many-requests':
-        return 'Too many attempts. Please wait a few moments and try again.';
+      case 'email-already-in-use':
+        return 'An account already exists with this email.';
+      case 'invalid-email':
+        return 'Please enter a valid email address.';
+      case 'weak-password':
+        return 'Password is too weak. Please use at least 6 characters.';
+      case 'operation-not-allowed':
+        return 'Email registration is currently disabled.';
       case 'network-request-failed':
         return 'Network error. Please check your internet connection.';
       default:
-        return e.message ?? 'Authentication failed. Please try again.';
+        return e.message ?? 'Registration failed. Please try again.';
     }
   }
 
@@ -325,7 +197,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   // ── Eyebrow Label ─────────────────────────────────────────
                   Center(
                     child: Text(
-                      'LOG IN TO MYLOGS',
+                      'GET STARTED WITH MYLOGS',
                       style: AppTypography.labelEyebrow.copyWith(
                         color: AppColors.primary,
                         fontWeight: FontWeight.w700,
@@ -337,7 +209,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   // ── Headline ──────────────────────────────────────────────
                   Center(
                     child: Text(
-                      'Welcome back',
+                      'Create your account',
                       style: GoogleFonts.outfit(
                         fontSize: 26,
                         fontWeight: FontWeight.w800,
@@ -350,7 +222,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                   Center(
                     child: Text(
-                      'Sync your movies, books, and daily momentum',
+                      'One unified logbook for media, reading, and tasks',
                       textAlign: TextAlign.center,
                       style: AppTypography.bodyMd.copyWith(
                         color: AppColors.onSurfaceVariant,
@@ -434,6 +306,32 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             const SizedBox(height: 18),
                           ],
 
+                          // ── Full Name Field ────────────────────────────────
+                          const Text(
+                            'Full Name (Optional)',
+                            style: TextStyle(
+                              color: AppColors.obsidian,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          TextFormField(
+                            controller: _nameCtrl,
+                            keyboardType: TextInputType.name,
+                            textCapitalization: TextCapitalization.words,
+                            textInputAction: TextInputAction.next,
+                            style: const TextStyle(
+                              color: AppColors.obsidian,
+                              fontSize: 14,
+                            ),
+                            decoration: _buildInputDecoration(
+                              hint: 'Alex Smith',
+                              icon: Icons.person_outline_rounded,
+                            ),
+                          ),
+                          const SizedBox(height: 18),
+
                           // ── Email Field ────────────────────────────────────
                           const Text(
                             'Email Address',
@@ -469,36 +367,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           const SizedBox(height: 18),
 
                           // ── Password Field ─────────────────────────────────
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                'Password',
-                                style: TextStyle(
-                                  color: AppColors.obsidian,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: _showForgotPasswordDialog,
-                                child: const Text(
-                                  'Forgot password?',
-                                  style: TextStyle(
-                                    color: AppColors.primary,
-                                    fontSize: 12.5,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
+                          const Text(
+                            'Password',
+                            style: TextStyle(
+                              color: AppColors.obsidian,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                           const SizedBox(height: 6),
                           TextFormField(
                             controller: _passwordCtrl,
                             obscureText: _obscurePassword,
                             textInputAction: TextInputAction.done,
-                            onFieldSubmitted: (_) => _signIn(),
+                            onFieldSubmitted: (_) => _signUp(),
                             style: const TextStyle(
                               color: AppColors.obsidian,
                               fontSize: 14,
@@ -531,9 +413,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               return null;
                             },
                           ),
-                          const SizedBox(height: 22),
+                          const SizedBox(height: 24),
 
-                          // ── Primary Sign In Button ─────────────────────────
+                          // ── Primary Create Account Button ──────────────────
                           Container(
                             height: 48,
                             decoration: BoxDecoration(
@@ -557,7 +439,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   borderRadius: BorderRadius.circular(13),
                                 ),
                               ),
-                              onPressed: _isLoading ? null : _signIn,
+                              onPressed: _isLoading ? null : _signUp,
                               child: _isLoading
                                   ? const SizedBox(
                                       width: 20,
@@ -568,7 +450,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       ),
                                     )
                                   : const Text(
-                                      'Sign In',
+                                      'Create Account',
                                       style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w700,
@@ -671,21 +553,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: 26),
 
-                  // ── Footer Switcher: Go to Register ─────────────────────────
+                  // ── Footer Switcher: Go to Login ───────────────────────────
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Don\'t have an account?',
+                        'Already have an account?',
                         style: AppTypography.bodyMd.copyWith(
                           color: AppColors.onSurfaceVariant,
                         ),
                       ),
                       const SizedBox(width: 4),
                       GestureDetector(
-                        onTap: () => context.go('/register'),
+                        onTap: () => context.go('/login'),
                         child: const Text(
-                          'Register',
+                          'Sign In',
                           style: TextStyle(
                             color: AppColors.primary,
                             fontSize: 14,

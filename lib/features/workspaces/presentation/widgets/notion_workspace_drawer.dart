@@ -5,6 +5,7 @@ import 'package:my_logs/core/services/auth_service.dart';
 import 'package:my_logs/core/theme/app_colors.dart';
 import 'package:my_logs/core/theme/app_typography.dart';
 import 'package:my_logs/core/utils/user_display_utils.dart';
+import 'package:my_logs/core/widgets/app_confirmation_dialog.dart';
 import 'package:my_logs/features/learning_paths/application/learning_path_providers.dart';
 import 'package:my_logs/features/notes/application/note_providers.dart';
 import 'package:my_logs/features/read/application/book_providers.dart';
@@ -702,69 +703,14 @@ class _NotionWorkspaceDrawerState extends ConsumerState<NotionWorkspaceDrawer> {
 
   // ── 🚪 Centralized Logout Confirmation Dialog ───────────────────────────────
   void _confirmLogout(BuildContext context) {
-    showDialog(
+    showLogoutConfirmationDialog(
       context: context,
-      barrierDismissible: true,
-      builder: (dialogCtx) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: const Row(
-          children: [
-            Icon(Icons.logout_rounded, color: Color(0xFFDC2626), size: 22),
-            SizedBox(width: 10),
-            Text(
-              'Log Out',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: _textPrimary,
-              ),
-            ),
-          ],
-        ),
-        content: const Text(
-          'Are you sure you want to log out of your account?',
-          style: TextStyle(
-            fontSize: 14,
-            color: _textSecondary,
-            height: 1.4,
-          ),
-        ),
-        actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogCtx).pop(),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(
-                color: _textSecondary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFDC2626),
-              foregroundColor: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            ),
-            onPressed: () async {
-              Navigator.of(dialogCtx).pop(); // close dialog
-              Navigator.of(context).pop(); // close drawer
-              await ref.read(authServiceProvider).signOut();
-            },
-            child: const Text(
-              'Log Out',
-              style: TextStyle(fontWeight: FontWeight.w700),
-            ),
-          ),
-        ],
-      ),
+      ref: ref,
+      onBeforeSignOut: () {
+        if (context.mounted) {
+          Navigator.of(context).pop(); // close drawer
+        }
+      },
     );
   }
 

@@ -7,6 +7,7 @@ import 'package:my_logs/core/theme/app_colors.dart';
 import 'package:my_logs/core/theme/app_spacing.dart';
 import 'package:my_logs/core/theme/app_typography.dart';
 import 'package:my_logs/core/utils/user_display_utils.dart';
+import 'package:my_logs/core/widgets/app_confirmation_dialog.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -185,15 +186,15 @@ class ProfileScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 24),
 
-          // ── Sign Out Action ───────────────────────────────────────────────
+          // ── Log Out Action ────────────────────────────────────────────────
           SizedBox(
             width: double.infinity,
             height: 48,
             child: OutlinedButton.icon(
-              onPressed: () => _confirmSignOut(context, ref),
+              onPressed: () => _confirmLogOut(context, ref),
               icon: const Icon(Icons.logout_rounded, size: 18, color: Color(0xFFDC2626)),
               label: const Text(
-                'Sign Out',
+                'Log Out',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -243,36 +244,10 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _confirmSignOut(BuildContext context, WidgetRef ref) async {
-    final confirm = await showDialog<bool>(
+  Future<void> _confirmLogOut(BuildContext context, WidgetRef ref) async {
+    await showLogoutConfirmationDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-        ),
-        title: const Text('Sign Out?'),
-        content: const Text(
-          'Are you sure you want to sign out from your account?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => ctx.pop(false),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFDC2626),
-              foregroundColor: Colors.white,
-            ),
-            onPressed: () => ctx.pop(true),
-            child: const Text('Sign Out'),
-          ),
-        ],
-      ),
+      ref: ref,
     );
-
-    if (confirm == true) {
-      await ref.read(authServiceProvider).signOut();
-    }
   }
 }
