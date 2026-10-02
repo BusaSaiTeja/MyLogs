@@ -18,6 +18,7 @@ _$TaskItemImpl _$$TaskItemImplFromJson(Map<String, dynamic> json) =>
       dueDate: json['dueDate'] == null
           ? null
           : DateTime.parse(json['dueDate'] as String),
+      workspaceId: json['workspaceId'] as String? ?? '',
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
@@ -30,6 +31,7 @@ Map<String, dynamic> _$$TaskItemImplToJson(_$TaskItemImpl instance) =>
       'isCompleted': instance.isCompleted,
       'priority': _$TaskPriorityEnumMap[instance.priority]!,
       'dueDate': instance.dueDate?.toIso8601String(),
+      'workspaceId': instance.workspaceId,
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),
     };

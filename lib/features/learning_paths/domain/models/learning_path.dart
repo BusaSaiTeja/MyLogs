@@ -24,6 +24,7 @@ class LearningPath with _$LearningPath {
     required String title,
     String? description,
     @Default([]) List<PathStep> steps,
+    @Default('') String workspaceId,
     required DateTime createdAt,
     required DateTime updatedAt,
   }) = _LearningPath;

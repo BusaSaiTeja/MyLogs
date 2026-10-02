@@ -36,6 +36,7 @@ _$LearningPathImpl _$$LearningPathImplFromJson(Map<String, dynamic> json) =>
               ?.map((e) => PathStep.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
+      workspaceId: json['workspaceId'] as String? ?? '',
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
@@ -46,6 +47,7 @@ Map<String, dynamic> _$$LearningPathImplToJson(_$LearningPathImpl instance) =>
       'title': instance.title,
       'description': instance.description,
       'steps': instance.steps,
+      'workspaceId': instance.workspaceId,
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),
     };

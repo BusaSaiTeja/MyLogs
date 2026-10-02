@@ -15,6 +15,8 @@ import 'package:my_logs/features/home/presentation/widgets/home_tile.dart';
 import 'package:my_logs/features/home/presentation/widgets/continue_watching_card.dart';
 import 'package:my_logs/features/home/presentation/widgets/currently_reading_tile.dart';
 
+import 'package:my_logs/features/workspaces/presentation/widgets/notion_workspace_drawer.dart';
+
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
@@ -32,12 +34,20 @@ class HomeScreen extends ConsumerWidget {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.surface,
-        leading: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Icon(Icons.apps_rounded, color: AppColors.primary),
+        leading: IconButton(
+          icon: const Icon(Icons.menu_rounded),
+          color: Colors.black,
+          tooltip: 'Workspace Menu',
+          onPressed: () {
+            if (rootScaffoldKey.currentState?.isDrawerOpen == true) {
+              rootScaffoldKey.currentState?.closeDrawer();
+            } else {
+              rootScaffoldKey.currentState?.openDrawer();
+            }
+          },
         ),
         title: Text('Home',
-            style: AppTypography.headlineLgMobile.copyWith(color: AppColors.primary)),
+            style: AppTypography.headlineLgMobile.copyWith(color: Colors.black)),
         centerTitle: false,
         actions: [
           IconButton(

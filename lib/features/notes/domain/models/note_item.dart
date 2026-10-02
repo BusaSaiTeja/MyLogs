@@ -10,6 +10,7 @@ class NoteItem with _$NoteItem {
     required String title,
     required String content,
     @Default([]) List<String> tags,
+    @Default('') String workspaceId,
     required DateTime createdAt,
     required DateTime updatedAt,
   }) = _NoteItem;

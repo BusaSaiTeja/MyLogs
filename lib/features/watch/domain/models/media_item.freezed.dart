@@ -34,6 +34,7 @@ mixin _$MediaItem {
   int? get totalEpisodes => throw _privateConstructorUsedError;
   String? get language => throw _privateConstructorUsedError;
   String? get notes => throw _privateConstructorUsedError;
+  String get workspaceId => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
   DateTime get updatedAt => throw _privateConstructorUsedError;
 
@@ -66,6 +67,7 @@ abstract class $MediaItemCopyWith<$Res> {
     int? totalEpisodes,
     String? language,
     String? notes,
+    String workspaceId,
     DateTime createdAt,
     DateTime updatedAt,
   });
@@ -99,6 +101,7 @@ class _$MediaItemCopyWithImpl<$Res, $Val extends MediaItem>
     Object? totalEpisodes = freezed,
     Object? language = freezed,
     Object? notes = freezed,
+    Object? workspaceId = null,
     Object? createdAt = null,
     Object? updatedAt = null,
   }) {
@@ -156,6 +159,10 @@ class _$MediaItemCopyWithImpl<$Res, $Val extends MediaItem>
                 ? _value.notes
                 : notes // ignore: cast_nullable_to_non_nullable
                       as String?,
+            workspaceId: null == workspaceId
+                ? _value.workspaceId
+                : workspaceId // ignore: cast_nullable_to_non_nullable
+                      as String,
             createdAt: null == createdAt
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
@@ -193,6 +200,7 @@ abstract class _$$MediaItemImplCopyWith<$Res>
     int? totalEpisodes,
     String? language,
     String? notes,
+    String workspaceId,
     DateTime createdAt,
     DateTime updatedAt,
   });
@@ -225,6 +233,7 @@ class __$$MediaItemImplCopyWithImpl<$Res>
     Object? totalEpisodes = freezed,
     Object? language = freezed,
     Object? notes = freezed,
+    Object? workspaceId = null,
     Object? createdAt = null,
     Object? updatedAt = null,
   }) {
@@ -282,6 +291,10 @@ class __$$MediaItemImplCopyWithImpl<$Res>
             ? _value.notes
             : notes // ignore: cast_nullable_to_non_nullable
                   as String?,
+        workspaceId: null == workspaceId
+            ? _value.workspaceId
+            : workspaceId // ignore: cast_nullable_to_non_nullable
+                  as String,
         createdAt: null == createdAt
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
@@ -312,6 +325,7 @@ class _$MediaItemImpl implements _MediaItem {
     this.totalEpisodes,
     this.language,
     this.notes,
+    this.workspaceId = '',
     required this.createdAt,
     required this.updatedAt,
   }) : _genres = genres;
@@ -355,13 +369,16 @@ class _$MediaItemImpl implements _MediaItem {
   @override
   final String? notes;
   @override
+  @JsonKey()
+  final String workspaceId;
+  @override
   final DateTime createdAt;
   @override
   final DateTime updatedAt;
 
   @override
   String toString() {
-    return 'MediaItem(id: $id, title: $title, category: $category, status: $status, year: $year, synopsis: $synopsis, posterUrl: $posterUrl, genres: $genres, rating: $rating, episodesWatched: $episodesWatched, totalEpisodes: $totalEpisodes, language: $language, notes: $notes, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'MediaItem(id: $id, title: $title, category: $category, status: $status, year: $year, synopsis: $synopsis, posterUrl: $posterUrl, genres: $genres, rating: $rating, episodesWatched: $episodesWatched, totalEpisodes: $totalEpisodes, language: $language, notes: $notes, workspaceId: $workspaceId, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -388,6 +405,8 @@ class _$MediaItemImpl implements _MediaItem {
             (identical(other.language, language) ||
                 other.language == language) &&
             (identical(other.notes, notes) || other.notes == notes) &&
+            (identical(other.workspaceId, workspaceId) ||
+                other.workspaceId == workspaceId) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -411,6 +430,7 @@ class _$MediaItemImpl implements _MediaItem {
     totalEpisodes,
     language,
     notes,
+    workspaceId,
     createdAt,
     updatedAt,
   );
@@ -444,6 +464,7 @@ abstract class _MediaItem implements MediaItem {
     final int? totalEpisodes,
     final String? language,
     final String? notes,
+    final String workspaceId,
     required final DateTime createdAt,
     required final DateTime updatedAt,
   }) = _$MediaItemImpl;
@@ -477,6 +498,8 @@ abstract class _MediaItem implements MediaItem {
   String? get language;
   @override
   String? get notes;
+  @override
+  String get workspaceId;
   @override
   DateTime get createdAt;
   @override

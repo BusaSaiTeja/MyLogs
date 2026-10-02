@@ -8,6 +8,7 @@ import 'package:my_logs/features/tasks/application/task_providers.dart';
 import 'package:my_logs/features/tasks/domain/models/task_item.dart';
 import 'package:my_logs/features/tasks/presentation/widgets/task_date_picker_tile.dart';
 import 'package:my_logs/features/tasks/presentation/widgets/task_priority_selector.dart';
+import 'package:my_logs/features/workspaces/application/workspace_providers.dart';
 
 class TaskFormScreen extends ConsumerStatefulWidget {
   const TaskFormScreen({super.key, this.taskId});
@@ -83,8 +84,10 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
             ));
       }
     } else {
+      final activeWorkspaceId = ref.read(activeWorkspaceIdProvider).valueOrNull ?? '';
       ref.read(taskListProvider.notifier).add(TaskItem(
             id: '',
+            workspaceId: activeWorkspaceId,
             title: _titleCtrl.text.trim(),
             description: _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
             priority: _priority,

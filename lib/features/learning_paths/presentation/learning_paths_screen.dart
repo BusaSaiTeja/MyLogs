@@ -6,28 +6,82 @@ import 'package:my_logs/core/theme/app_typography.dart';
 import 'package:my_logs/core/widgets/empty_state.dart';
 import 'package:my_logs/features/learning_paths/application/learning_path_providers.dart';
 import 'package:my_logs/features/learning_paths/presentation/widgets/learning_path_card.dart';
+import 'package:my_logs/features/workspaces/presentation/widgets/notion_workspace_drawer.dart';
 
 class LearningPathsScreen extends ConsumerWidget {
   const LearningPathsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final pathsAsync = ref.watch(learningPathListProvider);
+    final pathsAsync = ref.watch(workspaceFilteredLearningPathsProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded),
-          color: AppColors.primary,
-          onPressed: () => context.canPop() ? context.pop() : context.go('/'),
+          icon: const Icon(Icons.menu_rounded),
+          color: Colors.black,
+          tooltip: 'Open menu',
+          onPressed: () {
+            if (rootScaffoldKey.currentState?.isDrawerOpen == true) {
+              rootScaffoldKey.currentState?.closeDrawer();
+            } else {
+              rootScaffoldKey.currentState?.openDrawer();
+            }
+          },
         ),
         title: Text('Learning Paths',
-            style: AppTypography.headlineLgMobile.copyWith(color: AppColors.primary)),
+            style: AppTypography.headlineLgMobile.copyWith(color: Colors.black)),
         centerTitle: false,
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert_rounded, color: AppColors.onSurfaceVariant),
+            tooltip: 'More options',
+            onSelected: (value) {
+              if (value == 'disable') {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Disable feature (Coming in Phase 3)'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              } else if (value == 'hide') {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Hide feature (Coming in Phase 3)'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'disable',
+                child: Row(
+                  children: [
+                    Icon(Icons.block_rounded, size: 20, color: AppColors.onSurfaceVariant),
+                    SizedBox(width: 12),
+                    Text('Disable Feature'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'hide',
+                child: Row(
+                  children: [
+                    Icon(Icons.visibility_off_outlined, size: 20, color: AppColors.onSurfaceVariant),
+                    SizedBox(width: 12),
+                    Text('Hide Feature'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'learning_paths_fab',
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
         onPressed: () => context.push('/learning-paths/add'),

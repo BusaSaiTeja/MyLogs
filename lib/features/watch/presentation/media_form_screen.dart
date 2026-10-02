@@ -11,6 +11,7 @@ import 'package:my_logs/features/watch/data/anilist_anime_service.dart';
 import 'package:my_logs/features/watch/data/tmdb_service.dart';
 import 'package:my_logs/features/watch/domain/models/media_item.dart';
 import 'package:my_logs/features/watch/presentation/widgets/media_rating_selector.dart';
+import 'package:my_logs/features/workspaces/application/workspace_providers.dart';
 
 class MediaFormSuggestion {
   const MediaFormSuggestion({
@@ -260,9 +261,11 @@ class _MediaFormScreenState extends ConsumerState<MediaFormScreen> {
               ),
             );
       } else {
+        final activeWorkspaceId = ref.read(activeWorkspaceIdProvider).valueOrNull ?? '';
         await ref.read(mediaListProvider.notifier).add(
               MediaItem(
                 id: '',
+                workspaceId: activeWorkspaceId,
                 title: _titleCtrl.text.trim(),
                 category: widget.category,
                 status: _status,

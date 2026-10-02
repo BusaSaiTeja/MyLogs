@@ -7,6 +7,7 @@ import 'package:my_logs/core/theme/app_spacing.dart';
 import 'package:my_logs/core/theme/app_typography.dart';
 import 'package:my_logs/features/notes/application/note_providers.dart';
 import 'package:my_logs/features/notes/domain/models/note_item.dart';
+import 'package:my_logs/features/workspaces/application/workspace_providers.dart';
 
 class NoteDetailScreen extends ConsumerStatefulWidget {
   const NoteDetailScreen({super.key, this.noteId, this.isNew = false});
@@ -82,8 +83,10 @@ class _NoteDetailScreenState extends ConsumerState<NoteDetailScreen> {
               ));
         }
       } else {
+        final activeWorkspaceId = ref.read(activeWorkspaceIdProvider).valueOrNull ?? '';
         final newNote = NoteItem(
           id: '',
+          workspaceId: activeWorkspaceId,
           title: effectiveTitle,
           content: content,
           tags: List.from(_selectedTags),

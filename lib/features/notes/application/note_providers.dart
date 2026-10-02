@@ -3,6 +3,7 @@ import 'package:my_logs/core/services/auth_service.dart';
 import 'package:my_logs/features/notes/data/firestore_note_repository.dart';
 import 'package:my_logs/features/notes/domain/models/note_item.dart';
 import 'package:my_logs/features/notes/domain/note_repository.dart';
+import 'package:my_logs/features/workspaces/application/workspace_providers.dart';
 
 // ── Repository Provider ───────────────────────────────────────────────────────
 final noteRepositoryProvider = Provider<NoteRepository>((ref) {
@@ -55,6 +56,21 @@ class NoteListNotifier extends AsyncNotifier<List<NoteItem>> {
 final noteListProvider =
     AsyncNotifierProvider<NoteListNotifier, List<NoteItem>>(NoteListNotifier.new);
 
+final workspaceFilteredNotesProvider = Provider<AsyncValue<List<NoteItem>>>((ref) {
+  final notesAsync = ref.watch(noteListProvider);
+  final activeId = ref.watch(activeWorkspaceIdProvider).valueOrNull;
+  final workspaces = ref.watch(workspaceListProvider).valueOrNull ?? [];
+
+  return notesAsync.whenData((notes) => notes
+      .where((n) => itemMatchesWorkspace(
+            itemWorkspaceId: n.workspaceId,
+            activeWorkspaceId: activeId,
+            allWorkspaces: workspaces,
+          ))
+      .toList());
+});
+
 final noteByIdProvider = Provider.family<NoteItem?, String>((ref, id) {
   return ref.watch(noteListProvider).valueOrNull?.where((n) => n.id == id).firstOrNull;
 });
+

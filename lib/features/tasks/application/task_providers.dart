@@ -3,6 +3,7 @@ import 'package:my_logs/core/services/auth_service.dart';
 import 'package:my_logs/features/tasks/data/firestore_task_repository.dart';
 import 'package:my_logs/features/tasks/domain/models/task_item.dart';
 import 'package:my_logs/features/tasks/domain/task_repository.dart';
+import 'package:my_logs/features/workspaces/application/workspace_providers.dart';
 
 // ── Repository Provider ───────────────────────────────────────────────────────
 final taskRepositoryProvider = Provider<TaskRepository>((ref) {
@@ -96,11 +97,24 @@ int _priorityWeight(TaskPriority p) => switch (p) {
       TaskPriority.low => 2,
     };
 
+// ── Workspace Filtered Tasks Provider ────────────────────────────────────────
+final workspaceFilteredTasksProvider = Provider<List<TaskItem>>((ref) {
+  final tasks = ref.watch(taskListProvider).valueOrNull ?? [];
+  final activeId = ref.watch(activeWorkspaceIdProvider).valueOrNull;
+  final workspaces = ref.watch(workspaceListProvider).valueOrNull ?? [];
+
+  return tasks.where((t) => itemMatchesWorkspace(
+        itemWorkspaceId: t.workspaceId,
+        activeWorkspaceId: activeId,
+        allWorkspaces: workspaces,
+      )).toList();
+});
+
 // ── Derived Providers ────────────────────────────────────────────────────────
 
 // Today's tasks
 final todayTasksProvider = Provider<List<TaskItem>>((ref) {
-  final tasks = ref.watch(taskListProvider).valueOrNull ?? [];
+  final tasks = ref.watch(workspaceFilteredTasksProvider);
   final now = DateTime.now();
   final list = tasks
       .where((t) =>
@@ -117,7 +131,7 @@ final todayTasksProvider = Provider<List<TaskItem>>((ref) {
 
 // Upcoming tasks (Future dates or tasks without a date)
 final upcomingTasksProvider = Provider<List<TaskItem>>((ref) {
-  final tasks = ref.watch(taskListProvider).valueOrNull ?? [];
+  final tasks = ref.watch(workspaceFilteredTasksProvider);
   final today = DateTime.now();
   final startOfTomorrow = DateTime(today.year, today.month, today.day + 1);
   final list = tasks
@@ -151,13 +165,13 @@ final pendingTasksProvider = Provider<List<TaskItem>>((ref) {
 
 // Completed tasks
 final completedTasksProvider = Provider<List<TaskItem>>((ref) {
-  final tasks = ref.watch(taskListProvider).valueOrNull ?? [];
+  final tasks = ref.watch(workspaceFilteredTasksProvider);
   return tasks.where((t) => t.isCompleted).toList();
 });
 
 // Missed / Overdue tasks
 final missedTasksProvider = Provider<List<TaskItem>>((ref) {
-  final tasks = ref.watch(taskListProvider).valueOrNull ?? [];
+  final tasks = ref.watch(workspaceFilteredTasksProvider);
   final today = DateTime.now();
   final startOfToday = DateTime(today.year, today.month, today.day);
   final list = tasks
@@ -170,3 +184,4 @@ final missedTasksProvider = Provider<List<TaskItem>>((ref) {
   list.sort((a, b) => a.dueDate!.compareTo(b.dueDate!));
   return list;
 });
+

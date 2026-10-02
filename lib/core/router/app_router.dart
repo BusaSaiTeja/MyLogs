@@ -22,8 +22,8 @@ import 'package:my_logs/features/learning_paths/presentation/path_detail_screen.
 import 'package:my_logs/features/learning_paths/presentation/path_form_screen.dart';
 import 'package:my_logs/features/auth/presentation/login_screen.dart';
 import 'package:my_logs/features/profile/presentation/profile_screen.dart';
-import 'package:my_logs/core/theme/app_colors.dart';
-import 'package:my_logs/core/theme/app_typography.dart';
+import 'package:my_logs/features/workspaces/presentation/feature_marketplace_screen.dart';
+import 'package:my_logs/features/workspaces/presentation/widgets/notion_workspace_drawer.dart';
 
 class GoRouterRefreshStream extends ChangeNotifier {
   GoRouterRefreshStream(Stream<dynamic> stream) {
@@ -289,6 +289,10 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const ProfileScreen(),
     ),
     GoRoute(
+      path: '/marketplace',
+      builder: (context, state) => const FeatureMarketplaceScreen(),
+    ),
+    GoRoute(
       path: '/login',
       builder: (context, state) => const LoginScreen(),
     ),
@@ -313,96 +317,11 @@ class _MainShell extends StatelessWidget {
         }
       },
       child: Scaffold(
+        key: rootScaffoldKey,
+        drawer: const NotionWorkspaceDrawer(),
         body: navigationShell,
-        bottomNavigationBar: _MyLogBottomNav(
-          selectedIndex: navigationShell.currentIndex,
-          onDestinationSelected: (index) =>
-              navigationShell.goBranch(index, initialLocation: index == navigationShell.currentIndex),
-        ),
       ),
     );
   }
 }
 
-class _MyLogBottomNav extends StatelessWidget {
-  const _MyLogBottomNav({
-    required this.selectedIndex,
-    required this.onDestinationSelected,
-  });
-
-  final int selectedIndex;
-  final ValueChanged<int> onDestinationSelected;
-
-  static const _destinations = [
-    (icon: Icons.home_outlined, active: Icons.home_rounded, label: 'Home'),
-    (icon: Icons.visibility_outlined, active: Icons.visibility_rounded, label: 'Watch'),
-    (icon: Icons.book_outlined, active: Icons.book_rounded, label: 'Read'),
-    (icon: Icons.check_circle_outline_rounded, active: Icons.check_circle_rounded, label: 'Tasks'),
-    (icon: Icons.alarm_outlined, active: Icons.alarm_rounded, label: 'Reminders'),
-    (icon: Icons.sticky_note_2_outlined, active: Icons.sticky_note_2_rounded, label: 'Notes'),
-    (icon: Icons.alt_route_rounded, active: Icons.alt_route_rounded, label: 'Learning'),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.surfaceContainerLowest,
-        border: Border(top: BorderSide(color: AppColors.outlineVariant, width: 1)),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Row(
-              children: List.generate(_destinations.length, (i) {
-                final dest = _destinations[i];
-                final isActive = i == selectedIndex;
-                return GestureDetector(
-                  onTap: () => onDestinationSelected(i),
-                  behavior: HitTestBehavior.opaque,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                    decoration: isActive
-                        ? BoxDecoration(
-                            color: AppColors.secondaryContainer,
-                            borderRadius: BorderRadius.circular(9999),
-                          )
-                        : null,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          isActive ? dest.active : dest.icon,
-                          color: isActive
-                              ? AppColors.onSecondaryContainer
-                              : AppColors.onSurfaceVariant,
-                          size: 24,
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          dest.label,
-                          style: AppTypography.labelMd.copyWith(
-                            color: isActive
-                                ? AppColors.onSecondaryContainer
-                                : AppColors.onSurfaceVariant,
-                            letterSpacing: 0.02,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}

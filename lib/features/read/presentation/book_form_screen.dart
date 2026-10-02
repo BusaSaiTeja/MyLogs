@@ -9,6 +9,7 @@ import 'package:my_logs/core/theme/app_typography.dart';
 import 'package:my_logs/features/read/application/book_providers.dart';
 import 'package:my_logs/features/read/data/google_books_service.dart';
 import 'package:my_logs/features/read/domain/models/book_item.dart';
+import 'package:my_logs/features/workspaces/application/workspace_providers.dart';
 
 class BookFormScreen extends ConsumerStatefulWidget {
   const BookFormScreen({super.key, this.bookId});
@@ -180,8 +181,10 @@ class _BookFormScreenState extends ConsumerState<BookFormScreen> {
             ));
       }
     } else {
+      final activeWorkspaceId = ref.read(activeWorkspaceIdProvider).valueOrNull ?? '';
       ref.read(bookListProvider.notifier).add(BookItem(
             id: '',
+            workspaceId: activeWorkspaceId,
             title: _titleCtrl.text.trim(),
             author: _authorCtrl.text.trim(),
             coverUrl: _coverCtrl.text.trim().isEmpty ? null : _coverCtrl.text.trim(),

@@ -24,6 +24,7 @@ class TaskItem with _$TaskItem {
     @Default(false) bool isCompleted,
     @Default(TaskPriority.medium) TaskPriority priority,
     DateTime? dueDate,
+    @Default('') String workspaceId,
     required DateTime createdAt,
     required DateTime updatedAt,
   }) = _TaskItem;

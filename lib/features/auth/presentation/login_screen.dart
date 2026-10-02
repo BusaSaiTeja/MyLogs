@@ -87,6 +87,50 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
+  Future<void> _signInWithGoogle() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    final auth = ref.read(authServiceProvider);
+
+    try {
+      final credential = await auth.signInWithGoogle();
+      if (credential == null) {
+        // User canceled sign-in
+        return;
+      }
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Signed in with Google! 👋'),
+          backgroundColor: AppColors.primary,
+        ),
+      );
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        context.go('/');
+      }
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        _errorMessage = _parseAuthError(e);
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Google sign-in failed. Please try again.';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
   String _parseAuthError(FirebaseAuthException e) {
     switch (e.code) {
       case 'user-not-found':
@@ -588,6 +632,90 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                               letterSpacing: 0.2,
                                             ),
                                           ),
+                                  ),
+                                ),
+
+                                // ── OR Divider ────────────────────────────────
+                                const SizedBox(height: 16),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Divider(
+                                        color: Colors.white.withValues(alpha: 0.2),
+                                        thickness: 1,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                                      child: Text(
+                                        'OR',
+                                        style: TextStyle(
+                                          color: Colors.white.withValues(alpha: 0.55),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Divider(
+                                        color: Colors.white.withValues(alpha: 0.2),
+                                        thickness: 1,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+
+                                // ── Google Sign In Button ─────────────────────
+                                SizedBox(
+                                  height: 48,
+                                  width: double.infinity,
+                                  child: OutlinedButton(
+                                    style: OutlinedButton.styleFrom(
+                                      backgroundColor: Colors.white.withValues(alpha: 0.08),
+                                      side: BorderSide(
+                                        color: Colors.white.withValues(alpha: 0.25),
+                                        width: 1.2,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                    ),
+                                    onPressed: _isLoading ? null : _signInWithGoogle,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          width: 24,
+                                          height: 24,
+                                          decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.white,
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'G',
+                                              style: TextStyle(
+                                                color: Color(0xFF4285F4),
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w900,
+                                                fontFamily: 'Roboto',
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Text(
+                                          _isSignUp ? 'Sign up with Google' : 'Continue with Google',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: 0.2,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ],

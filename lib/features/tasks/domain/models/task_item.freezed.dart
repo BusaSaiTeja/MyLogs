@@ -27,6 +27,7 @@ mixin _$TaskItem {
   bool get isCompleted => throw _privateConstructorUsedError;
   TaskPriority get priority => throw _privateConstructorUsedError;
   DateTime? get dueDate => throw _privateConstructorUsedError;
+  String get workspaceId => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
   DateTime get updatedAt => throw _privateConstructorUsedError;
 
@@ -52,6 +53,7 @@ abstract class $TaskItemCopyWith<$Res> {
     bool isCompleted,
     TaskPriority priority,
     DateTime? dueDate,
+    String workspaceId,
     DateTime createdAt,
     DateTime updatedAt,
   });
@@ -78,6 +80,7 @@ class _$TaskItemCopyWithImpl<$Res, $Val extends TaskItem>
     Object? isCompleted = null,
     Object? priority = null,
     Object? dueDate = freezed,
+    Object? workspaceId = null,
     Object? createdAt = null,
     Object? updatedAt = null,
   }) {
@@ -107,6 +110,10 @@ class _$TaskItemCopyWithImpl<$Res, $Val extends TaskItem>
                 ? _value.dueDate
                 : dueDate // ignore: cast_nullable_to_non_nullable
                       as DateTime?,
+            workspaceId: null == workspaceId
+                ? _value.workspaceId
+                : workspaceId // ignore: cast_nullable_to_non_nullable
+                      as String,
             createdAt: null == createdAt
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
@@ -137,6 +144,7 @@ abstract class _$$TaskItemImplCopyWith<$Res>
     bool isCompleted,
     TaskPriority priority,
     DateTime? dueDate,
+    String workspaceId,
     DateTime createdAt,
     DateTime updatedAt,
   });
@@ -162,6 +170,7 @@ class __$$TaskItemImplCopyWithImpl<$Res>
     Object? isCompleted = null,
     Object? priority = null,
     Object? dueDate = freezed,
+    Object? workspaceId = null,
     Object? createdAt = null,
     Object? updatedAt = null,
   }) {
@@ -191,6 +200,10 @@ class __$$TaskItemImplCopyWithImpl<$Res>
             ? _value.dueDate
             : dueDate // ignore: cast_nullable_to_non_nullable
                   as DateTime?,
+        workspaceId: null == workspaceId
+            ? _value.workspaceId
+            : workspaceId // ignore: cast_nullable_to_non_nullable
+                  as String,
         createdAt: null == createdAt
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
@@ -214,6 +227,7 @@ class _$TaskItemImpl implements _TaskItem {
     this.isCompleted = false,
     this.priority = TaskPriority.medium,
     this.dueDate,
+    this.workspaceId = '',
     required this.createdAt,
     required this.updatedAt,
   });
@@ -236,13 +250,16 @@ class _$TaskItemImpl implements _TaskItem {
   @override
   final DateTime? dueDate;
   @override
+  @JsonKey()
+  final String workspaceId;
+  @override
   final DateTime createdAt;
   @override
   final DateTime updatedAt;
 
   @override
   String toString() {
-    return 'TaskItem(id: $id, title: $title, description: $description, isCompleted: $isCompleted, priority: $priority, dueDate: $dueDate, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'TaskItem(id: $id, title: $title, description: $description, isCompleted: $isCompleted, priority: $priority, dueDate: $dueDate, workspaceId: $workspaceId, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -259,6 +276,8 @@ class _$TaskItemImpl implements _TaskItem {
             (identical(other.priority, priority) ||
                 other.priority == priority) &&
             (identical(other.dueDate, dueDate) || other.dueDate == dueDate) &&
+            (identical(other.workspaceId, workspaceId) ||
+                other.workspaceId == workspaceId) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -275,6 +294,7 @@ class _$TaskItemImpl implements _TaskItem {
     isCompleted,
     priority,
     dueDate,
+    workspaceId,
     createdAt,
     updatedAt,
   );
@@ -301,6 +321,7 @@ abstract class _TaskItem implements TaskItem {
     final bool isCompleted,
     final TaskPriority priority,
     final DateTime? dueDate,
+    final String workspaceId,
     required final DateTime createdAt,
     required final DateTime updatedAt,
   }) = _$TaskItemImpl;
@@ -320,6 +341,8 @@ abstract class _TaskItem implements TaskItem {
   TaskPriority get priority;
   @override
   DateTime? get dueDate;
+  @override
+  String get workspaceId;
   @override
   DateTime get createdAt;
   @override

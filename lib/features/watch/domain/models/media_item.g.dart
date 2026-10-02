@@ -27,6 +27,7 @@ _$MediaItemImpl _$$MediaItemImplFromJson(Map<String, dynamic> json) =>
       totalEpisodes: (json['totalEpisodes'] as num?)?.toInt(),
       language: json['language'] as String?,
       notes: json['notes'] as String?,
+      workspaceId: json['workspaceId'] as String? ?? '',
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
@@ -46,6 +47,7 @@ Map<String, dynamic> _$$MediaItemImplToJson(_$MediaItemImpl instance) =>
       'totalEpisodes': instance.totalEpisodes,
       'language': instance.language,
       'notes': instance.notes,
+      'workspaceId': instance.workspaceId,
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),
     };

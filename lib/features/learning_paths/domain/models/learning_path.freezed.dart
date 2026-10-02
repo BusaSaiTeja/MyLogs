@@ -298,6 +298,7 @@ mixin _$LearningPath {
   String get title => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   List<PathStep> get steps => throw _privateConstructorUsedError;
+  String get workspaceId => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
   DateTime get updatedAt => throw _privateConstructorUsedError;
 
@@ -323,6 +324,7 @@ abstract class $LearningPathCopyWith<$Res> {
     String title,
     String? description,
     List<PathStep> steps,
+    String workspaceId,
     DateTime createdAt,
     DateTime updatedAt,
   });
@@ -347,6 +349,7 @@ class _$LearningPathCopyWithImpl<$Res, $Val extends LearningPath>
     Object? title = null,
     Object? description = freezed,
     Object? steps = null,
+    Object? workspaceId = null,
     Object? createdAt = null,
     Object? updatedAt = null,
   }) {
@@ -368,6 +371,10 @@ class _$LearningPathCopyWithImpl<$Res, $Val extends LearningPath>
                 ? _value.steps
                 : steps // ignore: cast_nullable_to_non_nullable
                       as List<PathStep>,
+            workspaceId: null == workspaceId
+                ? _value.workspaceId
+                : workspaceId // ignore: cast_nullable_to_non_nullable
+                      as String,
             createdAt: null == createdAt
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
@@ -396,6 +403,7 @@ abstract class _$$LearningPathImplCopyWith<$Res>
     String title,
     String? description,
     List<PathStep> steps,
+    String workspaceId,
     DateTime createdAt,
     DateTime updatedAt,
   });
@@ -419,6 +427,7 @@ class __$$LearningPathImplCopyWithImpl<$Res>
     Object? title = null,
     Object? description = freezed,
     Object? steps = null,
+    Object? workspaceId = null,
     Object? createdAt = null,
     Object? updatedAt = null,
   }) {
@@ -440,6 +449,10 @@ class __$$LearningPathImplCopyWithImpl<$Res>
             ? _value._steps
             : steps // ignore: cast_nullable_to_non_nullable
                   as List<PathStep>,
+        workspaceId: null == workspaceId
+            ? _value.workspaceId
+            : workspaceId // ignore: cast_nullable_to_non_nullable
+                  as String,
         createdAt: null == createdAt
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
@@ -461,6 +474,7 @@ class _$LearningPathImpl implements _LearningPath {
     required this.title,
     this.description,
     final List<PathStep> steps = const [],
+    this.workspaceId = '',
     required this.createdAt,
     required this.updatedAt,
   }) : _steps = steps;
@@ -484,13 +498,16 @@ class _$LearningPathImpl implements _LearningPath {
   }
 
   @override
+  @JsonKey()
+  final String workspaceId;
+  @override
   final DateTime createdAt;
   @override
   final DateTime updatedAt;
 
   @override
   String toString() {
-    return 'LearningPath(id: $id, title: $title, description: $description, steps: $steps, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'LearningPath(id: $id, title: $title, description: $description, steps: $steps, workspaceId: $workspaceId, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -503,6 +520,8 @@ class _$LearningPathImpl implements _LearningPath {
             (identical(other.description, description) ||
                 other.description == description) &&
             const DeepCollectionEquality().equals(other._steps, _steps) &&
+            (identical(other.workspaceId, workspaceId) ||
+                other.workspaceId == workspaceId) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -517,6 +536,7 @@ class _$LearningPathImpl implements _LearningPath {
     title,
     description,
     const DeepCollectionEquality().hash(_steps),
+    workspaceId,
     createdAt,
     updatedAt,
   );
@@ -541,6 +561,7 @@ abstract class _LearningPath implements LearningPath {
     required final String title,
     final String? description,
     final List<PathStep> steps,
+    final String workspaceId,
     required final DateTime createdAt,
     required final DateTime updatedAt,
   }) = _$LearningPathImpl;
@@ -556,6 +577,8 @@ abstract class _LearningPath implements LearningPath {
   String? get description;
   @override
   List<PathStep> get steps;
+  @override
+  String get workspaceId;
   @override
   DateTime get createdAt;
   @override

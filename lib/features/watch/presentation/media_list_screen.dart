@@ -76,6 +76,7 @@ class _MediaListScreenState extends ConsumerState<MediaListScreen> {
         centerTitle: false,
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'media_list_fab',
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
         onPressed: () => context.push(_addRoute),

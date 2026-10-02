@@ -14,6 +14,7 @@ _$NoteItemImpl _$$NoteItemImplFromJson(Map<String, dynamic> json) =>
       tags:
           (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList() ??
           const [],
+      workspaceId: json['workspaceId'] as String? ?? '',
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
@@ -24,6 +25,7 @@ Map<String, dynamic> _$$NoteItemImplToJson(_$NoteItemImpl instance) =>
       'title': instance.title,
       'content': instance.content,
       'tags': instance.tags,
+      'workspaceId': instance.workspaceId,
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),
     };

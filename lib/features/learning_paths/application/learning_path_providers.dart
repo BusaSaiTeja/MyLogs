@@ -3,6 +3,7 @@ import 'package:my_logs/core/services/auth_service.dart';
 import 'package:my_logs/features/learning_paths/data/firestore_learning_path_repository.dart';
 import 'package:my_logs/features/learning_paths/domain/learning_path_repository.dart';
 import 'package:my_logs/features/learning_paths/domain/models/learning_path.dart';
+import 'package:my_logs/features/workspaces/application/workspace_providers.dart';
 
 // ── Repository Provider ───────────────────────────────────────────────────────
 final learningPathRepositoryProvider = Provider<LearningPathRepository>((ref) {
@@ -47,6 +48,21 @@ final learningPathListProvider =
     AsyncNotifierProvider<LearningPathListNotifier, List<LearningPath>>(
   LearningPathListNotifier.new,
 );
+
+final workspaceFilteredLearningPathsProvider =
+    Provider<AsyncValue<List<LearningPath>>>((ref) {
+  final pathsAsync = ref.watch(learningPathListProvider);
+  final activeId = ref.watch(activeWorkspaceIdProvider).valueOrNull;
+  final workspaces = ref.watch(workspaceListProvider).valueOrNull ?? [];
+
+  return pathsAsync.whenData((paths) => paths
+      .where((p) => itemMatchesWorkspace(
+            itemWorkspaceId: p.workspaceId,
+            activeWorkspaceId: activeId,
+            allWorkspaces: workspaces,
+          ))
+      .toList());
+});
 
 final learningPathByIdProvider =
     Provider.family<LearningPath?, String>((ref, id) {

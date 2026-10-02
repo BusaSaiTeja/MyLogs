@@ -3,6 +3,7 @@ import 'package:my_logs/core/services/auth_service.dart';
 import 'package:my_logs/features/watch/data/firestore_media_repository.dart';
 import 'package:my_logs/features/watch/domain/media_repository.dart';
 import 'package:my_logs/features/watch/domain/models/media_item.dart';
+import 'package:my_logs/features/workspaces/application/workspace_providers.dart';
 
 // ── Repository Provider ───────────────────────────────────────────────────────
 final mediaRepositoryProvider = Provider<MediaRepository>((ref) {
@@ -80,12 +81,34 @@ final mediaListProvider =
   MediaListNotifier.new,
 );
 
+// ── Workspace Filtered Media Provider ────────────────────────────────────────
+final workspaceFilteredMediaProvider = Provider<List<MediaItem>>((ref) {
+  final items = ref.watch(mediaListProvider).valueOrNull ?? [];
+  final activeId = ref.watch(activeWorkspaceIdProvider).valueOrNull;
+  final workspaces = ref.watch(workspaceListProvider).valueOrNull ?? [];
+
+  return items.where((m) => itemMatchesWorkspace(
+        itemWorkspaceId: m.workspaceId,
+        activeWorkspaceId: activeId,
+        allWorkspaces: workspaces,
+      )).toList();
+});
+
 // ── Derived / Filtered Providers ──────────────────────────────────────────────
 
-/// Media items filtered by category.
+/// Media items filtered by category and active workspace.
 final mediaByCategory = Provider.family<AsyncValue<List<MediaItem>>, MediaCategory>((ref, cat) {
+  final activeId = ref.watch(activeWorkspaceIdProvider).valueOrNull;
+  final workspaces = ref.watch(workspaceListProvider).valueOrNull ?? [];
+
   return ref.watch(mediaListProvider).whenData(
-        (items) => items.where((m) => m.category == cat).toList(),
+        (items) => items.where((m) =>
+            m.category == cat &&
+            itemMatchesWorkspace(
+              itemWorkspaceId: m.workspaceId,
+              activeWorkspaceId: activeId,
+              allWorkspaces: workspaces,
+            )).toList(),
       );
 });
 
@@ -93,10 +116,8 @@ final mediaByCategory = Provider.family<AsyncValue<List<MediaItem>>, MediaCatego
 final mediaByCategoryAndStatus =
     Provider.family<List<MediaItem>, (MediaCategory, MediaStatus)>((ref, args) {
   final (cat, status) = args;
-  return ref.watch(mediaListProvider).valueOrNull?.where(
-            (m) => m.category == cat && m.status == status,
-          ).toList() ??
-      [];
+  final items = ref.watch(workspaceFilteredMediaProvider);
+  return items.where((m) => m.category == cat && m.status == status).toList();
 });
 
 /// Single item by id — used by MediaDetailScreen.
@@ -110,7 +131,7 @@ final mediaByIdProvider = Provider.family<MediaItem?, String>((ref, id) {
 
 /// Live counts for the Watch Hub cards.
 final watchHubStatsProvider = Provider<WatchHubStats>((ref) {
-  final items = ref.watch(mediaListProvider).valueOrNull ?? [];
+  final items = ref.watch(workspaceFilteredMediaProvider);
   return WatchHubStats(
     movieCount: items.where((m) => m.category == MediaCategory.movie).length,
     animatedCount: items.where((m) => m.category == MediaCategory.animatedMovie).length,
@@ -120,9 +141,10 @@ final watchHubStatsProvider = Provider<WatchHubStats>((ref) {
 
 /// Items currently being watched (for Home screen "Continue Watching" section).
 final continueWatchingProvider = Provider<List<MediaItem>>((ref) {
-  final items = ref.watch(mediaListProvider).valueOrNull ?? [];
+  final items = ref.watch(workspaceFilteredMediaProvider);
   return (items.where((m) => m.status == MediaStatus.watching).toList()
         ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt)))
       .take(5)
       .toList();
 });
+

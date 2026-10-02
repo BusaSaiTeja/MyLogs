@@ -9,6 +9,7 @@ import 'package:my_logs/core/widgets/pill_tab_bar.dart';
 import 'package:my_logs/features/tasks/application/task_providers.dart';
 import 'package:my_logs/features/tasks/domain/models/task_item.dart';
 import 'package:my_logs/features/tasks/presentation/widgets/task_tile.dart';
+import 'package:my_logs/features/workspaces/presentation/widgets/notion_workspace_drawer.dart';
 
 class TasksScreen extends ConsumerStatefulWidget {
   const TasksScreen({super.key});
@@ -58,16 +59,69 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded),
-          color: AppColors.primary,
-          onPressed: () => context.canPop() ? context.pop() : context.go('/'),
+          icon: const Icon(Icons.menu_rounded),
+          color: Colors.black,
+          tooltip: 'Open menu',
+          onPressed: () {
+            if (rootScaffoldKey.currentState?.isDrawerOpen == true) {
+              rootScaffoldKey.currentState?.closeDrawer();
+            } else {
+              rootScaffoldKey.currentState?.openDrawer();
+            }
+          },
         ),
-        title: Text('Tasks', style: AppTypography.headlineLgMobile.copyWith(color: AppColors.primary)),
+        title: Text('Tasks', style: AppTypography.headlineLgMobile.copyWith(color: Colors.black)),
         centerTitle: false,
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert_rounded, color: AppColors.onSurfaceVariant),
+            tooltip: 'More options',
+            onSelected: (value) {
+              if (value == 'disable') {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Disable feature (Coming in Phase 3)'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              } else if (value == 'hide') {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Hide feature (Coming in Phase 3)'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'disable',
+                child: Row(
+                  children: [
+                    Icon(Icons.block_rounded, size: 20, color: AppColors.onSurfaceVariant),
+                    SizedBox(width: 12),
+                    Text('Disable Feature'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'hide',
+                child: Row(
+                  children: [
+                    Icon(Icons.visibility_off_outlined, size: 20, color: AppColors.onSurfaceVariant),
+                    SizedBox(width: 12),
+                    Text('Hide Feature'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
       // ── Floating Action Button (Only visible on Pending tab) ──────────────
       floatingActionButton: _selectedTab == 0
           ? FloatingActionButton(
+              heroTag: 'tasks_fab',
               backgroundColor: AppColors.primary,
               foregroundColor: AppColors.onPrimary,
               onPressed: () => context.push('/tasks/add'),

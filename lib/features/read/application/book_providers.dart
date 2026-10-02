@@ -4,6 +4,7 @@ import 'package:my_logs/features/read/data/firestore_book_repository.dart';
 import 'package:my_logs/features/read/data/google_books_service.dart';
 import 'package:my_logs/features/read/domain/book_repository.dart';
 import 'package:my_logs/features/read/domain/models/book_item.dart';
+import 'package:my_logs/features/workspaces/application/workspace_providers.dart';
 
 // ── Repository Provider ───────────────────────────────────────────────────────
 final bookRepositoryProvider = Provider<BookRepository>((ref) {
@@ -78,10 +79,23 @@ class BookListNotifier extends AsyncNotifier<List<BookItem>> {
 final bookListProvider =
     AsyncNotifierProvider<BookListNotifier, List<BookItem>>(BookListNotifier.new);
 
+// ── Workspace Filtered Books Provider ────────────────────────────────────────
+final workspaceFilteredBooksProvider = Provider<List<BookItem>>((ref) {
+  final books = ref.watch(bookListProvider).valueOrNull ?? [];
+  final activeId = ref.watch(activeWorkspaceIdProvider).valueOrNull;
+  final workspaces = ref.watch(workspaceListProvider).valueOrNull ?? [];
+
+  return books.where((b) => itemMatchesWorkspace(
+        itemWorkspaceId: b.workspaceId,
+        activeWorkspaceId: activeId,
+        allWorkspaces: workspaces,
+      )).toList();
+});
+
 // ── Derived Providers ─────────────────────────────────────────────────────────
 final booksByStatusProvider =
     Provider.family<List<BookItem>, BookStatus>((ref, status) {
-  final allBooks = ref.watch(bookListProvider).valueOrNull ?? [];
+  final allBooks = ref.watch(workspaceFilteredBooksProvider);
   if (status == BookStatus.collection) {
     return allBooks.where((b) => b.isCollection || b.status == BookStatus.collection).toList();
   }
@@ -98,7 +112,7 @@ final bookByIdProvider = Provider.family<BookItem?, String>((ref, id) {
 });
 
 final currentlyReadingProvider = Provider<List<BookItem>>((ref) {
-  final books = ref.watch(bookListProvider).valueOrNull ?? [];
+  final books = ref.watch(workspaceFilteredBooksProvider);
   return (books.where((b) {
         final effectiveStatus = (b.status == BookStatus.collection)
             ? (b.currentPage > 0 ? BookStatus.reading : BookStatus.toRead)
@@ -109,3 +123,4 @@ final currentlyReadingProvider = Provider<List<BookItem>>((ref) {
       .take(5)
       .toList();
 });
+

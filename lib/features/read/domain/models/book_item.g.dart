@@ -26,6 +26,7 @@ _$BookItemImpl _$$BookItemImplFromJson(Map<String, dynamic> json) =>
       currentPage: (json['currentPage'] as num?)?.toInt() ?? 0,
       totalPages: (json['totalPages'] as num?)?.toInt(),
       notes: json['notes'] as String?,
+      workspaceId: json['workspaceId'] as String? ?? '',
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
@@ -44,6 +45,7 @@ Map<String, dynamic> _$$BookItemImplToJson(_$BookItemImpl instance) =>
       'currentPage': instance.currentPage,
       'totalPages': instance.totalPages,
       'notes': instance.notes,
+      'workspaceId': instance.workspaceId,
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),
     };

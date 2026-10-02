@@ -25,6 +25,7 @@ mixin _$NoteItem {
   String get title => throw _privateConstructorUsedError;
   String get content => throw _privateConstructorUsedError;
   List<String> get tags => throw _privateConstructorUsedError;
+  String get workspaceId => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
   DateTime get updatedAt => throw _privateConstructorUsedError;
 
@@ -48,6 +49,7 @@ abstract class $NoteItemCopyWith<$Res> {
     String title,
     String content,
     List<String> tags,
+    String workspaceId,
     DateTime createdAt,
     DateTime updatedAt,
   });
@@ -72,6 +74,7 @@ class _$NoteItemCopyWithImpl<$Res, $Val extends NoteItem>
     Object? title = null,
     Object? content = null,
     Object? tags = null,
+    Object? workspaceId = null,
     Object? createdAt = null,
     Object? updatedAt = null,
   }) {
@@ -93,6 +96,10 @@ class _$NoteItemCopyWithImpl<$Res, $Val extends NoteItem>
                 ? _value.tags
                 : tags // ignore: cast_nullable_to_non_nullable
                       as List<String>,
+            workspaceId: null == workspaceId
+                ? _value.workspaceId
+                : workspaceId // ignore: cast_nullable_to_non_nullable
+                      as String,
             createdAt: null == createdAt
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
@@ -121,6 +128,7 @@ abstract class _$$NoteItemImplCopyWith<$Res>
     String title,
     String content,
     List<String> tags,
+    String workspaceId,
     DateTime createdAt,
     DateTime updatedAt,
   });
@@ -144,6 +152,7 @@ class __$$NoteItemImplCopyWithImpl<$Res>
     Object? title = null,
     Object? content = null,
     Object? tags = null,
+    Object? workspaceId = null,
     Object? createdAt = null,
     Object? updatedAt = null,
   }) {
@@ -165,6 +174,10 @@ class __$$NoteItemImplCopyWithImpl<$Res>
             ? _value._tags
             : tags // ignore: cast_nullable_to_non_nullable
                   as List<String>,
+        workspaceId: null == workspaceId
+            ? _value.workspaceId
+            : workspaceId // ignore: cast_nullable_to_non_nullable
+                  as String,
         createdAt: null == createdAt
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
@@ -186,6 +199,7 @@ class _$NoteItemImpl implements _NoteItem {
     required this.title,
     required this.content,
     final List<String> tags = const [],
+    this.workspaceId = '',
     required this.createdAt,
     required this.updatedAt,
   }) : _tags = tags;
@@ -209,13 +223,16 @@ class _$NoteItemImpl implements _NoteItem {
   }
 
   @override
+  @JsonKey()
+  final String workspaceId;
+  @override
   final DateTime createdAt;
   @override
   final DateTime updatedAt;
 
   @override
   String toString() {
-    return 'NoteItem(id: $id, title: $title, content: $content, tags: $tags, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'NoteItem(id: $id, title: $title, content: $content, tags: $tags, workspaceId: $workspaceId, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -227,6 +244,8 @@ class _$NoteItemImpl implements _NoteItem {
             (identical(other.title, title) || other.title == title) &&
             (identical(other.content, content) || other.content == content) &&
             const DeepCollectionEquality().equals(other._tags, _tags) &&
+            (identical(other.workspaceId, workspaceId) ||
+                other.workspaceId == workspaceId) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -241,6 +260,7 @@ class _$NoteItemImpl implements _NoteItem {
     title,
     content,
     const DeepCollectionEquality().hash(_tags),
+    workspaceId,
     createdAt,
     updatedAt,
   );
@@ -265,6 +285,7 @@ abstract class _NoteItem implements NoteItem {
     required final String title,
     required final String content,
     final List<String> tags,
+    final String workspaceId,
     required final DateTime createdAt,
     required final DateTime updatedAt,
   }) = _$NoteItemImpl;
@@ -280,6 +301,8 @@ abstract class _NoteItem implements NoteItem {
   String get content;
   @override
   List<String> get tags;
+  @override
+  String get workspaceId;
   @override
   DateTime get createdAt;
   @override

@@ -45,6 +45,7 @@ class MediaItem with _$MediaItem {
     int? totalEpisodes,
     String? language,
     String? notes,
+    @Default('') String workspaceId,
     required DateTime createdAt,
     required DateTime updatedAt,
   }) = _MediaItem;

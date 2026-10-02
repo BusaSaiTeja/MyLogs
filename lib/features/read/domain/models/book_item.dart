@@ -33,6 +33,7 @@ class BookItem with _$BookItem {
     @Default(0) int currentPage,
     int? totalPages,
     String? notes,
+    @Default('') String workspaceId,
     required DateTime createdAt,
     required DateTime updatedAt,
   }) = _BookItem;

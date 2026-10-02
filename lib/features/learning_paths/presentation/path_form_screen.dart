@@ -6,6 +6,7 @@ import 'package:my_logs/core/theme/app_spacing.dart';
 import 'package:my_logs/core/theme/app_typography.dart';
 import 'package:my_logs/features/learning_paths/application/learning_path_providers.dart';
 import 'package:my_logs/features/learning_paths/domain/models/learning_path.dart';
+import 'package:my_logs/features/workspaces/application/workspace_providers.dart';
 
 class PathFormScreen extends ConsumerStatefulWidget {
   const PathFormScreen({super.key, this.pathId});
@@ -118,8 +119,10 @@ class _PathFormScreenState extends ConsumerState<PathFormScreen> {
               updatedAt: now,
             ));
       } else {
+        final activeWorkspaceId = ref.read(activeWorkspaceIdProvider).valueOrNull ?? '';
         await ref.read(learningPathListProvider.notifier).add(LearningPath(
               id: '',
+              workspaceId: activeWorkspaceId,
               title: _titleCtrl.text.trim(),
               description:
                   _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
@@ -157,6 +160,7 @@ class _PathFormScreenState extends ConsumerState<PathFormScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'path_form_fab',
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
         onPressed: () {

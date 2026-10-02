@@ -1,10 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
-  AuthService({FirebaseAuth? auth}) : _auth = auth ?? FirebaseAuth.instance;
+  AuthService({
+    FirebaseAuth? auth,
+    GoogleSignIn? googleSignIn,
+  })  : _auth = auth ?? FirebaseAuth.instance,
+        _googleSignIn = googleSignIn ?? GoogleSignIn();
 
   final FirebaseAuth _auth;
+  final GoogleSignIn _googleSignIn;
 
   User? get currentUser => _auth.currentUser;
   String? get currentUserId => _auth.currentUser?.uid;
@@ -80,6 +86,36 @@ class AuthService {
     return credential;
   }
 
+  /// Signs in with Google, linking guest data if active.
+  Future<UserCredential?> signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    if (googleUser == null) {
+      // The user canceled the sign-in flow
+      return null;
+    }
+
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final OAuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    final user = _auth.currentUser;
+    if (user != null && user.isAnonymous) {
+      try {
+        return await user.linkWithCredential(credential);
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'credential-already-in-use' || e.code == 'email-already-in-use') {
+          return await _auth.signInWithCredential(credential);
+        } else {
+          rethrow;
+        }
+      }
+    }
+
+    return await _auth.signInWithCredential(credential);
+  }
+
   /// Sends a password reset email.
   Future<void> sendPasswordResetEmail(String email) async {
     await _auth.sendPasswordResetEmail(email: email.trim());
@@ -87,6 +123,7 @@ class AuthService {
 
   /// Signs out completely.
   Future<void> signOut() async {
+    await _googleSignIn.signOut();
     await _auth.signOut();
   }
 }
