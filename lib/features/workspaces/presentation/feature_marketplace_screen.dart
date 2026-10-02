@@ -47,13 +47,13 @@ class _FeatureMarketplaceScreenState extends ConsumerState<FeatureMarketplaceScr
         backgroundColor: AppColors.surface,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
-          color: Colors.black,
+          color: AppColors.obsidian,
           tooltip: 'Back',
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Feature Marketplace',
-          style: AppTypography.headlineLgMobile.copyWith(color: Colors.black),
+          style: AppTypography.headlineLgMobile.copyWith(color: AppColors.obsidian),
         ),
         centerTitle: false,
       ),

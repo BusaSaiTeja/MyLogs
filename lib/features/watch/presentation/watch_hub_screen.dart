@@ -21,7 +21,7 @@ class WatchHubScreen extends ConsumerWidget {
         backgroundColor: AppColors.surface,
         leading: IconButton(
           icon: const Icon(Icons.menu_rounded),
-          color: Colors.black,
+          color: AppColors.obsidian,
           tooltip: 'Open menu',
           onPressed: () {
             if (rootScaffoldKey.currentState?.isDrawerOpen == true) {
@@ -31,7 +31,7 @@ class WatchHubScreen extends ConsumerWidget {
             }
           },
         ),
-        title: Text('Watch Hub', style: AppTypography.headlineLgMobile.copyWith(color: Colors.black)),
+        title: Text('Watch Hub', style: AppTypography.headlineLgMobile.copyWith(color: AppColors.obsidian)),
         centerTitle: false,
         actions: [
           PopupMenuButton<String>(

@@ -60,7 +60,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
         backgroundColor: AppColors.surface,
         leading: IconButton(
           icon: const Icon(Icons.menu_rounded),
-          color: Colors.black,
+          color: AppColors.obsidian,
           tooltip: 'Open menu',
           onPressed: () {
             if (rootScaffoldKey.currentState?.isDrawerOpen == true) {
@@ -70,7 +70,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
             }
           },
         ),
-        title: Text('Tasks', style: AppTypography.headlineLgMobile.copyWith(color: Colors.black)),
+        title: Text('Tasks', style: AppTypography.headlineLgMobile.copyWith(color: AppColors.obsidian)),
         centerTitle: false,
         actions: [
           PopupMenuButton<String>(

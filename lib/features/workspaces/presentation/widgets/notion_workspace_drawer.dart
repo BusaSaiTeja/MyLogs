@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_logs/core/theme/app_colors.dart';
+import 'package:my_logs/core/theme/app_typography.dart';
 import 'package:my_logs/features/learning_paths/application/learning_path_providers.dart';
 import 'package:my_logs/features/notes/application/note_providers.dart';
 import 'package:my_logs/features/read/application/book_providers.dart';
@@ -28,7 +29,7 @@ class _NotionWorkspaceDrawerState extends ConsumerState<NotionWorkspaceDrawer> {
   static const Color _bg = AppColors.surfaceContainerLowest; // Pure white / 0xFFFFFFFF
   static const Color _surface = AppColors.surfaceContainerLow; // 0xFFF2F4F6
   static const Color _border = Color(0xFFE2E8F0); // Subtle divider & border
-  static const Color _textPrimary = AppColors.onSurface; // 0xFF191C1E
+  static const Color _textPrimary = AppColors.obsidian; // Deep refined slate
   static const Color _textSecondary = AppColors.onSurfaceVariant; // 0xFF464555
 
   @override
@@ -90,14 +91,9 @@ class _NotionWorkspaceDrawerState extends ConsumerState<NotionWorkspaceDrawer> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
+                        Text(
                           'ACTIVE FEATURES',
-                          style: TextStyle(
-                            color: _textSecondary,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.8,
-                          ),
+                          style: AppTypography.labelEyebrow,
                         ),
                         Text(
                           '${enabledKeys.length} enabled',

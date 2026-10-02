@@ -5,41 +5,43 @@ import 'package:my_logs/core/theme/app_colors.dart';
 /// Typography definitions matching DESIGN.md exactly.
 /// All styles use Inter via google_fonts.
 abstract final class AppTypography {
-  // ── Display: 32sp / 700 / -0.02em ─────────────────────────────────────────
-  static TextStyle get display => GoogleFonts.inter(
+  // ── Display: 32sp / 700 / tight tracking ──────────────────────────────────
+  static TextStyle get display => GoogleFonts.outfit(
         fontSize: 32,
         fontWeight: FontWeight.w700,
         height: 40 / 32,
-        letterSpacing: 32 * -0.02,
-        color: AppColors.onSurface,
+        letterSpacing: -0.8,
+        color: AppColors.obsidian,
       );
 
-  // ── Headline LG: 24sp / 600 / -0.01em ────────────────────────────────────
-  static TextStyle get headlineLg => GoogleFonts.inter(
+  // ── Headline LG: 24sp / 700 / tight tracking ──────────────────────────────
+  static TextStyle get headlineLg => GoogleFonts.outfit(
         fontSize: 24,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         height: 32 / 24,
-        letterSpacing: 24 * -0.01,
-        color: AppColors.onSurface,
+        letterSpacing: -0.5,
+        color: AppColors.obsidian,
       );
 
-  // ── Headline LG Mobile: 22sp / 600 ───────────────────────────────────────
-  static TextStyle get headlineLgMobile => GoogleFonts.inter(
+  // ── Headline LG Mobile: 22sp / 700 ────────────────────────────────────────
+  static TextStyle get headlineLgMobile => GoogleFonts.outfit(
         fontSize: 22,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         height: 28 / 22,
-        color: AppColors.onSurface,
+        letterSpacing: -0.4,
+        color: AppColors.obsidian,
       );
 
-  // ── Headline MD: 20sp / 600 ───────────────────────────────────────────────
-  static TextStyle get headlineMd => GoogleFonts.inter(
-        fontSize: 20,
+  // ── Headline MD: 19sp / 600 ───────────────────────────────────────────────
+  static TextStyle get headlineMd => GoogleFonts.outfit(
+        fontSize: 19,
         fontWeight: FontWeight.w600,
-        height: 28 / 20,
-        color: AppColors.onSurface,
+        height: 26 / 19,
+        letterSpacing: -0.3,
+        color: AppColors.obsidian,
       );
 
-  // ── Body LG: 16sp / 400 ──────────────────────────────────────────────────
+  // ── Body LG: 16sp / 400 ───────────────────────────────────────────────────
   static TextStyle get bodyLg => GoogleFonts.inter(
         fontSize: 16,
         fontWeight: FontWeight.w400,
@@ -47,7 +49,7 @@ abstract final class AppTypography {
         color: AppColors.onSurface,
       );
 
-  // ── Body MD: 14sp / 400 ──────────────────────────────────────────────────
+  // ── Body MD: 14sp / 400 ───────────────────────────────────────────────────
   static TextStyle get bodyMd => GoogleFonts.inter(
         fontSize: 14,
         fontWeight: FontWeight.w400,
@@ -55,13 +57,21 @@ abstract final class AppTypography {
         color: AppColors.onSurface,
       );
 
-  // ── Label MD: 12sp / 600 / 0.05em ────────────────────────────────────────
+  // ── Label MD: 12sp / 600 ──────────────────────────────────────────────────
   static TextStyle get labelMd => GoogleFonts.inter(
         fontSize: 12,
         fontWeight: FontWeight.w600,
         height: 16 / 12,
-        letterSpacing: 12 * 0.05,
+        letterSpacing: 0.2,
         color: AppColors.onSurface,
+      );
+
+  // ── Eyebrow / Section Tag: 11sp / 700 / loose tracking (0.08em) ───────────
+  static TextStyle get labelEyebrow => GoogleFonts.inter(
+        fontSize: 11,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 1.1,
+        color: AppColors.onSurfaceVariant,
       );
 
   // ── Convenience: coloured variants ───────────────────────────────────────

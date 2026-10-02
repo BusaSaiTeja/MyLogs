@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:my_logs/core/theme/app_colors.dart';
 import 'package:my_logs/core/theme/app_spacing.dart';
 import 'package:my_logs/core/theme/app_typography.dart';
@@ -11,6 +12,8 @@ class HomeStatCard extends StatelessWidget {
     required this.icon,
     required this.color,
     required this.onTap,
+    this.eyebrow,
+    this.isHero = false,
   });
 
   final String value;
@@ -18,28 +21,97 @@ class HomeStatCard extends StatelessWidget {
   final IconData icon;
   final Color color;
   final VoidCallback onTap;
+  final String? eyebrow;
+  final bool isHero;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-        decoration: BoxDecoration(
-          color: AppColors.surfaceContainerLowest,
-          borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-          border: Border.all(color: AppColors.surfaceContainerHighest),
-          boxShadow: AppColors.cardShadow,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, size: 20, color: color),
-            const SizedBox(height: 8),
-            Text(value, style: AppTypography.headlineLg.copyWith(color: AppColors.primary)),
-            const SizedBox(height: 2),
-            Text(label, style: AppTypography.bodyMdOutline(), maxLines: 1, overflow: TextOverflow.ellipsis),
-          ],
+    return Material(
+      color: AppColors.surfaceContainerLowest,
+      borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
+        splashColor: color.withValues(alpha: 0.08),
+        highlightColor: color.withValues(alpha: 0.04),
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: isHero ? 16 : 12,
+            vertical: isHero ? 16 : 12,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
+            border: Border.all(
+              color: isHero
+                  ? color.withValues(alpha: 0.25)
+                  : const Color(0xFFE2E8F0),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF0F172A).withValues(alpha: 0.03),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: isHero ? 36 : 28,
+                    height: isHero ? 36 : 28,
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Center(
+                      child: Icon(icon, size: isHero ? 20 : 16, color: color),
+                    ),
+                  ),
+                  if (eyebrow != null)
+                    Text(
+                      eyebrow!.toUpperCase(),
+                      style: GoogleFonts.inter(
+                        fontSize: 9.5,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.8,
+                        color: color,
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    value,
+                    style: GoogleFonts.outfit(
+                      fontSize: isHero ? 28 : 22,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.5,
+                      color: AppColors.obsidian,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    label,
+                    style: AppTypography.bodyMdVariant().copyWith(
+                      fontSize: isHero ? 13 : 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

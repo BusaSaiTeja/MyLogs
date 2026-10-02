@@ -1,9 +1,8 @@
 /// Core API Configuration & Keys
-class ApiConfig {
-  ApiConfig._();
-
+abstract final class ApiConfig {
   /// TMDB API Key (v3)
-  static const String tmdbApiKey = 'REDACTED_TMDB_API_KEY';
+  /// Injected at runtime via `--dart-define=TMDB_API_KEY=your_key`
+  static const String tmdbApiKey = String.fromEnvironment('TMDB_API_KEY');
 
   /// TMDB Base Image URL for posters (w500 size)
   static const String tmdbImageBaseUrl = 'https://image.tmdb.org/t/p/w500';

@@ -52,17 +52,18 @@ abstract final class AppTheme {
         bodyMedium: AppTypography.bodyMd,
         labelMedium: AppTypography.labelMd,
       ),
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         backgroundColor: AppColors.surface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
-        iconTheme: IconThemeData(color: Colors.black),
-        titleTextStyle: TextStyle(
-          color: Colors.black,
+        iconTheme: const IconThemeData(color: AppColors.obsidian),
+        titleTextStyle: GoogleFonts.outfit(
+          color: AppColors.obsidian,
           fontSize: 22,
           fontWeight: FontWeight.w700,
+          letterSpacing: -0.4,
         ),
       ),
       cardTheme: CardThemeData(

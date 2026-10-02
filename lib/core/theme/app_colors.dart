@@ -51,6 +51,8 @@ abstract final class AppColors {
   static const Color surfaceTint = Color(0xFF4D44E3);
 
   // ── On-Surface ────────────────────────────────────────────────────────────
+  /// Rich obsidian for typography & icons — replaces harsh raw black with refined deep slate.
+  static const Color obsidian = Color(0xFF0F172A);
   static const Color onSurface = Color(0xFF191C1E);
   static const Color onSurfaceVariant = Color(0xFF464555);
   static const Color inverseSurface = Color(0xFF2D3133);

@@ -58,3 +58,16 @@ coverage/
 
 # Windows-related
 **/windows/flutter/ephemeral/
+
+# Secrets, Environment & API Keys
+*.env
+*.env.*
+.env
+.env.local
+.env.production
+.env.staging
+!.env.example
+lib/core/config/*.local.dart
+lib/core/config/api_keys.dart
+**/secrets.json
+**/credentials.json

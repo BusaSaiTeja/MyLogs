@@ -27,8 +27,8 @@ class HomeScreen extends ConsumerWidget {
     final continueWatching = ref.watch(continueWatchingProvider);
     final currentlyReading = ref.watch(currentlyReadingProvider);
 
-    const sectionGap = SizedBox(height: 18.0);
-    const itemGap = SizedBox(height: 8.0);
+    const sectionGap = SizedBox(height: 26.0);
+    const itemGap = SizedBox(height: 10.0);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -36,7 +36,7 @@ class HomeScreen extends ConsumerWidget {
         backgroundColor: AppColors.surface,
         leading: IconButton(
           icon: const Icon(Icons.menu_rounded),
-          color: Colors.black,
+          color: AppColors.obsidian,
           tooltip: 'Workspace Menu',
           onPressed: () {
             if (rootScaffoldKey.currentState?.isDrawerOpen == true) {
@@ -46,8 +46,10 @@ class HomeScreen extends ConsumerWidget {
             }
           },
         ),
-        title: Text('Home',
-            style: AppTypography.headlineLgMobile.copyWith(color: Colors.black)),
+        title: Text(
+          'Home',
+          style: AppTypography.headlineLgMobile.copyWith(color: AppColors.obsidian),
+        ),
         centerTitle: false,
         actions: [
           IconButton(
@@ -65,43 +67,65 @@ class HomeScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         children: [
-          // ── Quick Stats Row ──────────────────────────────────────────────────
+          // ── Asymmetric Bento Hero Overview (Breaks Dead Symmetry) ──────────
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Hero Focal Card: Today's Tasks & Momentum
               Expanded(
-                child: HomeStatCard(
-                  value: '${todayTasks.length}',
-                  label: 'Tasks today',
-                  icon: Icons.check_circle_outline_rounded,
-                  color: AppColors.primaryContainer,
-                  onTap: () => context.go('/tasks'),
+                flex: 11,
+                child: SizedBox(
+                  height: 146,
+                  child: HomeStatCard(
+                    value: '${todayTasks.length}',
+                    label: todayTasks.isEmpty
+                        ? 'All tasks completed'
+                        : 'Active tasks today',
+                    icon: Icons.check_circle_outline_rounded,
+                    color: AppColors.primaryContainer,
+                    eyebrow: "Today's Focus",
+                    isHero: true,
+                    onTap: () => context.go('/tasks'),
+                  ),
                 ),
               ),
               const SizedBox(width: 10),
+
+              // Right Stacked Micro Cards
               Expanded(
-                child: HomeStatCard(
-                  value: '${todayReminders.length}',
-                  label: 'Reminders',
-                  icon: Icons.alarm_rounded,
-                  color: AppColors.tertiaryContainer,
-                  onTap: () => context.go('/reminders'),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: HomeStatCard(
-                  value: '${continueWatching.length}',
-                  label: 'Watching',
-                  icon: Icons.visibility_outlined,
-                  color: AppColors.secondaryContainer,
-                  onTap: () => context.go('/watch'),
+                flex: 9,
+                child: SizedBox(
+                  height: 146,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: HomeStatCard(
+                          value: '${todayReminders.length}',
+                          label: 'Reminders',
+                          icon: Icons.alarm_rounded,
+                          color: AppColors.tertiaryContainer,
+                          onTap: () => context.go('/reminders'),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Expanded(
+                        child: HomeStatCard(
+                          value: '${continueWatching.length}',
+                          label: 'Watching',
+                          icon: Icons.movie_outlined,
+                          color: AppColors.secondaryContainer,
+                          onTap: () => context.go('/watch'),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
           ),
           sectionGap,
 
-          // ── Today's Tasks ────────────────────────────────────────────────────
+          // ── Today's Tasks (Grouped Surface Card) ───────────────────────────
           if (todayTasks.isNotEmpty) ...[
             HomeSectionHeader(
               title: "Today's Tasks",
@@ -109,22 +133,44 @@ class HomeScreen extends ConsumerWidget {
               onAction: () => context.go('/tasks'),
             ),
             itemGap,
-            ...todayTasks.take(4).map((t) => HomeTile(
-                  leading: Icon(
-                    t.isCompleted
-                        ? Icons.check_circle_rounded
-                        : Icons.radio_button_unchecked_rounded,
-                    color: t.isCompleted ? AppColors.primary : AppColors.outline,
-                    size: 20,
+            Container(
+              decoration: BoxDecoration(
+                color: AppColors.surfaceContainerLowest,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF0F172A).withValues(alpha: 0.03),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
                   ),
-                  title: t.title,
-                  subtitle: t.dueDate != null ? AppDateUtils.formatDate(t.dueDate!) : null,
-                  onTap: () => context.go('/tasks'),
-                )),
+                ],
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Column(
+                children: todayTasks.take(4).toList().asMap().entries.map((entry) {
+                  final i = entry.key;
+                  final t = entry.value;
+                  return HomeTile(
+                    leading: Icon(
+                      t.isCompleted
+                          ? Icons.check_circle_rounded
+                          : Icons.radio_button_unchecked_rounded,
+                      color: t.isCompleted ? AppColors.primary : AppColors.outline,
+                      size: 20,
+                    ),
+                    title: t.title,
+                    subtitle: t.dueDate != null ? AppDateUtils.formatDate(t.dueDate!) : null,
+                    showDivider: i < (todayTasks.length.clamp(0, 4) - 1),
+                    onTap: () => context.go('/tasks'),
+                  );
+                }).toList(),
+              ),
+            ),
             sectionGap,
           ],
 
-          // ── Today's Reminders ────────────────────────────────────────────────
+          // ── Today's Reminders (Grouped Surface Card) ───────────────────────
           if (todayReminders.isNotEmpty) ...[
             HomeSectionHeader(
               title: 'Reminders Today',
@@ -132,12 +178,34 @@ class HomeScreen extends ConsumerWidget {
               onAction: () => context.go('/reminders'),
             ),
             itemGap,
-            ...todayReminders.take(3).map((r) => HomeTile(
-                  leading: const Icon(Icons.alarm_rounded, color: AppColors.primary, size: 20),
-                  title: r.title,
-                  subtitle: AppDateUtils.formatTime(r.scheduledTime),
-                  onTap: () => context.go('/reminders'),
-                )),
+            Container(
+              decoration: BoxDecoration(
+                color: AppColors.surfaceContainerLowest,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF0F172A).withValues(alpha: 0.03),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Column(
+                children: todayReminders.take(3).toList().asMap().entries.map((entry) {
+                  final i = entry.key;
+                  final r = entry.value;
+                  return HomeTile(
+                    leading: const Icon(Icons.alarm_rounded, color: AppColors.primary, size: 20),
+                    title: r.title,
+                    subtitle: AppDateUtils.formatTime(r.scheduledTime),
+                    showDivider: i < (todayReminders.length.clamp(0, 3) - 1),
+                    onTap: () => context.go('/reminders'),
+                  );
+                }).toList(),
+              ),
+            ),
             sectionGap,
           ],
 
@@ -154,7 +222,7 @@ class HomeScreen extends ConsumerWidget {
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: continueWatching.length,
-                separatorBuilder: (_, _) => const SizedBox(width: 10),
+                separatorBuilder: (_, _) => const SizedBox(width: 12),
                 itemBuilder: (context, i) {
                   final item = continueWatching[i];
                   return ContinueWatchingCard(
@@ -181,8 +249,7 @@ class HomeScreen extends ConsumerWidget {
                 )),
             sectionGap,
           ],
-
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
         ],
       ),
     );

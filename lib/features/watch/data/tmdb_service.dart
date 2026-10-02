@@ -27,7 +27,7 @@ class TmdbService {
   TmdbService({http.Client? client}) : _client = client ?? http.Client();
 
   final http.Client _client;
-  static const String _omdbApiKey = 'REDACTED_OMDB_API_KEY';
+  static const String _omdbApiKey = String.fromEnvironment('OMDB_API_KEY');
 
   static const Map<int, String> _genreMap = {
     28: 'Action',
@@ -84,6 +84,8 @@ class TmdbService {
 
   /// Searches OMDB for movies & series.
   Future<List<TmdbSearchResult>> _searchOmdb(String cleanQuery) async {
+    if (_omdbApiKey.isEmpty) return [];
+
     final uri = Uri.https('www.omdbapi.com', '', {
       'apikey': _omdbApiKey,
       's': cleanQuery,
@@ -175,6 +177,8 @@ class TmdbService {
 
   /// TMDB Movie Search
   Future<List<TmdbSearchResult>> _searchTmdbMovies(String cleanQuery) async {
+    if (ApiConfig.tmdbApiKey.isEmpty) return [];
+
     final uri = Uri.https('api.themoviedb.org', '/3/search/movie', {
       'api_key': ApiConfig.tmdbApiKey,
       'query': cleanQuery,

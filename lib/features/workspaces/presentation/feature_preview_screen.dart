@@ -47,7 +47,7 @@ class _FeaturePreviewScreenState extends ConsumerState<FeaturePreviewScreen> {
         backgroundColor: AppColors.surface,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
-          color: Colors.black,
+          color: AppColors.obsidian,
           tooltip: 'Back to Marketplace',
           onPressed: () => Navigator.of(context).pop(),
         ),
@@ -55,7 +55,7 @@ class _FeaturePreviewScreenState extends ConsumerState<FeaturePreviewScreen> {
           children: [
             Text(
               widget.feature.title,
-              style: AppTypography.headlineLgMobile.copyWith(color: Colors.black),
+              style: AppTypography.headlineLgMobile.copyWith(color: AppColors.obsidian),
             ),
             const SizedBox(width: 8),
             Container(
